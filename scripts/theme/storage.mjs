@@ -151,7 +151,7 @@ export async function currentFiles(slug) {
 
 const SAME_AS_TEMPLATE = ["styles", "effect"];
 
-const isUnmodifiedCopy = (entry, template) => SAME_AS_TEMPLATE.every(name => canonical(entry.files[name]) === canonical(template.files[name]))
+export const isUnmodifiedCopy = (entry, template) => SAME_AS_TEMPLATE.every(name => canonical(entry.files[name]) === canonical(template.files[name]))
   && canonical(entry.files.theme.resources) === canonical(template.files.theme.resources);
 
 export async function applyTemplate(slug) {

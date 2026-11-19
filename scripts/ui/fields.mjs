@@ -40,7 +40,11 @@ const CONTROLS = {
   range: (field, value) => `<input type="range" data-input value="${escapeHTML(value ?? field.min)}" ${attrs(field)}><output>${escapeHTML(value ?? "—")}</output>`,
   toggle: (field, value) => `<input type="checkbox" data-input${value ? " checked" : ""}>`,
   swatch: (field, value) => `<input type="color" data-input value="${escapeHTML(value)}"><output>${escapeHTML(value)}</output>`,
-  select: (field, value) => `<select data-input>${options([...(field.required ? [] : [["", "—"]]), ...field.values.map(entry => [entry, field.labelOf ? field.labelOf(entry) : optionLabel(field, entry)])], value)}</select>`,
+  select: (field, value) => {
+    const entry = item => [item, field.labelOf ? field.labelOf(item) : optionLabel(field, item)];
+    const body = field.groups ? field.groups.map(group => `<optgroup label="${escapeHTML(group.label)}">${options(group.values.map(entry), value)}</optgroup>`).join("") : options(field.values.map(entry), value);
+    return `<select data-input>${field.required ? "" : options([["", "—"]], value)}${body}</select>`;
+  },
   cards: (field, value) => field.options.map(option => `<button type="button" class="bookbinder-card-option${option.id === value ? " active" : ""}" data-choice="${option.id}"${option.disabled ? ' disabled data-tooltip="' + localize("Types.Later") + '"' : ""}>`
     + `<b>${localize(`Types.${option.id}.Glyph`)}</b>${localize(`Types.${option.id}.Name`)}</button>`).join(""),
   color: colorControl,

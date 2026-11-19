@@ -2,7 +2,7 @@ import { escapeHTML, localize } from "../constants.mjs";
 import { canCreateThemes, canSeeTheme } from "../permissions.mjs";
 import { setting } from "../settings.mjs";
 import { addSheet, clone, copyDesign, removeSheet, sheetsOf, typeOf, validSheet } from "../theme/design.mjs";
-import { createDesign } from "../theme/storage.mjs";
+import { createDesign, isUnmodifiedCopy } from "../theme/storage.mjs";
 import { listThemes, moduleVersion } from "../theme/store.mjs";
 import { ShellApplication } from "./app.mjs";
 import { renderFields, sheetOptions } from "./fields.mjs";
@@ -55,11 +55,13 @@ export class DesignWizard extends ShellApplication {
     const { world, presets } = await listThemes();
     const usable = entry => entry.available && canSeeTheme(game.user, entry.meta);
     app.#bases = new Map([...presets, ...world].filter(usable).map(entry => [entry.slug, entry]));
+    app.#duplicates = new Set(world.filter(entry => presets.some(template => template.name === entry.name && isUnmodifiedCopy(entry, template))).map(entry => entry.slug));
     app.#setBase(app.#bases.has(baseSlug) ? baseSlug : DEFAULT_BASE, { name: "", visibility: game.user.isGM ? "all" : "author" });
     return app.render({ force: true });
   }
 
   #bases = new Map();
+  #duplicates = new Set();
   #baseSlug;
   #draft;
   #step = 0;
@@ -90,8 +92,11 @@ export class DesignWizard extends ShellApplication {
   }
 
   #baseField() {
+    const shown = slug => !this.#duplicates.has(slug) || slug === this.#baseSlug;
+    const slugsOf = preset => [...this.#bases.values()].filter(entry => (entry.source === "preset") === preset && shown(entry.slug)).map(entry => entry.slug);
+    const groups = [{ label: localize("Theme.TemplateGroup"), values: slugsOf(true) }, { label: localize("Theme.WorldGroup"), values: slugsOf(false) }].filter(group => group.values.length);
     return {
-      id: "base", type: "select", required: true, rerender: true, hint: true, values: [...this.#bases.keys()],
+      id: "base", type: "select", required: true, rerender: true, hint: true, groups,
       labelOf: slug => this.#bases.get(slug).name, get: () => this.#baseSlug, set: (ctx, slug) => this.#setBase(slug)
     };
   }
