@@ -15,7 +15,8 @@ export const presetRoot = () => modulePath("presets");
 export const canWrite = () => game.user.can("FILES_UPLOAD");
 export const hasFont = name => Object.hasOwn(CONFIG.fontDefinitions, name);
 
-export const resourceUrl = path => route(path.startsWith("modules/") ? path : `${worldRoot()}/${path}`);
+export const dataPath = path => (/^(?:img|assets)\//.test(path) ? `${worldRoot()}/${path}` : path);
+export const resourceUrl = path => route(dataPath(path));
 export const moduleAsset = file => route(modulePath(`presets/${file}`));
 
 export const makeAssets = resources => ({

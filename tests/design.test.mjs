@@ -1,5 +1,6 @@
 import { canCreateThemes, canDeleteTheme, canEditTheme, canSeeTheme } from "../scripts/permissions.mjs";
-import { TYPES, addSheet, applyType, canonical, clone, contrastRatio, copyDesign, fingerprint, getPath, isDirty, pendingOf, removeSheet, replaceFont, resolveColor, setPath, sheetKeys, stamp, typeOf, useImage, usedFonts, validSheet } from "../scripts/theme/design.mjs";
+import { path as isPath } from "../scripts/theme/schema.mjs";
+import { TYPES, addSheet, applyType, canonical, clone, contrastRatio, copyDesign, fingerprint, getPath, isDirty, pendingOf, removeSheet, replaceFont, resolveColor, setPath, sheetKeys, stamp, toThemePath, typeOf, useImage, usedFonts, validSheet } from "../scripts/theme/design.mjs";
 import { upgradeFiles } from "../scripts/theme/migrations.mjs";
 import { identifier, slugify, uniqueKey, versionName } from "../scripts/theme/slug.mjs";
 import { equal, test, truthy } from "./harness.mjs";
@@ -150,4 +151,14 @@ test("usage: pages per sub-sheet only count in journals that use the theme (EDT-
   const journals = [fakeJournal("grimoire", ["letter", "letter", undefined]), fakeJournal("grimoire", ["report"]), fakeJournal("other", ["letter"])];
   equal([countSheetPages(journals, "grimoire", "letter"), countSheetPages(journals, "grimoire", "report"), countSheetPages(journals, "grimoire", "gone")], [2, 1, 0]);
   truthy(usesTheme(journals[0], "grimoire") && !usesTheme(journals[2], "grimoire"), "usesTheme");
+});
+
+test("image paths from Foundry's file picker are stored relative to the theme folder or kept as Data paths (FMT-10)", () => {
+  const root = "worlds/w/Bookbinder_themes";
+  equal([toThemePath(`${root}/img/x/a.png`, root), toThemePath("icons/svg/book.svg", root), toThemePath("modules/bookbinder/presets/img/book/cover.svg", root)], ["img/x/a.png", "icons/svg/book.svg", "modules/bookbinder/presets/img/book/cover.svg"]);
+});
+
+test("image path validator accepts Data paths and rejects traversal, protocols and absolute paths (FMT-05)", () => {
+  for (const good of ["img/x/a.png", "icons/svg/book.svg", "worlds/w/mapa de ñandú.webp", "modules/bookbinder/presets/img/book/cover.svg"]) truthy(isPath(good), good);
+  for (const bad of ["../secret.png", "img/../../x.png", "https://evil/x.png", "data:image/png;base64,AAAA", "/etc/passwd", "img/x\\y.png", ""]) truthy(!isPath(bad), bad);
 });

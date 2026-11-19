@@ -1,8 +1,7 @@
 import { escapeHTML, localize } from "../constants.mjs";
-import { hasFont, resourceUrl } from "../theme/store.mjs";
-import { slugify } from "../theme/slug.mjs";
+import { dataPath, hasFont, resourceUrl } from "../theme/store.mjs";
 import { resolveColor, sheetsOf, useImage } from "../theme/design.mjs";
-import { pickImage } from "./gallery.mjs";
+import { pickImage } from "./image-picker.mjs";
 import { HEX, PALETTE_KEYS, clearField, fieldPaths, fieldValue, hintKey, imageOf, isInheritable, isOwn, labelKey, optionKey, orClear, read, write } from "./schema.mjs";
 
 const labelOf = field => localize(labelKey(field));
@@ -75,10 +74,10 @@ function parse(field, input) {
 }
 
 export async function chooseImage(ctx, path) {
-  const current = imageOf(ctx, read(ctx, path));
-  const picked = await pickImage({ current: current?.path, folder: slugify(ctx.files.theme.name) });
+  const key = read(ctx, path), current = imageOf(ctx, key);
+  const picked = await pickImage({ current: current && dataPath(current.path) });
   if (picked === undefined) return ctx.rerender();
-  write(ctx, path, picked ? useImage(ctx.files, null, picked.path) : orClear(ctx, path, "none"));
+  write(ctx, path, useImage(ctx.files, current?.status === "pending" ? key : null, picked));
   ctx.changed(null);
   ctx.rerender();
 }

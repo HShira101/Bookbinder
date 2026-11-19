@@ -120,6 +120,8 @@ export function useImage(files, keyName, path) {
   return name;
 }
 
+export const toThemePath = (path, root) => (path.startsWith(`${root}/`) ? path.slice(root.length + 1) : path);
+
 export function registerFonts(files) {
   const fonts = (files.theme.resources.fonts = {});
   for (const name of usedFonts(files)) fonts[name] = { status: "ready" };

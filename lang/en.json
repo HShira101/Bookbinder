@@ -266,18 +266,6 @@
       "Discard": "Discard",
       "Keep": "Keep editing"
     },
-    "Gallery": {
-      "Title": "Choose image",
-      "World": "Uploaded to this world",
-      "Common": "Common (module)",
-      "Template": "Template \"{name}\"",
-      "Suggested": "suggested",
-      "Upload": "Upload",
-      "UploadHint": "The uploaded image is saved in the world and joins the catalog.",
-      "AskGM": "To upload files, ask the GM.",
-      "None": "No image",
-      "Uploaded": "\"{name}\" uploaded to the world catalog."
-    },
     "Types": {
       "Later": "Arrives in v0.6",
       "book": {
@@ -463,7 +451,8 @@
       "header-color": "Header color",
       "header-background": "Header background",
       "header-transform": "Header transform",
-      "stripedRows": "Alternate rows"
+      "stripedRows": "Alternate rows",
+      "askGM": "To choose or upload images you need the \"Browse files\" permission: ask the GM."
     },
     "Options": {
       "texture": {

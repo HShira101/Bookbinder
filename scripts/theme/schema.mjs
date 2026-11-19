@@ -10,7 +10,7 @@ export const bool = value => typeof value === "boolean";
 export const text = (max = 80) => value => typeof value === "string" && value.length <= max && !/[\u0000-\u001f]/.test(value);
 export const family = value => typeof value === "string" && /^[\p{L}\p{N} .'_-]{1,80}$/u.test(value);
 export const key = value => typeof value === "string" && NAME.test(value);
-export const path = value => typeof value === "string" && /^[\w./-]{1,200}$/.test(value) && !value.includes("..") && /^(?:img|assets|modules\/bookbinder)\//.test(value);
+export const path = value => typeof value === "string" && /^[\p{L}\p{N}_ ./%()+,'-]{1,260}$/u.test(value) && !value.includes("..") && !value.startsWith("/");
 export const padding = value => [].concat(value).length >= 1 && [].concat(value).length <= 4 && [].concat(value).every(num(0, 200));
 
 export const object = (fields, { open = false } = {}) => ({ fields, open });

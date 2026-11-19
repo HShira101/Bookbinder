@@ -266,18 +266,6 @@
       "Discard": "Descartar",
       "Keep": "Seguir editando"
     },
-    "Gallery": {
-      "Title": "Elegir imagen",
-      "World": "Subidas a este mundo",
-      "Common": "Comunes (módulo)",
-      "Template": "Plantilla «{name}»",
-      "Suggested": "sugerida",
-      "Upload": "Subir",
-      "UploadHint": "La imagen subida se guarda en el mundo y entra al catálogo.",
-      "AskGM": "Para subir archivos, pídeselo al GM.",
-      "None": "Sin imagen",
-      "Uploaded": "«{name}» subida al catálogo del mundo."
-    },
     "Types": {
       "Later": "Llega en la v0.6",
       "book": {
@@ -463,7 +451,8 @@
       "header-color": "Color de la cabecera",
       "header-background": "Fondo de la cabecera",
       "header-transform": "Transformación de la cabecera",
-      "stripedRows": "Filas alternas"
+      "stripedRows": "Filas alternas",
+      "askGM": "Para elegir o subir imágenes necesitas el permiso «Examinar archivos»: pídeselo al GM."
     },
     "Options": {
       "texture": {

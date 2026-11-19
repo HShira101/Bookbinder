@@ -4,12 +4,12 @@ import { setting } from "../settings.mjs";
 import { addSheet, clone, contrastRatio, fingerprint, getPath, isDirty, pendingCount, pendingOf, removeSheet, replaceFont, resolveColor, sheetKeys, sheetsOf, stamp, typeOf, useImage, usedFonts, validSheet } from "../theme/design.mjs";
 import { versionName } from "../theme/slug.mjs";
 import { createDesign, currentFiles, saveDesign } from "../theme/storage.mjs";
-import { forgetTheme, hasFont, listThemes, loadTheme, moduleVersion } from "../theme/store.mjs";
+import { dataPath, forgetTheme, hasFont, listThemes, loadTheme, moduleVersion } from "../theme/store.mjs";
 import { countSheetPages, findUsage } from "../theme/usage.mjs";
 import { ShellApplication } from "./app.mjs";
 import { ask, button, confirmClose, confirmSave, promptForm } from "./dialogs.mjs";
 import { options, renderFields, sheetOptions } from "./fields.mjs";
-import { pickImage } from "./gallery.mjs";
+import { pickImage } from "./image-picker.mjs";
 import { PreviewPane } from "./preview.mjs";
 import { ELEMENTS, SECTIONS, elementFields, elementRoot, read, sectionIds, sheetPath } from "./schema.mjs";
 
@@ -287,9 +287,9 @@ export class DesignEditor extends ShellApplication {
 
   async #resolveImage(name) {
     const image = this.#draft.theme.resources.images[name];
-    const picked = await pickImage({ suggest: image.path, folder: this.#draft.theme.name });
+    const picked = await pickImage({ current: dataPath(image.path) });
     if (!picked) return;
-    useImage(this.#draft, name, picked.path);
+    useImage(this.#draft, name, picked);
     this.#touched();
     this.#drawProps();
   }
