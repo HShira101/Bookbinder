@@ -627,6 +627,14 @@
       "Prose1": "La torre de Vane se alza donde el camino se estrecha entre dos paredes de roca negra. Sus puertas llevan abiertas tres inviernos, y la nieve ha entrado hasta el segundo rellano sin que nadie la barra.",
       "Prose2": "Dentro quedan las mesas puestas, los jergones hechos y un tablero de damas a medio jugar. Nada indica lucha ni huida: solo una ausencia ordenada, como si la guarnición hubiera salido a recibir a alguien y no hubiera vuelto.",
       "Prose3": "En la sala alta, el cuaderno del capitán sigue abierto sobre el atril. La última página dice que la almenara se encendió sola, y que desde las murallas vieron responder otra luz allí donde no hay torre alguna."
+    },
+    "Fonts": {
+      "Manage": "Gestionar fuentes",
+      "Search": "Buscar fuentes…",
+      "None": "Ninguna fuente coincide",
+      "MenuName": "Gestionar fuentes",
+      "MenuLabel": "Gestionar fuentes",
+      "MenuHint": "Abre la configuración de fuentes de Foundry para añadir o quitar las fuentes que usan los temas."
     }
   }
 }

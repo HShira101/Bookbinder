@@ -8,6 +8,7 @@ import { dataPath, forgetTheme, hasFont, listThemes, loadTheme, moduleVersion } 
 import { countSheetPages, findUsage } from "../theme/usage.mjs";
 import { ShellApplication } from "./app.mjs";
 import { ask, button, confirmClose, confirmSave, promptForm } from "./dialogs.mjs";
+import { drawFontNames, fontControl, handleFontClick } from "./font-picker.mjs";
 import { options, renderFields, sheetOptions } from "./fields.mjs";
 import { pickImage } from "./image-picker.mjs";
 import { PreviewPane } from "./preview.mjs";
@@ -113,14 +114,16 @@ export class DesignEditor extends ShellApplication {
       if (event.target.matches("[data-sheet]")) this.#setSheet(event.target.value);
       else if (event.target.matches("[data-journal]")) this.#setJournal(event.target.value);
     });
-    root.querySelector(".bookbinder-fields").addEventListener("change", event => {
-      const font = event.target.closest("[data-font-for]");
-      if (!font) return;
-      replaceFont(this.#draft, font.dataset.fontFor, font.value);
-      this.#touched();
-      this.#drawProps();
-    });
     root.querySelector(".bookbinder-fields").addEventListener("click", event => {
+      handleFontClick(event, {
+        refresh: () => this.#drawProps(),
+        onPick: (button, value) => {
+          if (!button.dataset.fontFor || !value) return;
+          replaceFont(this.#draft, button.dataset.fontFor, value);
+          this.#touched();
+          this.#drawProps();
+        }
+      });
       const resolve = event.target.closest("[data-resolve-image]");
       if (resolve) this.#resolveImage(resolve.dataset.resolveImage);
     });
@@ -191,16 +194,16 @@ export class DesignEditor extends ShellApplication {
   #drawResources(host) {
     host.oninput = host.onchange = host.onclick = null;
     const pending = pendingOf(this.#draft, hasFont);
-    const fonts = Object.keys(CONFIG.fontDefinitions).sort((a, b) => a.localeCompare(b));
     const imageRow = name => `<li><i class="fa-solid fa-image"></i><span><b>${escapeHTML(name)}</b> · ${localize("Editor.Missing", { name: escapeHTML(this.#draft.theme.resources.images[name].path.split("/").at(-1)) })}</span>`
       + `<button type="button" data-resolve-image="${escapeHTML(name)}">${localize("Editor.Resolve")}</button></li>`;
     const fontRow = name => `<li><i class="fa-solid fa-font"></i><span><b>${escapeHTML(name)}</b> · ${localize(hasFont(name) ? "Editor.FontUnconfirmed" : "Editor.FontMissing")}</span>`
-      + `<select data-font-for="${escapeHTML(name)}"><option value="">${localize("Editor.ChooseFont")}</option>${fonts.map(font => `<option>${escapeHTML(font)}</option>`).join("")}</select></li>`;
+      + `${fontControl("", { clearable: false, extra: `data-font-for="${escapeHTML(name)}"` })}</li>`;
     const images = Object.entries(this.#draft.theme.resources.images ?? {}).map(([key, image]) => `<li><i class="fa-solid fa-image"></i><b>${escapeHTML(key)}</b><small>${escapeHTML(image.status === "pending" ? localize("Editor.Pending") : image.path)}</small></li>`).join("");
     host.innerHTML = `<section class="bookbinder-resources"><h3>${localize("Headings.pending")}</h3>`
       + `${pendingCount(pending) ? `<ul>${pending.images.map(imageRow).join("")}${pending.fonts.map(fontRow).join("")}</ul>` : `<p class="notes">${localize("Editor.NoPending")}</p>`}</section>`
       + `<section class="bookbinder-resources"><h3>${localize("Headings.images")}</h3><ul>${images}</ul></section>`
       + `<section class="bookbinder-resources"><h3>${localize("Headings.fonts")}</h3><ul>${usedFonts(this.#draft).map(name => `<li><i class="fa-solid fa-font"></i><b>${escapeHTML(name)}</b><small>${localize(pending.fonts.includes(name) ? "Editor.Pending" : "Editor.Ready")}</small></li>`).join("")}</ul></section>`;
+    drawFontNames(host);
   }
 
   #drawContrast() {

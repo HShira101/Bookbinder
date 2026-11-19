@@ -5,6 +5,7 @@ export const SELECTORS = {
   blockquote: "blockquote", cite: "cite", ul: "ul", ol: "ol", li: "li", hr: "hr", table: "table", contentLink: "a.content-link", inlineRoll: "a.inline-roll",
   secret: "section.secret", img: "img", figcaption: "figcaption"
 };
+const DEFAULT_STACK = '"Signika",sans-serif';
 const BOXED = new Set(["img", "blockquote", "secret", "contentLink", "inlineRoll", "table"]);
 const NUMBERING = { decimal: "decimal", roman: "upper-roman", alpha: "lower-alpha" };
 const TEXTURES = {
@@ -56,7 +57,7 @@ export function createStyler(theme, assets) {
     underline: v => v === "none" ? "text-decoration:none" : `text-decoration:underline ${v};text-underline-offset:.16em`,
     radius: v => `border-radius:${v}px`, padding: v => `padding:${numberList(v)}`
   };
-  const stack = props => props.fallback ? `${str(props.fallback)},${props.generic ?? "sans-serif"}` : "var(--bb-fallback)";
+  const stack = (props, inherited = `var(--bb-fallback,${DEFAULT_STACK})`) => props.fallback ? `${str(props.fallback)},${props.generic ?? "sans-serif"}` : inherited;
   const declarations = (props = {}, boxed = false) => Object.entries(props).map(([name, value]) => {
     if (name === "font") return `font-family:${str(value)},${stack(props)}`;
     if (name === "shadow") return boxed ? `box-shadow:${BOX_SHADOW[value]}` : `text-shadow:${TEXT_SHADOW[value]}`;
@@ -160,7 +161,8 @@ function sheetRules(id, sheet, main, styler, assets) {
   } else {
     rules.push(`${scope}{--bb-stack-color:${tone(paper.color, -0.3)}}`, paperRules(`${scope}>.bookbinder-paper`, paper, ornaments, styler));
   }
-  rules.push(`${content}{${declarations(base)}${base.font ? "" : ";font-family:var(--bb-fallback)"};--bb-fallback:${styler.stack(base)}${paper.columns ? `;column-count:${paper.columns};column-gap:22px;column-fill:balance` : ""}}`);
+  rules.push(`${scope}{--bb-fallback:${styler.stack(base, DEFAULT_STACK)}}`);
+  rules.push(`${content}{${declarations(base)}${base.font ? "" : ";font-family:var(--bb-fallback)"}${paper.columns ? `;column-count:${paper.columns};column-gap:22px;column-fill:balance` : ""}}`);
   for (const [name, props] of Object.entries(elements)) {
     if (!SELECTORS[name]) continue;
     const selector = `${content} ${SELECTORS[name]}`;

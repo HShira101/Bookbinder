@@ -627,6 +627,14 @@
       "Prose1": "Vane's tower stands where the road narrows between two walls of black rock. Its doors have stood open for three winters, and the snow has come in as far as the second landing with nobody to sweep it.",
       "Prose2": "Inside, the tables are laid, the pallets made and a draughts board lies half played. Nothing suggests a fight or a flight: only an orderly absence, as if the garrison had gone out to greet someone and never returned.",
       "Prose3": "In the high room the captain's notebook still lies open on the lectern. The last page says the beacon lit itself, and that from the walls they saw another light answer where there is no tower at all."
+    },
+    "Fonts": {
+      "Manage": "Manage fonts",
+      "Search": "Search fonts…",
+      "None": "No fonts match",
+      "MenuName": "Manage fonts",
+      "MenuLabel": "Manage fonts",
+      "MenuHint": "Opens Foundry's font settings to add or remove the fonts themes can use."
     }
   }
 }

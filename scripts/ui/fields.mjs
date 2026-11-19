@@ -1,6 +1,7 @@
 import { escapeHTML, localize } from "../constants.mjs";
-import { dataPath, hasFont, resourceUrl } from "../theme/store.mjs";
+import { dataPath, resourceUrl } from "../theme/store.mjs";
 import { resolveColor, sheetsOf, useImage } from "../theme/design.mjs";
+import { drawFontNames, fontControl, handleFontClick } from "./font-picker.mjs";
 import { pickImage } from "./image-picker.mjs";
 import { HEX, PALETTE_KEYS, clearField, fieldPaths, fieldValue, hintKey, imageOf, isInheritable, isOwn, labelKey, optionKey, orClear, parseValue, read, write } from "./schema.mjs";
 
@@ -19,12 +20,6 @@ function colorControl(field, value, ctx) {
     + `<optgroup label="${escapeHTML(localize("Fields.paletteGroup"))}">${options(palette, isPalette ? value : "")}</optgroup>`
     + `${options([["custom", localize("Fields.custom")]], custom ? "custom" : "")}</select>`
     + `<input type="color" data-color-custom value="${HEX.test(resolved ?? "") ? resolved : "#808080"}"${custom ? "" : " hidden"}>`;
-}
-
-function fontControl(field, value) {
-  const names = Object.keys(CONFIG.fontDefinitions).sort((a, b) => a.localeCompare(b));
-  const missing = value && !hasFont(value) ? [[value, `⚠ ${value}`]] : [];
-  return `<select data-input>${options([["", "—"], ...missing, ...names.map(name => [name, name])], value)}</select>`;
 }
 
 function imageControl(field, value, ctx) {
@@ -48,7 +43,7 @@ const CONTROLS = {
   cards: (field, value) => field.options.map(option => `<button type="button" class="bookbinder-card-option${option.id === value ? " active" : ""}" data-choice="${option.id}"${option.disabled ? ' disabled data-tooltip="' + localize("Types.Later") + '"' : ""}>`
     + `<b>${localize(`Types.${option.id}.Glyph`)}</b>${localize(`Types.${option.id}.Name`)}</button>`).join(""),
   color: colorControl,
-  font: fontControl,
+  font: (field, value) => fontControl(value),
   image: imageControl
 };
 
@@ -91,6 +86,7 @@ export function renderFields(host, fields, ctx) {
   const shown = fields.filter(field => !field.when || field.when(view));
   const fieldOf = node => shown[node.closest("[data-field]").dataset.field];
   host.innerHTML = shown.map((field, index) => (field.type === "heading" ? `<h3>${escapeHTML(localize(labelKey(field)))}</h3>` : row(field, view, index))).join("");
+  drawFontNames(host);
   host.oninput = event => {
     const input = event.target;
     if (input.matches("[data-color-custom]")) return writeField(fieldOf(input), view, input.value);
@@ -107,6 +103,15 @@ export function renderFields(host, fields, ctx) {
     if (field.rerender || isInheritable(field, view)) view.rerender();
   };
   host.onclick = event => {
+    const handled = handleFontClick(event, {
+      refresh: view.rerender,
+      onPick: (button, value) => {
+        const field = fieldOf(button);
+        writeField(field, view, parseValue(field, value, false));
+        view.rerender();
+      }
+    });
+    if (handled) return;
     const target = event.target.closest("[data-reset], [data-pick], [data-clear], [data-choice]");
     if (!target) return;
     const field = fieldOf(target);

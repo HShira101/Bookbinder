@@ -12,6 +12,9 @@ Hooks.once("init", () => {
   game.settings.registerMenu(MODULE_ID, "designs", {
     name: "BOOKBINDER.Manager.MenuName", label: "BOOKBINDER.Manager.MenuLabel", hint: "BOOKBINDER.Manager.MenuHint", icon: "fa-solid fa-book", type: DesignManager, restricted: false
   });
+  game.settings.registerMenu(MODULE_ID, "fonts", {
+    name: "BOOKBINDER.Fonts.MenuName", label: "BOOKBINDER.Fonts.MenuLabel", hint: "BOOKBINDER.Fonts.MenuHint", icon: "fa-solid fa-font", type: foundry.applications.settings.menus.FontConfig, restricted: true
+  });
   foundry.applications.apps.DocumentSheetConfig.registerSheet(foundry.documents.JournalEntry, MODULE_ID, BookSheet, {
     label: "BOOKBINDER.Sheet.Label",
     makeDefault: false

@@ -3,7 +3,7 @@ import { ELEMENTS, PALETTE_KEYS, SECTIONS, allFields, hintKey, labelKey, optionK
 import { equal, test, truthy } from "./harness.mjs";
 
 const LANGS = ["es", "en"];
-const SOURCES = ["ui/app", "ui/card", "ui/dialogs", "ui/editor", "ui/fields", "ui/image-picker", "ui/manager", "ui/permissions-app", "ui/preview", "ui/sample", "ui/wizard", "theme-menu", "theme/storage", "sheet/book-sheet"];
+const SOURCES = ["ui/app", "ui/card", "ui/dialogs", "ui/editor", "ui/fields", "ui/font-picker", "ui/image-picker", "ui/manager", "ui/permissions-app", "ui/preview", "ui/sample", "ui/wizard", "theme-menu", "theme/storage", "sheet/book-sheet"];
 const loadLang = async lang => (await (await fetch(`../lang/${lang}.json`)).json()).BOOKBINDER;
 const has = (doc, key) => typeof key.split(".").reduce((node, part) => node?.[part], doc) === "string";
 
