@@ -6,7 +6,7 @@ import { canonical, stamp } from "./design.mjs";
 import { upgradeFiles } from "./migrations.mjs";
 import { slugify, uniqueKey } from "./slug.mjs";
 import {
-  THEME_FILES, canWrite, entryOf, forgetTheme, moduleVersion, pendingEntries, picker, presetRoot, readFiles, readIndex, readTheme, route, worldLocation, worldRoot
+  THEME_FILES, canWrite, dataPath, entryOf, forgetTheme, moduleVersion, pendingEntries, picker, presetRoot, readFiles, readIndex, readTheme, route, worldLocation, worldRoot
 } from "./store.mjs";
 
 const WORLD_FOLDERS = ["theme", "img", "assets", "assets/sounds"];
@@ -44,6 +44,12 @@ const dirName = dir => decodeURIComponent(dir.split("/").at(-1));
 async function diskSlugs() {
   const listing = await picker().browse("data", `${worldRoot()}/theme`).catch(() => ({ dirs: [] }));
   return listing.dirs.map(dirName);
+}
+
+async function browseTree(path) {
+  const listing = await picker().browse("data", path).catch(() => ({ dirs: [], files: [] }));
+  const nested = await Promise.all(listing.dirs.map(dir => browseTree(decodeURIComponent(dir))));
+  return [...listing.files.map(file => decodeURIComponent(typeof file === "string" ? file : file.path)), ...nested.flat()];
 }
 
 const reservedSlugs = async () => new Set([...(await diskSlugs()), ...(await readIndex(worldRoot())), ...(await readIndex(presetRoot()))]);
@@ -143,6 +149,22 @@ export async function listTrashed() {
   const slugs = (await diskSlugs()).filter(slug => !index.includes(slug));
   const results = await Promise.all(slugs.map(slug => readTheme(slug, worldLocation())));
   return results.filter(result => result.ok).map(entryOf);
+}
+
+export async function listOrphans() {
+  const index = await readIndex(worldRoot());
+  const active = (await Promise.all(index.map(slug => readTheme(slug, worldLocation())))).filter(result => result.ok);
+  const used = new Set(active.flatMap(({ files }) => Object.values({ ...files.theme.resources.images, ...files.theme.resources.sounds })
+    .map(entry => dataPath(entry.path))));
+  const trashed = (await diskSlugs()).filter(slug => !index.includes(slug));
+  const trashFiles = (await Promise.all(trashed.map(slug => browseTree(`${worldRoot()}/theme/${slug}`)))).flat();
+  const [images, assets] = await Promise.all([browseTree(`${worldRoot()}/img`), browseTree(`${worldRoot()}/assets`)]);
+  const unused = paths => paths.filter(path => !used.has(path)).sort();
+  return [
+    { key: "trash", paths: trashFiles.sort() },
+    { key: "images", paths: unused(images) },
+    { key: "assets", paths: unused(assets) }
+  ];
 }
 
 export async function currentFiles(slug) {

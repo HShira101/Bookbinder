@@ -151,7 +151,19 @@
       "Apply": "Apply",
       "NoUses": "No world journal uses it any more: it can be deleted without breaking anything.",
       "Import": "Import",
-      "Export": "Export"
+      "Export": "Export",
+      "Orphans": "Unused files"
+    },
+    "Orphans": {
+      "Title": "Unused files",
+      "Hint": "Files in Bookbinder_themes that no active design uses. Delete them by hand on the server or host; the module does not delete files.",
+      "trash": "Themes in the trash",
+      "images": "Images",
+      "assets": "Sounds and assets",
+      "None": "There are no unused files.",
+      "Copy": "Copy paths",
+      "Copied": "{count} path(s) copied.",
+      "CopyFailed": "Could not copy to the clipboard: select the list and copy it by hand."
     },
     "Transfer": {
       "NotTheme": "This file is not a Bookbinder theme.",

@@ -27,10 +27,16 @@ export function openMenu({ frame, anchor, items, current, onPick }) {
     onPick(choice.dataset.choice);
   });
   menu.addEventListener("keydown", event => {
-    if (event.key !== "Escape") return;
-    event.stopPropagation();
-    close();
-    anchor.focus();
+    if (event.key === "Escape") {
+      event.stopPropagation();
+      close();
+      return anchor.focus();
+    }
+    const items = [...menu.querySelectorAll("button")];
+    const step = { ArrowDown: 1, ArrowUp: -1 }[event.key];
+    if (!step || !items.length) return;
+    event.preventDefault();
+    items[(items.indexOf(document.activeElement) + step + items.length) % items.length].focus();
   });
   menu.addEventListener("focusout", event => {
     if (!menu.contains(event.relatedTarget) && event.relatedTarget !== anchor) close();

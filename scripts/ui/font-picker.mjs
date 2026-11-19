@@ -6,7 +6,7 @@ const normalize = text => text.toLocaleLowerCase();
 export function fontControl(value, { attribute = "data-font-open", clearable = true, extra = "" } = {}) {
   const missing = value && !hasFont(value);
   const label = value ? `${missing ? "⚠ " : ""}${escapeHTML(value)}` : clearable ? "—" : escapeHTML(localize("Editor.ChooseFont"));
-  const manage = game.user.isGM ? `<button type="button" class="icon" data-fonts-manage data-tooltip="${localize("Fonts.Manage")}"><i class="fa-solid fa-gear"></i></button>` : "";
+  const manage = game.user.isGM ? `<button type="button" class="icon" data-fonts-manage aria-label="${localize("Fonts.Manage")}" data-tooltip="${localize("Fonts.Manage")}"><i class="fa-solid fa-gear"></i></button>` : "";
   return `<span class="bookbinder-font"><button type="button" ${attribute} ${extra} data-clearable="${clearable}" data-font="${escapeHTML(value ?? "")}"${missing ? ' class="missing"' : ""}><span data-font-name>${label}</span><i class="fa-solid fa-caret-down"></i></button>${manage}</span>`;
 }
 

@@ -151,7 +151,19 @@
       "Apply": "Aplicar",
       "NoUses": "Ningún Journal del mundo lo usa ya: se puede borrar sin romper nada.",
       "Import": "Importar",
-      "Export": "Exportar"
+      "Export": "Exportar",
+      "Orphans": "Archivos sin uso"
+    },
+    "Orphans": {
+      "Title": "Archivos sin uso",
+      "Hint": "Archivos de Bookbinder_themes que no usa ningún diseño activo. Bórralos a mano en el servidor o el hosting; el módulo no borra archivos.",
+      "trash": "Temas en la papelera",
+      "images": "Imágenes",
+      "assets": "Sonidos y recursos",
+      "None": "No hay archivos sin uso.",
+      "Copy": "Copiar rutas",
+      "Copied": "{count} ruta(s) copiada(s).",
+      "CopyFailed": "No se pudo copiar al portapapeles: selecciona la lista y cópiala a mano."
     },
     "Transfer": {
       "NotTheme": "Este archivo no es un tema de Bookbinder.",

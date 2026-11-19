@@ -2,7 +2,7 @@ import { escapeHTML, localize, worldJournals } from "../constants.mjs";
 import { canCreateThemes, canDeleteTheme, canEditTheme, canSeeTheme } from "../permissions.mjs";
 import { setting } from "../settings.mjs";
 import { pendingCount } from "../theme/design.mjs";
-import { listTrashed, restoreDesign, trashDesign } from "../theme/storage.mjs";
+import { listOrphans, listTrashed, restoreDesign, trashDesign } from "../theme/storage.mjs";
 import { listThemes } from "../theme/store.mjs";
 import { findUsage, usesTheme } from "../theme/usage.mjs";
 import { applyChoice, menuItems } from "../theme-menu.mjs";
@@ -19,7 +19,7 @@ const KEEP = "keep";
 const pendingChip = entry => (pendingCount(entry.pending) ? `<span class="bookbinder-chip warn"><i class="fa-solid fa-triangle-exclamation"></i> ${localize("Manager.PendingChip", { images: entry.pending.images.length, fonts: entry.pending.fonts.length })}</span>` : "");
 const visibilityChip = entry => (entry.meta.visibility === "all"
   ? `<span class="bookbinder-chip"><i class="fa-solid fa-users"></i> ${localize("Manager.Shared")}</span>` : `<span class="bookbinder-chip"><i class="fa-solid fa-lock"></i> ${localize("Manager.Private")}</span>`);
-const iconButton = (action, icon, tip, slug, extra = "") => `<button type="button" class="icon" data-action="${action}" data-slug="${slug}" ${extra} data-tooltip="${localize(tip)}"><i class="fa-solid ${icon}"></i></button>`;
+const iconButton = (action, icon, tip, slug, extra = "") => `<button type="button" class="icon" data-action="${action}" data-slug="${slug}" ${extra} aria-label="${localize(tip)}" data-tooltip="${localize(tip)}"><i class="fa-solid ${icon}"></i></button>`;
 
 function themeOptions(items, { keep = false } = {}) {
   const options = [];
@@ -62,6 +62,7 @@ export class DesignManager extends HTMLApplication {
       view(event, target) { return DesignCard.open(target.dataset.slug, { trashed: target.dataset.trashed === "true" }); },
       edit(event, target) { return DesignEditor.open(target.dataset.slug); },
       trash(event, target) { return this.#confirmTrash(target.dataset.slug, target.dataset.name); },
+      orphans() { return this.#showOrphans(); },
       restore(event, target) { return restoreDesign(target.dataset.slug).then(() => ui.notifications.info(localize("Manager.Restored", { name: target.dataset.name }))); }
     }
   };
@@ -92,11 +93,30 @@ export class DesignManager extends HTMLApplication {
       + `${canDeleteTheme(game.user) ? iconButton("trash", "fa-trash", "Manager.Delete", entry.slug, `data-name="${escapeHTML(entry.name)}"`) : ""}</span></li>`;
     const trashRow = entry => `<li><button type="button" class="name" data-action="view" data-trashed="true" data-slug="${entry.slug}">${escapeHTML(entry.name)}</button>`
       + `<span class="actions">${iconButton("view", "fa-eye", "Manager.View", entry.slug, 'data-trashed="true"')}<button type="button" data-action="restore" data-slug="${entry.slug}" data-name="${escapeHTML(entry.name)}"><i class="fa-solid fa-rotate-left"></i> ${localize("Manager.Restore")}</button></span></li>`;
-    return `${game.user.isGM ? `<div class="bookbinder-toolbar"><button type="button" data-action="permissions"><i class="fa-solid fa-key"></i> ${localize("Manager.Permissions")}</button></div>` : ""}`
+    return `${game.user.isGM ? `<div class="bookbinder-toolbar"><button type="button" data-action="permissions"><i class="fa-solid fa-key"></i> ${localize("Manager.Permissions")}</button><button type="button" data-action="orphans"><i class="fa-solid fa-broom"></i> ${localize("Manager.Orphans")}</button></div>` : ""}`
       + `<header class="bookbinder-list-head"><h2>${localize("Manager.Designs")}</h2>${canCreate ? `<span class="bookbinder-buttons"><button type="button" data-action="import"><i class="fa-solid fa-file-import"></i> ${localize("Manager.Import")}</button><button type="button" class="primary" data-action="add"><i class="fa-solid fa-plus"></i> ${localize("Manager.Add")}</button></span>` : ""}</header>`
       + `<ul class="bookbinder-design-list">${designs.map(row).join("") || `<li class="empty">${localize("Manager.Empty")}</li>`}</ul>`
       + `${canCreate ? "" : `<p class="notes"><i class="fa-solid fa-lock"></i> ${localize("Manager.NoPermission")}</p>`}`
       + `${trashed.length ? `<header class="bookbinder-list-head"><h2>${localize("Manager.Trash")}</h2><span class="notes">${localize("Manager.TrashHint")}</span></header><ul class="bookbinder-design-list trash">${trashed.map(trashRow).join("")}</ul>` : ""}`;
+  }
+
+  async #showOrphans() {
+    const groups = (await listOrphans()).filter(group => group.paths.length);
+    const paths = groups.flatMap(group => group.paths);
+    const content = paths.length
+      ? `<p class="notes">${localize("Orphans.Hint")}</p>` + groups.map(group => `<h3>${localize(`Orphans.${group.key}`)}</h3><ul class="bookbinder-orphans">${group.paths.map(path => `<li><code>${escapeHTML(path)}</code></li>`).join("")}</ul>`).join("")
+      : `<p class="notes">${localize("Orphans.None")}</p>`;
+    const choice = await ask({
+      title: localize("Orphans.Title"), icon: "fa-solid fa-broom", content, width: 640,
+      buttons: [...(paths.length ? [button("copy", "Orphans.Copy", { icon: "fa-solid fa-copy", default: true })] : []), button("close", "Common.Close")]
+    });
+    if (choice !== "copy") return;
+    try {
+      await navigator.clipboard.writeText(paths.join("\n"));
+      ui.notifications.info(localize("Orphans.Copied", { count: paths.length }));
+    } catch {
+      ui.notifications.warn(localize("Orphans.CopyFailed"));
+    }
   }
 
   async #confirmTrash(slug, name) {

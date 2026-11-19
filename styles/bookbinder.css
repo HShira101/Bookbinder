@@ -1032,6 +1032,11 @@
   pointer-events: none;
 }
 
+:is(.bookbinder-view, .bookbinder-manager, .bookbinder-wizard, .bookbinder-editor, .bookbinder-card-window, .bookbinder-dialog, .bookbinder-app) :is(button, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-text-hyperlink, #f0c35a);
+  outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bookbinder-view .bookbinder-nav,
   .bookbinder-view .bookbinder-tool,

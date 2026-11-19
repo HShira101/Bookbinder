@@ -26,7 +26,7 @@ function imageControl(field, value, ctx) {
   const image = imageOf(ctx, value);
   const style = image && image.status !== "pending" ? ` style="background-image:url('${escapeHTML(resourceUrl(image.path))}')"` : "";
   return `<span class="bookbinder-thumb"${style}>${image ? "" : '<i class="fa-solid fa-image"></i>'}</span>`
-    + `<button type="button" data-pick>${localize(image ? "Fields.change" : "Fields.choose")}</button>${image ? `<button type="button" class="icon" data-clear data-tooltip="${localize("Fields.remove")}"><i class="fa-solid fa-xmark"></i></button>` : ""}`;
+    + `<button type="button" data-pick>${localize(image ? "Fields.change" : "Fields.choose")}</button>${image ? `<button type="button" class="icon" data-clear aria-label="${localize("Fields.remove")}" data-tooltip="${localize("Fields.remove")}"><i class="fa-solid fa-xmark"></i></button>` : ""}`;
 }
 
 const CONTROLS = {
@@ -50,7 +50,7 @@ const CONTROLS = {
 function row(field, ctx, index) {
   const inherits = isInheritable(field, ctx), own = inherits && isOwn(field, ctx);
   const mark = !inherits ? "" : own
-    ? `<button type="button" class="inherit" data-reset data-tooltip="${localize("Editor.ResetInherited")}"><i class="fa-solid fa-rotate-left"></i></button>`
+    ? `<button type="button" class="inherit" data-reset aria-label="${localize("Editor.ResetInherited")}" data-tooltip="${localize("Editor.ResetInherited")}"><i class="fa-solid fa-rotate-left"></i></button>`
     : `<span class="inherited" data-tooltip="${localize("Editor.InheritedHint")}">${localize("Editor.Inherited")}</span>`;
   return `<div class="bookbinder-field type-${field.type}${own ? " own" : ""}" data-field="${index}"><label>${escapeHTML(labelOf(field))}</label>`
     + `<div class="control">${CONTROLS[field.type](field, fieldValue(field, ctx), ctx)}</div>${mark}${field.hint ? `<p class="notes">${localize(hintKey(field))}</p>` : ""}</div>`;

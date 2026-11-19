@@ -3,7 +3,8 @@ import { ELEMENTS, PALETTE_KEYS, SECTIONS, allFields, hintKey, labelKey, optionK
 import { equal, test, truthy } from "./harness.mjs";
 
 const LANGS = ["es", "en"];
-const SOURCES = ["ui/app", "ui/card", "ui/dialogs", "ui/editor", "ui/fields", "ui/font-picker", "ui/image-picker", "ui/manager", "ui/permissions-app", "ui/preview", "ui/sample", "ui/transfer", "ui/wizard", "theme-menu", "theme/storage", "sheet/book-sheet"];
+const SOURCES = ["ui/app", "ui/card", "ui/dialogs", "ui/editor", "ui/fields", "ui/font-picker", "ui/image-picker", "ui/manager", "ui/permissions-app", "ui/preview", "ui/sample", "ui/transfer", "ui/wizard", "theme-menu", "theme/storage", "sheet/book-sheet", "sheet/book-view", "sheet/page-content", "menu", "constants", "settings", "theme/store", "theme/usage", "theme/design", "theme/migrations", "theme/css", "main", "socket"];
+const CODE = [...SOURCES, "ui/schema", "ui/sample", "ui/manager"];
 const loadLang = async lang => (await (await fetch(`../lang/${lang}.json`)).json()).BOOKBINDER;
 const has = (doc, key) => typeof key.split(".").reduce((node, part) => node?.[part], doc) === "string";
 
@@ -58,4 +59,14 @@ test("dynamic keys built from the sample, wizard steps and checks are translated
     "Row11", "Row12", "Row13", "Row21", "Row22", "Row23", "Row31", "Row32", "Row33", "FoundryTitle", "Foundry", "SecretTitle", "Secret", "MapTitle", "Caption", "Chapter2", "Prose1", "Prose2", "Prose3"];
   const keys = [...sample.map(name => `Sample.${name}`), ...["Base", "Cover", "Sheets", "Typography"].map(name => `Wizard.Step${name}`), "Options.visibility.all", "Options.visibility.author", ...sectionIds("main").filter(id => id !== "cover").map(id => `Sections.${id}`)];
   equal(await missing(keys), []);
+});
+
+const codeText = async () => (await Promise.all(CODE.map(file => fetch(`../scripts/${file}.mjs`).then(response => response.text())))).join("\n");
+
+test("every translated key is used by the code, directly or through a dynamic key (no unused keys)", async () => {
+  const text = await codeText();
+  const flat = (node, prefix = "") => Object.entries(node).flatMap(([name, value]) => (typeof value === "object" ? flat(value, `${prefix}${name}.`) : [`${prefix}${name}`]));
+  const dynamic = key => Array.from({ length: key.length - 4 }, (_, i) => key.slice(0, i + 5)).some(prefix => text.includes(`${prefix}\${`));
+  const keys = flat(await loadLang("es"));
+  equal(keys.filter(key => !text.includes(key) && !dynamic(key)), []);
 });
