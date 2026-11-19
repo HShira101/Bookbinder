@@ -1,5 +1,4 @@
 export const MODULE_ID = "bookbinder";
-export const BOOK_THEME = "book";
 export const BOOK_SHEET_CLASS = `${MODULE_ID}.BookSheet`;
 
 export const modulePath = file => `modules/${MODULE_ID}/${file}`;

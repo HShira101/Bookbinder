@@ -1,19 +1,17 @@
-import { escapeHTML, localize, modulePath } from "../constants.mjs";
+import { MODULE_ID, escapeHTML, localize, modulePath } from "../constants.mjs";
 import { setting } from "../settings.mjs";
+import { buildCss } from "../theme/css.mjs";
 import { findAnchor, renderPageBody } from "./page-content.mjs";
 
-const PW = 470, PH = 650, CW = 14, STRIPS = 8, NAV = 56, RAD = Math.PI / 180;
-const BW = 2 * PW + 2 * CW, BH = PH + 2 * CW;
-const EFFECT = {
-  durationMs: 900,
-  easing: "smooth",
-  bend: 0.35,
-  leafShadow: 0.35,
-  dragThreshold: 0.25,
-  coverThickness: 5,
-  bundle: { pxPerLeaf: 0.6, maxThickness: 24, lineRatio: 0.3, maxLines: 14 }
+const PW = 470, PH = 650, STRIPS = 8, NAV = 56, RAD = Math.PI / 180;
+const FIXED = { dragThreshold: 0.25, coverThickness: 5 };
+const LAYOUTS = {
+  book: { sides: spread => [2 * spread - 1, 2 * spread], spreadOf: index => (index + 1) >> 1, min: -1, count: pages => (pages >> 1) + 1 },
+  pad: { sides: spread => [2 * spread, 2 * spread + 1], spreadOf: index => index >> 1, min: 0, count: pages => Math.max(1, Math.ceil(pages / 2)) }
 };
-const FOLIO = "· {n} ·";
+const MODES = { slide: "pad" };
+const CORNER_SPOTS = ["tl", "tr", "br", "bl"];
+let viewCounter = 0;
 const KEYS = { ArrowLeft: -1, ArrowRight: 1, PageUp: -1, PageDown: 1 };
 const EASE = {
   linear: u => u,
@@ -24,8 +22,14 @@ const LIGHT = { x: -0.2, z: 0.98, ambient: 0.55 };
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const smooth = u => u * u * (3 - 2 * u);
-const sidesOf = spread => [2 * spread - 1, 2 * spread];
-const spreadOf = index => (index + 1) >> 1;
+const ROMAN = [[10, "x"], [9, "ix"], [5, "v"], [4, "iv"], [1, "i"]];
+const roman = number => ROMAN.reduce((out, [value, glyph]) => {
+  while (number >= value) {
+    out += glyph;
+    number -= value;
+  }
+  return out;
+}, "");
 const lit = angle => (-Math.sin(angle * RAD) * LIGHT.x + Math.cos(angle * RAD) * LIGHT.z) / LIGHT.z;
 
 function tint(light, strength) {
@@ -33,8 +37,7 @@ function tint(light, strength) {
   return r < 1 ? `rgba(0,0,0,${((1 - r) * strength).toFixed(3)})` : `rgba(255,255,255,${((r - 1) * 3).toFixed(3)})`;
 }
 
-function bundleLines(leaves) {
-  const { lineRatio, maxLines } = EFFECT.bundle;
+function bundleLines(leaves, { lineRatio, maxLines }) {
   const count = clamp(Math.round(leaves * lineRatio), 2, maxLines);
   return Array.from({ length: count }, (_, k) => {
     const at = (((k + 0.5 + 0.28 * Math.sin(k * 2.7 + leaves)) / count) * 100).toFixed(2);
@@ -46,11 +49,13 @@ function bundleLines(leaves) {
 const control = (kind, dir, content = "") => `<button type="button" class="bookbinder-${kind} bookbinder-${kind}-${dir < 0 ? "l" : "r"}"`
   + ` data-bookbinder-${kind}="${dir}" aria-label="${localize(dir < 0 ? "Book.Previous" : "Book.Next")}">${content}</button>`;
 
+const PAPER_LAYERS = '<i class="bookbinder-im"></i><i class="bookbinder-fr"></i><i class="bookbinder-wm"></i>';
+
 const face = side => `<div class="bookbinder-face bookbinder-${side}"><div class="bookbinder-slot"></div><i class="bookbinder-shade"></i></div>`;
 
-const SHELL = () => `<div class="bookbinder-view">${control("nav", -1, "‹")}`
+const SHELL = (uid, mode, cw) => `<div class="bookbinder-view" data-uid="${uid}" data-mode="${mode}">${control("nav", -1, "‹")}`
   + `<div class="bookbinder-fit"><div class="bookbinder-scaler"><div class="bookbinder-shift">`
-  + `<div class="bookbinder-book" style="--bb-pw:${PW}px;--bb-ph:${PH}px;--bb-cw:${CW}px">`
+  + `<div class="bookbinder-book" data-mode="${mode}" style="--bb-pw:${PW}px;--bb-ph:${PH}px;--bb-cw:${cw}px">`
   + `<div class="bookbinder-board bookbinder-board-r"></div><div class="bookbinder-board bookbinder-board-l"></div>`
   + `<i class="bookbinder-block bookbinder-block-l"></i><i class="bookbinder-block bookbinder-block-r"></i>`
   + `<div class="bookbinder-screen"><section class="bookbinder-page bookbinder-page-l"></section><section class="bookbinder-page bookbinder-page-r"></section></div>`
@@ -71,31 +76,60 @@ export class BookView {
   #el;
   #strips;
   #observer;
+  #layout;
+  #fx;
+  #cw;
+  #uid = ++viewCounter;
 
-  constructor({ host, journal, onSpread }) {
+  constructor({ host, journal, theme, assets, onSpread, onSheet }) {
     this.host = host;
     this.journal = journal;
+    this.theme = theme;
+    this.assets = assets;
     this.onSpread = onSpread;
+    this.onSheet = onSheet;
+    this.mode = MODES[theme.effect.transition.type] ?? "book";
+    this.#layout = LAYOUTS[this.mode];
+    this.#fx = { ...FIXED, ...theme.effect.transition };
+    this.#cw = theme.surfaces.cover.width;
     this.#build(host);
   }
 
   get pageIds() {
-    return this.#spread < 0 ? [] : sidesOf(this.#spread).map(index => this.#pages[index]?.id).filter(Boolean);
+    return this.#spread < this.#layout.min ? [] : this.#sides(this.#spread).map(index => this.#pages[index]?.id).filter(Boolean);
+  }
+
+  get #book() {
+    return this.mode === "book";
   }
 
   get #count() {
-    return (this.#pages.length >> 1) + 1;
+    return this.#layout.count(this.#pages.length);
+  }
+
+  get #reduced() {
+    return matchMedia("(prefers-reduced-motion: reduce)").matches || !setting("animation");
   }
 
   get #ms() {
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches || !setting("animation");
-    return reduced ? 0 : EFFECT.durationMs / setting("speed");
+    return this.#reduced ? 0 : this.#fx.durationMs / setting("speed");
+  }
+
+  #sides(spread) {
+    return this.#layout.sides(Math.max(spread, 0));
+  }
+
+  #sheetOf(page) {
+    const id = page?.getFlag(MODULE_ID, "sheet");
+    return id && this.theme.sheets[id] ? id : "main";
   }
 
   #build(host) {
     const shadow = setting("isolation") === "shadow";
     const root = shadow ? host.attachShadow({ mode: "open" }) : host;
-    root.innerHTML = (shadow ? `<link rel="stylesheet" href="${modulePath("styles/bookbinder.css")}">` : "") + SHELL();
+    const scope = `.bookbinder-view[data-uid="${this.#uid}"]`;
+    root.innerHTML = (shadow ? `<link rel="stylesheet" href="${modulePath("styles/bookbinder.css")}">` : "")
+      + `<style>${buildCss(this.theme, scope, this.assets)}</style>` + SHELL(this.#uid, this.mode, this.#cw);
     const $ = selector => root.querySelector(`.bookbinder-${selector}`);
     this.#el = {
       root, book: $("book"), fit: $("fit"), scaler: $("scaler"), shift: $("shift"), cast: $("cast"), leaf: $("leaf"),
@@ -123,7 +157,7 @@ export class BookView {
   async open(pages, pageId, anchor) {
     this.#pages = pages;
     const index = this.#indexOf(pageId);
-    this.#spread = index < 0 ? -1 : spreadOf(index);
+    this.#spread = index < 0 ? this.#layout.min : this.#layout.spreadOf(index);
     await this.#show();
     if (anchor && index >= 0) this.#scrollTo(index, anchor);
   }
@@ -150,13 +184,14 @@ export class BookView {
   async goToPage(pageId, anchor) {
     const index = this.#indexOf(pageId);
     if (index < 0) return;
-    const spread = spreadOf(index);
+    const spread = this.#layout.spreadOf(index);
     if (spread !== this.#spread && !(await this.goTo(spread))) return;
     if (anchor) this.#scrollTo(index, anchor);
   }
 
   async goTo(to) {
     if (this.#busy || to === this.#spread || !this.#valid(to)) return false;
+    if (!this.#book) return this.#slide(to);
     if ((this.#spread < 0 || to < 0) && Math.abs(to - this.#spread) > 1) return (await this.goTo(0)) && this.goTo(to);
     this.#busy = true;
     await this.#load(this.#spread, to);
@@ -167,7 +202,7 @@ export class BookView {
 
   onKey(event) {
     const dir = KEYS[event.key];
-    if (!dir || event.target.closest?.("input, textarea, select, video, [contenteditable], .bookbinder-theme-menu")) return;
+    if (!dir || event.target.closest?.("input, textarea, select, video, [contenteditable], .bookbinder-menu")) return;
     event.preventDefault();
     event.stopPropagation();
     this.goTo(this.#spread + dir);
@@ -178,11 +213,11 @@ export class BookView {
   }
 
   #valid(spread) {
-    return spread >= -1 && spread < this.#count;
+    return spread >= this.#layout.min && spread < this.#count;
   }
 
   async #load(...spreads) {
-    const pages = spreads.flatMap(spread => sidesOf(Math.max(spread, 0)))
+    const pages = spreads.flatMap(spread => this.#sides(spread))
       .map(index => this.#pages[index])
       .filter(page => page && !this.#cache.has(page.id));
     await Promise.all(pages.map(async page => this.#cache.set(page.id, await renderPageBody(page))));
@@ -192,6 +227,10 @@ export class BookView {
     await this.#load(this.#spread);
     if (this.#busy || this.#destroyed) return;
     this.#render();
+    await this.#settle();
+  }
+
+  async #settle() {
     this.#load(this.#spread - 1, this.#spread + 1);
     if (!this.#pending) return;
     const pending = this.#pending;
@@ -199,8 +238,39 @@ export class BookView {
     await this.refresh(...pending);
   }
 
+  async #slide(to) {
+    this.#busy = true;
+    await this.#load(to);
+    if (this.#destroyed) return false;
+    const { pageL, pageR } = this.#el, dir = Math.sign(to - this.#spread), duration = this.#ms * 0.6;
+    const outgoing = document.createElement("div");
+    outgoing.className = "bookbinder-slide-out";
+    outgoing.append(pageL.cloneNode(true), pageR.cloneNode(true));
+    pageL.parentElement.append(outgoing);
+    this.#spread = to;
+    this.#render();
+    this.#playTurn();
+    if (duration > 0) {
+      const options = { duration, easing: "cubic-bezier(.3,.7,.2,1)" };
+      await Promise.all([
+        ...[pageL, pageR].map(page => page.animate([{ transform: `translateX(${dir * 60}%)`, opacity: 0 }, { transform: "none", opacity: 1 }], options).finished),
+        outgoing.animate([{ transform: "none", opacity: 1 }, { transform: `translateX(${-dir * 60}%)`, opacity: 0 }], options).finished
+      ]);
+    }
+    outgoing.remove();
+    this.#busy = false;
+    await this.#settle();
+    return true;
+  }
+
+  #playTurn() {
+    const { enabled, resource, volume } = this.theme.effect.sound;
+    const src = enabled && !this.#reduced && setting("sound") ? this.assets.resource(resource) : null;
+    if (src) foundry.audio.AudioHelper.play({ src, volume: volume * setting("volume") }, false);
+  }
+
   #render() {
-    const closed = this.#spread < 0, [left, right] = sidesOf(Math.max(this.#spread, 0));
+    const closed = this.#spread < 0, [left, right] = this.#sides(this.#spread);
     const { book, pageL, pageR, leaf, cast, root } = this.#el;
     book.dataset.closed = Number(closed);
     book.dataset.cover = 0;
@@ -216,23 +286,45 @@ export class BookView {
   }
 
   #coverHTML(front, side) {
+    const layout = this.theme.sheets.main.ornaments.coverTitle.layout ?? "center";
     const inner = front
-      ? `<div class="bookbinder-cv-art"></div><div class="bookbinder-cv-title">${escapeHTML(this.journal.name)}</div>`
-      : '<div class="bookbinder-endpaper"></div>';
+      ? `<div class="bookbinder-cv-art"></div><div class="bookbinder-cv-title" data-layout="${layout}">${escapeHTML(this.journal.name)}</div>`
+      : `<div class="bookbinder-endpaper">${PAPER_LAYERS}</div>`;
     return `<div class="bookbinder-cv" data-side="${side}">${inner}</div>`;
   }
 
+  #cornersHTML(corners) {
+    if (!corners || corners.style === "none") return "";
+    if (corners.style === "fold") return '<i class="bookbinder-cn bookbinder-fold"></i>';
+    const triangle = corners.style === "triangle" ? " bookbinder-tri" : "";
+    return CORNER_SPOTS.map(spot => `<i class="bookbinder-cn bookbinder-${spot}${triangle}">${corners.style === "symbol" ? escapeHTML(corners.symbol ?? "") : ""}</i>`).join("");
+  }
+
+  #folioHTML(folio, index) {
+    if (!folio?.format) return "";
+    const number = folio.numbering === "roman" ? roman(index + 1) : index + 1;
+    return `<div class="bookbinder-folio" data-pos="${folio.position ?? "center"}">${escapeHTML(folio.format.replace("{n}", number))}</div>`;
+  }
+
+  #controlsHTML(page) {
+    const button = (kind, label, glyph) => `<button type="button" class="bookbinder-${kind}" data-bookbinder-${kind === "edit" ? "open" : kind}="${page.id}"`
+      + ` aria-label="${localize(label)}" data-tooltip="${localize(label)}">${glyph}</button>`;
+    return button("edit", "Book.Edit", "✎") + (Object.keys(this.theme.sheetNames).length ? button("sheet", "Book.PageStyle", "Aa") : "");
+  }
+
   #pageHTML(index, side, live) {
-    const page = this.#pages[index];
+    const page = this.#pages[index], id = this.#sheetOf(page), { paper, ornaments } = this.theme.sheets[id];
     const empty = this.#pages.length ? "" : `<p class="bookbinder-empty">${localize("Book.NoPages")}</p>`;
     const body = page ? this.#cache.get(page.id)?.[live ? "live" : "still"] ?? "" : empty;
-    const folio = page ? `<div class="bookbinder-folio">${FOLIO.replace("{n}", index + 1)}</div>` : "";
-    const edit = live && page?.isOwner
-      ? `<button type="button" class="bookbinder-edit" data-bookbinder-open="${page.id}" aria-label="${localize("Book.Edit")}" data-tooltip="${localize("Book.Edit")}">✎</button>`
-      : "";
+    const loose = paper.inset > 0;
+    const header = page && ornaments.header?.enabled ? `<div class="bookbinder-rhead">${escapeHTML(side === "l" ? this.journal.name : page.name)}</div>` : "";
+    const attach = loose && paper.attach ? `<i class="bookbinder-att bookbinder-att-${paper.attach}"></i>` : "";
+    const stamp = page && ornaments.stamp ? '<i class="bookbinder-st"></i>' : "";
     const fill = page?.type === "image" ? " bookbinder-fill" : "";
-    return `<div class="bookbinder-pg" data-side="${side}"><div class="bookbinder-paper"></div>`
-      + `<div class="bookbinder-content${fill}">${body}</div>${folio}${edit}</div>`;
+    return `<div class="bookbinder-pg" data-sheet="${id}" data-side="${side}"${loose ? " data-loose" : ""}${header ? " data-head" : ""}>`
+      + `<div class="bookbinder-paper">${PAPER_LAYERS}</div><div class="bookbinder-loose">${loose ? `<div class="bookbinder-paper">${PAPER_LAYERS}</div>` : ""}`
+      + `<div class="bookbinder-content${fill}">${body}</div>${attach}${stamp}</div>`
+      + `${page ? this.#cornersHTML(ornaments.corners) + header + this.#folioHTML(ornaments.folio, index) : ""}${live && page?.isOwner ? this.#controlsHTML(page) : ""}</div>`;
   }
 
   #setPage(element, index, side) {
@@ -241,19 +333,20 @@ export class BookView {
   }
 
   #setShift(open) {
-    this.#el.shift.style.setProperty("--bb-shift", `${(-(1 - open) * (PW + CW)) / 2}px`);
+    this.#el.shift.style.setProperty("--bb-shift", `${(-(1 - open) * (PW + this.#cw)) / 2}px`);
   }
 
   #fit() {
     const { fit, scaler } = this.#el;
-    this.#scale = Math.max(0.1, Math.min((this.host.clientWidth - 2 * NAV) / BW, (this.host.clientHeight - 24) / BH));
-    fit.style.width = `${BW * this.#scale}px`;
-    fit.style.height = `${BH * this.#scale}px`;
+    const width = 2 * PW + 2 * this.#cw, height = PH + 2 * this.#cw;
+    this.#scale = Math.max(0.1, Math.min((this.host.clientWidth - 2 * NAV) / width, (this.host.clientHeight - 24) / height));
+    fit.style.width = `${width * this.#scale}px`;
+    fit.style.height = `${height * this.#scale}px`;
     scaler.style.transform = `scale(${this.#scale})`;
   }
 
   #scrollTo(index, anchor) {
-    const page = index === sidesOf(this.#spread)[0] ? this.#el.pageL : this.#el.pageR;
+    const page = index === this.#sides(this.#spread)[0] ? this.#el.pageL : this.#el.pageR;
     const content = page.querySelector(".bookbinder-content");
     const heading = content && findAnchor(content, anchor);
     if (heading) content.scrollTop += (heading.getBoundingClientRect().top - content.getBoundingClientRect().top) / this.#scale;
@@ -264,18 +357,23 @@ export class BookView {
     if (nav) return this.goTo(this.#spread + Number(nav.dataset.bookbinderNav));
     const open = event.target.closest("[data-bookbinder-open]");
     if (open) this.journal.pages.get(open.dataset.bookbinderOpen)?.sheet.render({ force: true });
+    const sheet = event.target.closest("[data-bookbinder-sheet]");
+    if (sheet) this.onSheet?.(this.journal.pages.get(sheet.dataset.bookbinderSheet), sheet);
   }
 
   #onPointerDown(event) {
     const hot = event.target.closest("[data-bookbinder-hot]");
-    if (hot && event.button === 0) this.#grab(event, hot, Number(hot.dataset.bookbinderHot));
+    if (!hot || event.button !== 0) return;
+    const dir = Number(hot.dataset.bookbinderHot);
+    if (this.#book) this.#grab(event, hot, dir);
+    else this.goTo(this.#spread + dir);
   }
 
   #dress(front, back, { width, height, top, thick, kind, leaves }) {
     const stripWidth = width / STRIPS, { leaf } = this.#el;
     leaf.style.cssText = `top:${top}px;width:${width}px;height:${height}px;--bb-thick:${thick}px`;
     leaf.dataset.kind = kind;
-    if (kind === "bundle") leaf.style.setProperty("--bb-lines", bundleLines(leaves));
+    if (kind === "bundle") leaf.style.setProperty("--bb-lines", bundleLines(leaves, this.#fx.bundle));
     this.#strips.forEach((strip, i) => {
       strip.el.style.width = `${stripWidth}px`;
       strip.fi.style.cssText = `width:${width}px;left:${1.5 - i * stripWidth}px`;
@@ -291,19 +389,19 @@ export class BookView {
     const { book, pageL, pageR, leaf } = this.#el;
     const moving = dir > 0 ? pageR : pageL, scroll = moving.querySelector(".bookbinder-content")?.scrollTop ?? 0;
     const kind = cover ? "cover" : leaves > 1 ? "bundle" : "leaf";
-    const width = cover ? PW + CW : PW;
-    const thick = cover ? EFFECT.coverThickness : kind === "bundle" ? Math.min(leaves * EFFECT.bundle.pxPerLeaf, EFFECT.bundle.maxThickness) : 0;
+    const width = cover ? PW + this.#cw : PW, { bundle } = this.#fx;
+    const thick = cover ? this.#fx.coverThickness : kind === "bundle" ? Math.min(leaves * bundle.pxPerLeaf, bundle.maxThickness) : 0;
     const stripWidth = this.#dress(
-      cover ? this.#coverHTML(true, "r") : this.#pageHTML(sidesOf(lo)[1], "r", false),
-      cover ? this.#coverHTML(false, "l") : this.#pageHTML(sidesOf(hi)[0], "l", false),
-      { width, height: cover ? BH : PH, top: cover ? 0 : CW, thick, kind, leaves }
+      cover ? this.#coverHTML(true, "r") : this.#pageHTML(this.#sides(lo)[1], "r", false),
+      cover ? this.#coverHTML(false, "l") : this.#pageHTML(this.#sides(hi)[0], "l", false),
+      { width, height: cover ? PH + 2 * this.#cw : PH, top: cover ? 0 : this.#cw, thick, kind, leaves }
     );
-    this.#ctx = { to, dir, cover, width, stripWidth, t: 0, bend: kind === "leaf" ? 1 + clamp(EFFECT.bend) : 1 };
+    this.#ctx = { to, dir, cover, width, stripWidth, t: 0, bend: kind === "leaf" ? 1 + clamp(this.#fx.bend) : 1 };
     this.#busy = true;
     book.dataset.closed = 0;
     book.dataset.cover = Number(cover);
-    if (dir > 0) this.#setPage(pageR, sidesOf(to)[1], "r");
-    else this.#setPage(pageL, to >= 0 ? sidesOf(to)[0] : -1, "l");
+    if (dir > 0) this.#setPage(pageR, this.#sides(to)[1], "r");
+    else this.#setPage(pageL, to >= 0 ? this.#sides(to)[0] : -1, "l");
     this.#pose(0);
     leaf.classList.add("bookbinder-on");
     if (!cover) this.#strips.forEach(strip => {
@@ -328,7 +426,7 @@ export class BookView {
   }
 
   #pose(t) {
-    const ctx = this.#ctx, shadow = EFFECT.leafShadow;
+    const ctx = this.#ctx, shadow = this.#fx.leafShadow;
     ctx.t = t;
     let outer = 180 * (1 - (1 - t) ** ctx.bend), inner = 180 * t ** ctx.bend;
     if (ctx.dir < 0) [outer, inner] = [180 - outer, 180 - inner];
@@ -346,7 +444,7 @@ export class BookView {
         fn(to);
         return resolve();
       }
-      const ease = EASE[EFFECT.easing], start = performance.now();
+      const ease = EASE[this.#fx.easing], start = performance.now();
       const tick = now => {
         if (this.#destroyed) return resolve();
         const u = clamp((now - start) / ms);
@@ -359,6 +457,7 @@ export class BookView {
   }
 
   async #animate(from, to, ms, ok) {
+    if (ok) this.#playTurn();
     await this.#run(t => this.#pose(t), from, to, ms);
     if (ok) this.#spread = this.#ctx.to;
     this.#ctx = null;
@@ -392,7 +491,7 @@ export class BookView {
       target.removeEventListener("pointerup", release);
       target.removeEventListener("pointercancel", release);
       if (!dragging) return this.goTo(to);
-      const t = this.#ctx.t, ok = t > EFFECT.dragThreshold;
+      const t = this.#ctx.t, ok = t > this.#fx.dragThreshold;
       this.#animate(t, Number(ok), this.#ms && 160 + this.#ms * 0.6 * (ok ? 1 - t : t), ok);
     };
     target.addEventListener("pointermove", move);

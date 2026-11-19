@@ -1,11 +1,8 @@
-import { BOOK_SHEET_CLASS, BOOK_THEME, MODULE_ID, localize } from "./constants.mjs";
+import { BOOK_SHEET_CLASS, MODULE_ID, localize } from "./constants.mjs";
+import { toggleMenu } from "./menu.mjs";
+import { listThemes, sourceOf, useTemplate } from "./theme/store.mjs";
 
-const THEMES = [
-  { id: null, label: "Theme.None" },
-  { id: BOOK_THEME, label: "Theme.Book" }
-];
-
-const journalTheme =journal => journal.getFlag(MODULE_ID, "theme") ?? null;
+const journalTheme = journal => journal.getFlag(MODULE_ID, "theme") ?? null;
 
 function applyTheme(journal, theme) {
   if (theme === journalTheme(journal)) return;
@@ -15,45 +12,30 @@ function applyTheme(journal, theme) {
   });
 }
 
-function menuHTML(current) {
-  return THEMES.map(({ id, label }) => {
-    const active = id === current;
-    return `<li><button type="button" role="menuitemradio" aria-checked="${active}" data-theme="${id ?? ""}">`
-      + `<i class="fa-solid fa-fw ${active ? "fa-check" : ""}"></i>${localize(label)}</button></li>`;
-  }).join("");
+async function menuItems(current) {
+  const { world, presets } = await listThemes();
+  const active = current && (await sourceOf(current))?.source;
+  const entry = (theme, source) => ({ id: `${source}:${theme.slug}`, label: theme.name, active: source === active && theme.slug === current });
+  const groups = [
+    [localize("Theme.WorldGroup"), world.map(theme => entry(theme, "world"))],
+    [localize("Theme.TemplateGroup"), presets.map(theme => entry(theme, "preset"))]
+  ];
+  const items = [{ id: "", label: localize("Theme.None"), active: !current }];
+  for (const [label, group] of groups) if (group.length) items.push({ heading: true, label }, ...group);
+  return items;
 }
 
-function openMenu(app, button) {
-  const frame = app.element, journal = app.document;
-  const menu = document.createElement("menu");
-  menu.className = "bookbinder-theme-menu";
-  menu.setAttribute("role", "menu");
-  menu.innerHTML = menuHTML(journalTheme(journal));
-  const frameBox = frame.getBoundingClientRect(), buttonBox = button.getBoundingClientRect();
-  menu.style.top = `${buttonBox.bottom - frameBox.top}px`;
-  menu.style.right = `${frameBox.right - buttonBox.right}px`;
-  const close = () => {
-    menu.remove();
-    button.ariaExpanded = "false";
-  };
-  menu.addEventListener("click", event => {
-    const choice = event.target.closest("[data-theme]");
-    if (!choice) return;
-    close();
-    applyTheme(journal, choice.dataset.theme || null);
+async function showMenu(app, button) {
+  const journal = app.document, current = journalTheme(journal);
+  const items = await menuItems(current);
+  const activeItem = items.find(item => item.active);
+  toggleMenu({
+    frame: app.element, anchor: button, items, current: activeItem?.id,
+    onPick: async choice => {
+      const [source, slug] = choice.split(/:(.+)/);
+      applyTheme(journal, source === "preset" ? await useTemplate(slug) : slug || null);
+    }
   });
-  menu.addEventListener("keydown", event => {
-    if (event.key !== "Escape") return;
-    event.stopPropagation();
-    close();
-    button.focus();
-  });
-  menu.addEventListener("focusout", event => {
-    if (!menu.contains(event.relatedTarget) && event.relatedTarget !== button) close();
-  });
-  frame.append(menu);
-  button.ariaExpanded = "true";
-  menu.querySelector("[aria-checked=true]")?.focus();
 }
 
 export function attachThemeButton(app) {
@@ -66,10 +48,6 @@ export function attachThemeButton(app) {
   button.dataset.tooltip = button.ariaLabel = localize("Theme.Apply");
   button.setAttribute("aria-haspopup", "menu");
   button.ariaExpanded = "false";
-  button.addEventListener("click", () => {
-    const menu = app.element.querySelector(".bookbinder-theme-menu");
-    if (menu) menu.remove();
-    else openMenu(app, button);
-  });
+  button.addEventListener("click", () => showMenu(app, button));
   header.insertBefore(button, header.querySelector('[data-action="close"]'));
 }

@@ -6,7 +6,10 @@
     "Theme": {
       "Apply": "Apply theme",
       "None": "None (Foundry sheet)",
-      "Book": "Book"
+      "WorldGroup": "World themes",
+      "TemplateGroup": "Templates",
+      "Warnings": "Theme \"{slug}\": {count} invalid value(s) were replaced by defaults.",
+      "Broken": "Theme \"{slug}\" could not be loaded; its journals open with the normal sheet."
     },
     "Toc": {
       "Title": "Pages",
@@ -18,7 +21,9 @@
       "Edit": "Edit page",
       "Open": "Open",
       "NoPages": "This journal has no pages you can see.",
-      "RenderError": "This page could not be displayed."
+      "RenderError": "This page could not be displayed.",
+      "PageStyle": "Page style",
+      "MainSheet": "Main sheet"
     },
     "Settings": {
       "animation": {
@@ -40,7 +45,18 @@
           "scoped": "Scoped CSS",
           "shadow": "Shadow DOM (experimental)"
         }
+      },
+      "sound": {
+        "Name": "Page-turn sound",
+        "Hint": "Play the theme's page-turn sound, if it has one."
+      },
+      "volume": {
+        "Name": "Page-turn volume",
+        "Hint": "Multiplied by the theme's own volume."
       }
+    },
+    "Menu": {
+      "Empty": "Nothing to choose"
     }
   }
 }

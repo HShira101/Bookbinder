@@ -6,7 +6,10 @@
     "Theme": {
       "Apply": "Aplicar tema",
       "None": "Ninguno (hoja de Foundry)",
-      "Book": "Libro"
+      "WorldGroup": "Diseños del mundo",
+      "TemplateGroup": "Plantillas",
+      "Warnings": "Tema \"{slug}\": {count} valor(es) inválido(s) se sustituyeron por los de defecto.",
+      "Broken": "No se pudo cargar el tema \"{slug}\"; sus Journals se abren con la hoja normal."
     },
     "Toc": {
       "Title": "Páginas",
@@ -18,7 +21,9 @@
       "Edit": "Editar página",
       "Open": "Abrir",
       "NoPages": "Este diario no tiene páginas que puedas ver.",
-      "RenderError": "No se pudo mostrar esta página."
+      "RenderError": "No se pudo mostrar esta página.",
+      "PageStyle": "Estilo de página",
+      "MainSheet": "Hoja principal"
     },
     "Settings": {
       "animation": {
@@ -40,7 +45,18 @@
           "scoped": "CSS con alcance",
           "shadow": "Shadow DOM (experimental)"
         }
+      },
+      "sound": {
+        "Name": "Sonido de página",
+        "Hint": "Reproduce el sonido de paso de página del tema, si lo tiene."
+      },
+      "volume": {
+        "Name": "Volumen del paso de página",
+        "Hint": "Se multiplica por el volumen del propio tema."
       }
+    },
+    "Menu": {
+      "Empty": "Nada que elegir"
     }
   }
 }

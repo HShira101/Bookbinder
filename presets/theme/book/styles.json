@@ -1,0 +1,230 @@
+{
+  "palette": {
+    "ink": "#3b2a1a",
+    "inkSoft": "#6b5236",
+    "accent": "#7a1f17",
+    "accentSoft": "#a4533d",
+    "metal": "#a17c32",
+    "paper": "#ecdfc0",
+    "cover": "#4c2c19"
+  },
+  "surfaces": {
+    "background": {
+      "color": "#0f0b08",
+      "highlight": "#33261c"
+    },
+    "cover": {
+      "color": "$cover",
+      "image": "cover",
+      "texture": "leather",
+      "width": 14,
+      "radius": 8,
+      "shadow": "strong"
+    },
+    "endpaper": {
+      "color": "#b08c57",
+      "pattern": {
+        "type": "dots",
+        "color": "rgba(70,40,15,.28)",
+        "size": 14
+      },
+      "noise": 0.5,
+      "vignette": 0.35
+    },
+    "paper": {
+      "color": "$paper",
+      "image": "paper",
+      "noise": 0.55,
+      "vignette": 0.2
+    },
+    "spine": {
+      "shadow": 0.5,
+      "width": 90
+    }
+  },
+  "typography": {
+    "base": {
+      "font": "Amiri",
+      "fallback": "Signika",
+      "generic": "serif",
+      "size": 15.5,
+      "lineHeight": 1.45,
+      "color": "$ink"
+    }
+  },
+  "elements": {
+    "h1": {
+      "font": "Modesto Condensed",
+      "size": 31,
+      "weight": 700,
+      "color": "$accent",
+      "align": "center",
+      "letterSpacing": 0.04,
+      "lineHeight": 1.18
+    },
+    "h2": {
+      "font": "Modesto Condensed",
+      "size": 22,
+      "weight": 700,
+      "color": "$accent",
+      "letterSpacing": 0.03,
+      "borderBottom": {
+        "width": 1,
+        "color": "$metal"
+      },
+      "marginBottom": 8
+    },
+    "h3": {
+      "size": 19,
+      "weight": 600,
+      "transform": "smallCaps",
+      "letterSpacing": 0.06,
+      "color": "$accent"
+    },
+    "h4": {
+      "size": 17,
+      "weight": 600,
+      "style": "italic",
+      "color": "$ink"
+    },
+    "h5": {
+      "size": 14,
+      "weight": 600,
+      "transform": "uppercase",
+      "letterSpacing": 0.12,
+      "color": "$inkSoft"
+    },
+    "h6": {
+      "size": 14,
+      "weight": 400,
+      "style": "italic",
+      "color": "$inkSoft"
+    },
+    "p": {
+      "align": "justify"
+    },
+    "strong": {
+      "weight": 700,
+      "color": "#2a1c10"
+    },
+    "a": {
+      "color": "$accent",
+      "underline": "dotted"
+    },
+    "code": {
+      "font": "Courier New",
+      "fallback": "Signika",
+      "generic": "monospace",
+      "size": 13,
+      "background": "rgba(90,60,25,.13)",
+      "color": "#4a2f17"
+    },
+    "blockquote": {
+      "style": "italic",
+      "color": "$inkSoft",
+      "borderLeft": {
+        "width": 3,
+        "color": "$metal"
+      }
+    },
+    "ul": {
+      "bullet": "❧",
+      "bulletColor": "$accent"
+    },
+    "ol": {
+      "numbering": "roman",
+      "bulletColor": "$accent"
+    },
+    "hr": {
+      "type": "ornament",
+      "symbol": "❦",
+      "color": "$metal",
+      "length": 70
+    },
+    "table": {
+      "header": {
+        "transform": "smallCaps",
+        "letterSpacing": 0.06,
+        "color": "$accent",
+        "borderBottom": {
+          "width": 2,
+          "color": "$metal"
+        }
+      },
+      "cell": {
+        "borderBottom": {
+          "width": 1,
+          "color": "rgba(90,60,25,.28)"
+        }
+      },
+      "stripedRows": "rgba(90,60,25,.06)"
+    },
+    "contentLink": {
+      "color": "#4a2f17",
+      "background": "rgba(255,248,225,.55)",
+      "border": {
+        "width": 1,
+        "color": "$metal"
+      }
+    },
+    "inlineRoll": {
+      "color": "$accent",
+      "background": "rgba(122,31,23,.08)",
+      "border": {
+        "width": 1,
+        "color": "$accentSoft"
+      }
+    },
+    "secret": {
+      "background": "rgba(122,31,23,.07)",
+      "border": {
+        "width": 1,
+        "color": "$accentSoft",
+        "style": "dashed"
+      },
+      "style": "italic"
+    },
+    "img": {
+      "border": {
+        "width": 1,
+        "color": "$inkSoft"
+      },
+      "shadow": "soft"
+    },
+    "figcaption": {
+      "color": "$inkSoft"
+    },
+    "dropCap": {
+      "enabled": true,
+      "lines": 3,
+      "font": "Modesto Condensed",
+      "weight": 700,
+      "color": "$accent"
+    }
+  },
+  "ornaments": {
+    "coverTitle": {
+      "layout": "center",
+      "font": "Modesto Condensed",
+      "fallback": "Signika",
+      "generic": "serif",
+      "size": 30,
+      "weight": 700,
+      "color": "#dcbc6a",
+      "letterSpacing": 0.07,
+      "transform": "uppercase",
+      "shadow": "emboss"
+    },
+    "watermark": {
+      "type": "none"
+    },
+    "corners": {
+      "style": "none"
+    },
+    "folio": {
+      "format": "· {n} ·",
+      "color": "$inkSoft",
+      "letterSpacing": 0.2
+    }
+  }
+}
