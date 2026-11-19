@@ -1,0 +1,319 @@
+{
+  "palette": {
+    "ink": "#1e1712",
+    "inkSoft": "#4f4032",
+    "accent": "#8b1a12",
+    "accentSoft": "#5e120c",
+    "metal": "#8a6d2b",
+    "paper": "#cdbb92",
+    "cover": "#1a1512"
+  },
+  "surfaces": {
+    "background": {
+      "color": "#070505",
+      "highlight": "#231c18"
+    },
+    "cover": {
+      "color": "$cover",
+      "image": "cover",
+      "texture": "leather",
+      "width": 14,
+      "radius": 5,
+      "shadow": "strong"
+    },
+    "endpaper": {
+      "color": "#4a0f0c",
+      "pattern": {
+        "type": "dots",
+        "color": "rgba(220,188,106,.28)",
+        "size": 12
+      },
+      "noise": 0.4,
+      "vignette": 0.55,
+      "vignetteColor": "#000000"
+    },
+    "paper": {
+      "color": "$paper",
+      "image": "paper",
+      "noise": 0.6,
+      "vignette": 0.35,
+      "vignetteColor": "#1a0f06",
+      "edge": "deckle",
+      "seed": 13,
+      "frame": {
+        "enabled": true,
+        "color": "rgba(138,109,43,.75)",
+        "inset": 14
+      }
+    },
+    "spine": {
+      "shadow": 0.7,
+      "width": 100
+    }
+  },
+  "typography": {
+    "base": {
+      "font": "Amiri",
+      "fallback": "Signika",
+      "size": 15.5,
+      "lineHeight": 1.4,
+      "color": "$ink",
+      "generic": "serif"
+    }
+  },
+  "elements": {
+    "h1": {
+      "font": "Modesto Condensed",
+      "size": 38,
+      "weight": 700,
+      "color": "$accent",
+      "align": "center",
+      "lineHeight": 1.05
+    },
+    "h2": {
+      "font": "Modesto Condensed",
+      "size": 25,
+      "weight": 700,
+      "color": "$accent",
+      "lineHeight": 1.1,
+      "borderBottom": {
+        "width": 2,
+        "color": "$metal"
+      },
+      "marginBottom": 8
+    },
+    "h3": {
+      "font": "Modesto Condensed",
+      "size": 20,
+      "weight": 500,
+      "color": "$ink"
+    },
+    "h4": {
+      "size": 15,
+      "weight": 600,
+      "transform": "uppercase",
+      "letterSpacing": 0.08,
+      "color": "$accentSoft"
+    },
+    "h5": {
+      "size": 12.5,
+      "weight": 600,
+      "transform": "uppercase",
+      "letterSpacing": 0.16,
+      "color": "$inkSoft"
+    },
+    "h6": {
+      "size": 15,
+      "weight": 400,
+      "style": "italic",
+      "color": "$inkSoft"
+    },
+    "p": {
+      "align": "justify"
+    },
+    "strong": {
+      "weight": 600,
+      "color": "#000000"
+    },
+    "em": {
+      "style": "italic"
+    },
+    "u": {
+      "underline": "solid"
+    },
+    "s": {
+      "color": "$inkSoft"
+    },
+    "a": {
+      "color": "$accent",
+      "underline": "solid"
+    },
+    "code": {
+      "font": "Courier New",
+      "fallback": "Signika",
+      "size": 13,
+      "background": "rgba(30,23,18,.13)",
+      "generic": "monospace"
+    },
+    "blockquote": {
+      "variant": "seal",
+      "style": "italic",
+      "color": "#33261c",
+      "background": "rgba(139,26,18,.07)",
+      "border": {
+        "width": 1,
+        "color": "$accentSoft"
+      },
+      "padding": [
+        9,
+        14
+      ]
+    },
+    "cite": {
+      "color": "$accent",
+      "transform": "smallCaps",
+      "letterSpacing": 0.05
+    },
+    "ul": {
+      "bullet": "✠",
+      "bulletColor": "$accent"
+    },
+    "ol": {
+      "numbering": "roman",
+      "bulletColor": "$accent"
+    },
+    "hr": {
+      "type": "ornament",
+      "symbol": "✠",
+      "color": "$accent",
+      "length": 75
+    },
+    "table": {
+      "header": {
+        "font": "Modesto Condensed",
+        "size": 15.5,
+        "weight": 500,
+        "color": "#f1e3bd",
+        "background": "$accent"
+      },
+      "cell": {
+        "borderBottom": {
+          "width": 1,
+          "color": "rgba(30,23,18,.3)"
+        }
+      },
+      "stripedRows": "rgba(30,23,18,.07)"
+    },
+    "contentLink": {
+      "color": "#f1e3bd",
+      "background": "#3a2c1c",
+      "border": {
+        "width": 1,
+        "color": "$metal"
+      }
+    },
+    "inlineRoll": {
+      "color": "#f1e3bd",
+      "background": "$accent",
+      "border": {
+        "width": 1,
+        "color": "$accentSoft"
+      }
+    },
+    "secret": {
+      "background": "rgba(0,0,0,.1)",
+      "border": {
+        "width": 1,
+        "color": "$ink",
+        "style": "dashed"
+      },
+      "style": "italic"
+    },
+    "img": {
+      "border": {
+        "width": 3,
+        "color": "#3a2c1c"
+      },
+      "shadow": "medium"
+    },
+    "figcaption": {
+      "color": "$inkSoft"
+    },
+    "dropCap": {
+      "enabled": true,
+      "lines": 3,
+      "scale": 0.7,
+      "font": "Modesto Condensed",
+      "weight": 700,
+      "color": "#f1e3bd",
+      "background": "$accent",
+      "border": {
+        "width": 2,
+        "color": "$metal"
+      },
+      "padding": [
+        5,
+        7,
+        1
+      ]
+    }
+  },
+  "ornaments": {
+    "coverTitle": {
+      "layout": "center",
+      "top": 13,
+      "font": "Modesto Condensed",
+      "fallback": "Signika",
+      "size": 34,
+      "weight": 700,
+      "color": "#dcbc6a",
+      "shadow": "strong",
+      "generic": "serif"
+    },
+    "watermark": {
+      "type": "none"
+    },
+    "folio": {
+      "format": "— {n} —",
+      "numbering": "roman",
+      "color": "$accentSoft",
+      "transform": "uppercase",
+      "letterSpacing": 0.2
+    },
+    "corners": {
+      "style": "triangle",
+      "color": "rgba(94,18,12,.8)"
+    }
+  },
+  "sheets": {
+    "decree": {
+      "name": "Decree",
+      "paper": {
+        "color": "#e3d5ae",
+        "image": "decree",
+        "noise": 0.4,
+        "vignette": 0.15,
+        "edge": "straight",
+        "inset": 20,
+        "tilt": 0.7,
+        "attach": "seal",
+        "frame": {
+          "enabled": true,
+          "color": "$accent",
+          "double": true,
+          "inset": 10,
+          "width": 2
+        }
+      },
+      "elements": {
+        "h1": {
+          "size": 40
+        },
+        "h2": {
+          "align": "center",
+          "borderBottom": {
+            "width": 0,
+            "color": "$metal"
+          }
+        },
+        "h3": {
+          "align": "center"
+        },
+        "p": {
+          "align": "center"
+        },
+        "dropCap": {
+          "enabled": false
+        }
+      },
+      "ornaments": {
+        "folio": {
+          "format": ""
+        },
+        "corners": {
+          "style": "none"
+        }
+      }
+    }
+  }
+}

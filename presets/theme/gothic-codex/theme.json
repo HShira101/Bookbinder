@@ -1,0 +1,40 @@
+{
+  "name": "Gothic Codex",
+  "author": {
+    "id": "bookbinder",
+    "name": "Bookbinder"
+  },
+  "visibility": "all",
+  "moduleVersion": "0.2.0",
+  "resources": {
+    "images": {
+      "cover": {
+        "path": "modules/bookbinder/presets/img/gothic-codex/cover.svg",
+        "status": "ready"
+      },
+      "paper": {
+        "path": "modules/bookbinder/presets/img/gothic-codex/paper.svg",
+        "status": "ready"
+      },
+      "decree": {
+        "path": "modules/bookbinder/presets/img/gothic-codex/decree.svg",
+        "status": "ready"
+      },
+      "figure": {
+        "path": "modules/bookbinder/presets/img/gothic-codex/figure.svg",
+        "status": "ready"
+      }
+    },
+    "fonts": {
+      "Amiri": {
+        "status": "ready"
+      },
+      "Courier New": {
+        "status": "ready"
+      },
+      "Modesto Condensed": {
+        "status": "ready"
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "transition": {
+    "type": "slide",
+    "durationMs": 700,
+    "easing": "easeOut"
+  },
+  "layout": {
+    "mode": "auto",
+    "minSpreadWidth": 900
+  },
+  "pagination": {
+    "mode": "perPage"
+  }
+}

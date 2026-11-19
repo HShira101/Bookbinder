@@ -1,0 +1,40 @@
+{
+  "name": "Oriental Scroll",
+  "author": {
+    "id": "bookbinder",
+    "name": "Bookbinder"
+  },
+  "visibility": "all",
+  "moduleVersion": "0.2.0",
+  "resources": {
+    "images": {
+      "fibers": {
+        "path": "modules/bookbinder/presets/img/common/fibers.svg",
+        "status": "ready"
+      },
+      "band": {
+        "path": "modules/bookbinder/presets/img/oriental-scroll/band.svg",
+        "status": "ready"
+      },
+      "hanko": {
+        "path": "modules/bookbinder/presets/img/oriental-scroll/hanko.svg",
+        "status": "ready"
+      },
+      "figure": {
+        "path": "modules/bookbinder/presets/img/oriental-scroll/figure.svg",
+        "status": "ready"
+      }
+    },
+    "fonts": {
+      "Amiri": {
+        "status": "ready"
+      },
+      "Courier New": {
+        "status": "ready"
+      },
+      "Modesto Condensed": {
+        "status": "ready"
+      }
+    }
+  }
+}

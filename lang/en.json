@@ -57,6 +57,66 @@
     },
     "Menu": {
       "Empty": "Nothing to choose"
+    },
+    "Presets": {
+      "book": {
+        "Name": "Book",
+        "Sheets": {
+          "letter": "Letter",
+          "torn": "Torn Parchment",
+          "travel": "Travel Journal",
+          "sketch": "Sketch",
+          "tome": "Compendium",
+          "entry": "Dictionary Entry",
+          "table": "Reference Table"
+        }
+      },
+      "lacquer-and-silk": {
+        "Name": "Lacquer and Silk",
+        "Sheets": {
+          "letter": "Washi Letter",
+          "edict": "Imperial Edict"
+        }
+      },
+      "investigator-notebook": {
+        "Name": "Investigator's Notebook",
+        "Sheets": {
+          "clipping": "Newspaper Clipping",
+          "report": "Police Report"
+        }
+      },
+      "datapad": {
+        "Name": "Datapad",
+        "Sheets": {
+          "classified": "Classified Report",
+          "alert": "Alert"
+        }
+      },
+      "gothic-codex": {
+        "Name": "Gothic Codex",
+        "Sheets": {
+          "decree": "Decree"
+        }
+      },
+      "oriental-scroll": {
+        "Name": "Oriental Scroll"
+      },
+      "arcane-diary": {
+        "Name": "Arcane Diary",
+        "Sheets": {
+          "spell": "Spell Page",
+          "recipe": "Alchemical Recipe",
+          "grimoire": "Dark Grimoire",
+          "cursed": "Cursed Page"
+        }
+      },
+      "sheet": {
+        "Name": "Sheet",
+        "Sheets": {
+          "letter": "Letter Paper",
+          "typed": "Typed Page"
+        }
+      }
     }
   }
 }
