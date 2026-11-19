@@ -40,6 +40,7 @@ export class BookSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
 
   #view = null;
   #loaded = null;
+  #dragged = null;
   #tocCollapsed = setting("tocCollapsed");
   #saveBookmark = foundry.utils.debounce(pageId => game.user.update({ [`flags.${MODULE_ID}.lastPage.${this.document.id}`]: pageId }), 1000);
 
@@ -80,13 +81,81 @@ export class BookSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
     return Object.assign(context, {
       collapsed: this.#tocCollapsed,
       canCreate: this.isEditable,
+      canSort: this.isEditable,
       entries: this.#pages.map(page => ({ id: page.id, name: page.name, level: page.title?.level ?? 1 }))
     });
   }
 
   async _onFirstRender(context, options) {
     await super._onFirstRender(context, options);
-    this.element.addEventListener("keydown", event => this.#view?.onKey(event));
+    const { element } = this;
+    element.addEventListener("keydown", event => this.#onKey(event));
+    element.addEventListener("dragstart", event => this.#onDragStart(event));
+    element.addEventListener("dragover", event => this.#onDragOver(event));
+    element.addEventListener("drop", event => this.#onDrop(event));
+    element.addEventListener("dragend", () => {
+      this.#dragged = null;
+      this.#markDrop(null);
+    });
+  }
+
+  #onKey(event) {
+    const entry = event.target.closest?.(".bookbinder-toc-entry");
+    if (entry && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      return entry.click();
+    }
+    this.#view?.onKey(event);
+  }
+
+  #entryOf(event) {
+    return event.target.closest?.(".bookbinder-toc-entry[data-page-id]") ?? null;
+  }
+
+  #dropTarget(event) {
+    const entry = this.#entryOf(event);
+    return entry && this.#dragged && entry.dataset.pageId !== this.#dragged ? entry : null;
+  }
+
+  #dropsBefore(entry, event) {
+    const box = entry.getBoundingClientRect();
+    return event.clientY < box.top + box.height / 2;
+  }
+
+  #markDrop(target, event) {
+    for (const entry of this.element.querySelectorAll(".bookbinder-toc-entry")) {
+      const here = entry === target, before = here && this.#dropsBefore(entry, event);
+      entry.classList.toggle("bookbinder-drop-before", here && before);
+      entry.classList.toggle("bookbinder-drop-after", here && !before);
+    }
+  }
+
+  #onDragStart(event) {
+    const entry = this.#entryOf(event);
+    if (!entry || !this.isEditable) return;
+    this.#dragged = entry.dataset.pageId;
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", JSON.stringify(this.document.pages.get(this.#dragged).toDragData()));
+  }
+
+  #onDragOver(event) {
+    const target = this.#dropTarget(event);
+    this.#markDrop(target, event);
+    if (target) event.preventDefault();
+  }
+
+  async #onDrop(event) {
+    const target = this.#dropTarget(event);
+    if (!target) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const before = this.#dropsBefore(target, event), pages = this.document.pages;
+    const source = pages.get(this.#dragged);
+    this.#dragged = null;
+    this.#markDrop(null);
+    const siblings = pages.contents.filter(page => page !== source);
+    const updates = foundry.utils.SortingHelpers.performIntegerSort(source, { target: pages.get(target.dataset.pageId), siblings, sortBefore: before });
+    await this.document.updateEmbeddedDocuments("JournalEntryPage", updates.map(({ target: page, update }) => ({ _id: page.id, ...update })));
   }
 
   async _onRender(context, options) {

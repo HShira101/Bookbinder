@@ -124,7 +124,7 @@
 .bookbinder-toc-list li {
   margin: 0;
 }
-.bookbinder-toc .bookbinder-toc-list button {
+.bookbinder-toc .bookbinder-toc-entry {
   all: unset;
   box-sizing: border-box;
   display: block;
@@ -136,14 +136,23 @@
   overflow-wrap: anywhere;
   cursor: pointer;
 }
-.bookbinder-toc :is(.bookbinder-toc-list button, .bookbinder-toc-create):is(:hover, :focus-visible) {
+.bookbinder-toc :is(.bookbinder-toc-entry, .bookbinder-toc-create):is(:hover, :focus-visible) {
   background: rgba(255, 255, 255, .06);
   color: #fff;
 }
-.bookbinder-toc .bookbinder-toc-list button.bookbinder-active {
+.bookbinder-toc .bookbinder-toc-entry.bookbinder-active {
   border-left-color: #c9a14a;
   background: rgba(201, 161, 74, .14);
   color: #fff;
+}
+.bookbinder-toc .bookbinder-toc-entry[draggable="true"] {
+  cursor: grab;
+}
+.bookbinder-toc .bookbinder-toc-entry.bookbinder-drop-before {
+  box-shadow: inset 0 2px 0 #c9a14a;
+}
+.bookbinder-toc .bookbinder-toc-entry.bookbinder-drop-after {
+  box-shadow: inset 0 -2px 0 #c9a14a;
 }
 
 .bookbinder-stage {

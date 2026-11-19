@@ -8,7 +8,7 @@
   </header>
   <ol class="bookbinder-toc-list">
     {{#each entries}}
-    <li><button type="button" data-action="goToPage" data-page-id="{{id}}" style="--bb-level:{{level}}">{{name}}</button></li>
+    <li><a class="bookbinder-toc-entry" role="button" tabindex="0" data-action="goToPage" data-page-id="{{id}}" style="--bb-level:{{level}}"{{#if ../canSort}} draggable="true"{{/if}}>{{name}}</a></li>
     {{/each}}
   </ol>
   {{#if canCreate}}
