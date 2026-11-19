@@ -221,7 +221,7 @@ export class DesignEditor extends ShellApplication {
     this.#drawTitle();
     this.#drawNav();
     this.#drawContrast();
-    this.#showPreview();
+    this.#showPreview(this.#sheet === "main" ? {} : { focus: "sheet" });
   }
 
   #select({ section, element }) {
@@ -260,7 +260,7 @@ export class DesignEditor extends ShellApplication {
     });
     if (!answer?.name.trim()) return;
     this.#sheet = addSheet(this.#draft, answer.name.trim(), answer.from || null);
-    this.#drawAll();
+    this.#drawAll("sheet");
   }
 
   async #renameSheet() {

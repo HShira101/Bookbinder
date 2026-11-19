@@ -7,7 +7,7 @@ import { listThemes, moduleVersion } from "../theme/store.mjs";
 import { ShellApplication } from "./app.mjs";
 import { renderFields, sheetOptions } from "./fields.mjs";
 import { PreviewPane } from "./preview.mjs";
-import { COVER_TITLE_FONT, QUICK_TYPE, fieldPaths, isSheetPath, wizardFields } from "./schema.mjs";
+import { COVER_TITLE_FONT, QUICK_TYPE, wizardFields } from "./schema.mjs";
 
 const STEPS = ["Base", "Cover", "Sheets", "Typography"];
 const DEFAULT_BASE = "book";
@@ -71,12 +71,6 @@ export class DesignWizard extends ShellApplication {
     await super._onFirstRender(context, options);
     this.#preview = new PreviewPane(this.element.querySelector(".bookbinder-preview-box"));
     this.element.querySelector("[data-sheet]").addEventListener("change", event => this.#focusSheet(event.target.value));
-    const enter = event => {
-      const group = event.target.closest("[data-sheet-group]");
-      if (group && group.dataset.sheetGroup !== this.#sheet) this.#focusSheet(group.dataset.sheetGroup);
-    };
-    this.element.querySelector(".bookbinder-wizard-form").addEventListener("focusin", enter);
-    this.element.querySelector(".bookbinder-wizard-form").addEventListener("pointerdown", enter);
     this.#goTo(0, "cover");
   }
 
@@ -99,7 +93,7 @@ export class DesignWizard extends ShellApplication {
   }
 
   #sheetGroups(fields) {
-    return Object.entries(sheetsOf(this.#draft)).map(([key, sheet]) => ({ title: sheet.name, sheet: key, sheetGroup: key, removable: true, fields: fields(key) }));
+    return Object.entries(sheetsOf(this.#draft)).map(([key, sheet]) => ({ title: sheet.name, sheet: key, removable: true, fields: fields(key) }));
   }
 
   #groups() {
@@ -109,10 +103,10 @@ export class DesignWizard extends ShellApplication {
     return [
       [{ fields: [name, this.#baseField(), ...rest] }],
       [{ title: localize("Headings.background"), fields: wizardFields("background") }, { title: localize(`Types.${typeOf(draft).id}.Part`), fields: wizardFields("cover") }],
-      [{ title: localize("Wizard.MainSheet"), sheetGroup: "main", fields: wizardFields("paper") }, { title: localize("Wizard.SubSheets"), add: true, fields: [] },
+      [{ title: localize("Wizard.MainSheet"), fields: wizardFields("paper") }, { title: localize("Wizard.SubSheets"), add: true, fields: [] },
         ...this.#sheetGroups(key => [sheetName(key), ...wizardFields("paper", 2)])],
       [...(typeOf(draft).id === "book" ? [{ title: localize("Wizard.CoverTitle"), fields: [COVER_TITLE_FONT] }] : []),
-        { title: localize("Wizard.MainSheet"), sheetGroup: "main", fields: QUICK_TYPE }, ...this.#sheetGroups(() => QUICK_TYPE)]
+        { title: localize("Wizard.MainSheet"), fields: QUICK_TYPE }, ...this.#sheetGroups(() => QUICK_TYPE)]
     ][this.#step];
   }
 
@@ -129,13 +123,13 @@ export class DesignWizard extends ShellApplication {
     for (const group of this.#groups()) {
       const extra = group.add ? `<button type="button" data-action="addSheet"><i class="fa-solid fa-plus"></i> ${localize("Wizard.Add")}</button>`
         : group.removable ? `<button type="button" data-action="removeSheet" data-sheet="${escapeHTML(group.sheet)}"><i class="fa-solid fa-trash"></i> ${localize("Wizard.Remove")}</button>` : "";
-      form.insertAdjacentHTML("beforeend", `<section class="bookbinder-group"${group.sheet ? ` data-group="${escapeHTML(group.sheet)}"` : ""}${group.sheetGroup ? ` data-sheet-group="${escapeHTML(group.sheetGroup)}"` : ""}>${group.title ? `<header><h3>${escapeHTML(group.title)}</h3>${extra}</header>` : ""}<div class="bookbinder-fields"></div></section>`);
+      form.insertAdjacentHTML("beforeend", `<section class="bookbinder-group"${group.sheet ? ` data-group="${escapeHTML(group.sheet)}"` : ""}>${group.title ? `<header><h3>${escapeHTML(group.title)}</h3>${extra}</header>` : ""}<div class="bookbinder-fields"></div></section>`);
       const sheet = group.sheet ?? "main";
       renderFields(form.lastElementChild.querySelector(".bookbinder-fields"), group.fields, {
         files: this.#draft, sheet, rerender: () => this.#draw(),
-        changed: field => {
-          if (field && fieldPaths(field).some(isSheetPath)) this.#sheet = sheet;
-          this.#showPreview();
+        changed: () => {
+          if (sheet !== "main") this.#sheet = sheet;
+          this.#showPreview(sheet === "main" ? {} : { focus: "sheet" });
         }
       });
     }
