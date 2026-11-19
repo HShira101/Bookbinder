@@ -124,7 +124,7 @@ export class DesignEditor extends ShellApplication {
       const resolve = event.target.closest("[data-resolve-image]");
       if (resolve) this.#resolveImage(resolve.dataset.resolveImage);
     });
-    this.#drawAll();
+    this.#drawAll("cover");
   }
 
   _onClose(options) {
@@ -142,13 +142,13 @@ export class DesignEditor extends ShellApplication {
     return super.close(options);
   }
 
-  #drawAll() {
+  #drawAll(focus = "keep") {
     this.#sheet = validSheet(this.#draft, this.#sheet);
     this.#drawBar();
     this.#drawNav();
     this.#drawProps();
     this.#drawTitle();
-    this.#showPreview();
+    this.#showPreview({ focus });
   }
 
   #drawTitle() {
@@ -214,7 +214,7 @@ export class DesignEditor extends ShellApplication {
   }
 
   #showPreview(options = {}) {
-    this.#preview.show(this.#draft, { sheet: this.#sheet, closed: this.#section === "cover" && typeOf(this.#draft).id === "book", journal: game.journals.get(this.#journalId) ?? null, ...options });
+    this.#preview.show(this.#draft, { sheet: this.#sheet, journal: game.journals.get(this.#journalId) ?? null, ...options });
   }
 
   #touched() {
@@ -226,12 +226,10 @@ export class DesignEditor extends ShellApplication {
 
   #select({ section, element }) {
     if (!sectionIds(this.#sheet).includes(section)) return;
-    const moved = section !== this.#section;
     this.#section = section;
     if (element) this.#element = element;
     this.#drawNav();
     this.#drawProps();
-    if (moved && (section === "cover" || this.#preview.view)) this.#showPreview({ immediate: true });
   }
 
   #setSheet(key) {
@@ -239,7 +237,7 @@ export class DesignEditor extends ShellApplication {
     this.#drawBar();
     this.#drawNav();
     this.#drawProps();
-    this.#showPreview({ immediate: true });
+    this.#showPreview({ focus: "sheet", immediate: true });
   }
 
   #setJournal(id) {

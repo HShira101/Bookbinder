@@ -100,7 +100,7 @@ export class BookView {
   }
 
   get pageIds() {
-    return this.#spread < this.#layout.min ? [] : this.#sides(this.#spread).map(index => this.#pages[index]?.id).filter(Boolean);
+    return this.#spread < 0 ? [] : this.#sides(this.#spread).map(index => this.#pages[index]?.id).filter(Boolean);
   }
 
   get #book() {

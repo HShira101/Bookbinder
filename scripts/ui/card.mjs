@@ -70,7 +70,7 @@ export class DesignCard extends ShellApplication {
   }
 
   #showPreview() {
-    this.#preview.show(this.#state.result.files, { sheet: validSheet(this.#state.result.files, this.#sheet), immediate: true });
+    this.#preview.show(this.#state.result.files, { focus: "sheet", sheet: validSheet(this.#state.result.files, this.#sheet), immediate: true });
   }
 
   #draw() {

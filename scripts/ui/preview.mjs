@@ -1,6 +1,8 @@
+import { MODULE_ID } from "../constants.mjs";
 import { BookView } from "../sheet/book-view.mjs";
 import { SELECTORS } from "../theme/css.mjs";
 import { resolveTheme } from "../theme/defaults.mjs";
+import { typeOf } from "../theme/design.mjs";
 import { makeAssets } from "../theme/store.mjs";
 import { ELEMENTS } from "./schema.mjs";
 import { SAMPLE_TITLE, samplePages } from "./sample.mjs";
@@ -11,6 +13,8 @@ const AREAS = [
   [".bookbinder-folio, .bookbinder-rhead, .bookbinder-cn, .bookbinder-wm, .bookbinder-st", "ornaments"],
   [".bookbinder-pg, .bookbinder-paper", "paper"]
 ];
+
+const sheetOfPage = page => page.getFlag(MODULE_ID, "sheet") ?? "main";
 
 const depthOf = node => {
   let depth = 0;
@@ -46,6 +50,7 @@ export class PreviewPane {
   #host = null;
   #timer = null;
   #token = 0;
+  #intent = null;
 
   constructor(container, { onPick, onSpread } = {}) {
     this.#container = container;
@@ -57,9 +62,11 @@ export class PreviewPane {
     return this.#view;
   }
 
-  show(files, options = {}) {
+  show(files, { focus = "keep", sheet = "main", journal = null, immediate = false } = {}) {
     clearTimeout(this.#timer);
-    if (options.immediate) return this.#draw(files, options);
+    if (focus !== "keep") this.#intent = { focus, sheet };
+    const options = { journal };
+    if (immediate) return this.#draw(files, options);
     this.#timer = setTimeout(() => this.#draw(files, options), DEBOUNCE);
   }
 
@@ -74,17 +81,29 @@ export class PreviewPane {
     this.#host?.remove();
   }
 
-  async #draw(files, { sheet = "main", closed = false, journal = null }) {
+  #target(intent, pages, book) {
+    const visible = this.#view?.pageIds ?? [];
+    const first = pages[0]?.id;
+    if (intent.focus === "cover" && book) return undefined;
+    if (intent.focus === "sheet") {
+      const wanted = pages.filter(page => sheetOfPage(page) === intent.sheet);
+      return visible.some(id => wanted.some(page => page.id === id)) ? visible[0] : (wanted[0]?.id ?? first);
+    }
+    if (book && this.#view && !visible.length) return undefined;
+    return pages.some(page => page.id === visible[0]) ? visible[0] : first;
+  }
+
+  async #draw(files, { journal = null }) {
     const token = ++this.#token;
+    const intent = this.#intent ?? { focus: "keep", sheet: "main" };
     const host = document.createElement("div");
     host.className = "bookbinder-preview-host loading";
     this.#container.append(host);
     const theme = resolveTheme(files);
     const source = journal ?? { name: SAMPLE_TITLE(), pages: new Map() };
     const view = new BookView({ host, journal: source, theme, assets: makeAssets(files.theme.resources), onSpread: () => this.onSpread?.() });
-    const pages = journal ? journalPages(journal) : samplePages(() => (sheet in theme.sheets ? sheet : undefined));
-    const keep = closed ? undefined : (this.#view?.pageIds[0] ?? pages[0]?.id);
-    await view.open(pages, keep);
+    const pages = journal ? journalPages(journal) : samplePages(theme.sheetNames);
+    await view.open(pages, this.#target(intent, pages, typeOf(files).id === "book"));
     if (token !== this.#token) {
       view.destroy();
       host.remove();
@@ -92,6 +111,7 @@ export class PreviewPane {
     }
     this.#view?.destroy();
     this.#host?.remove();
+    this.#intent = null;
     host.classList.remove("loading");
     host.addEventListener("click", event => {
       const node = event.composedPath()[0];

@@ -1,4 +1,4 @@
-import { localize } from "../constants.mjs";
+import { escapeHTML, localize } from "../constants.mjs";
 import { moduleAsset } from "../theme/store.mjs";
 
 const t = key => localize(`Sample.${key}`);
@@ -16,11 +16,20 @@ const PAGES = [
   () => `<h2>${t("Chapter2")}</h2><p>${t("Prose1")}</p><p>${t("Prose2")}</p><p>${t("Prose3")}</p>`
 ];
 
-export const SAMPLE_TITLE = () => t("Title");
+const sheetPage = name => `<h1>${escapeHTML(name)}</h1><p>${t("Lead")}</p><blockquote><p>${t("Quote")}</p><cite>— ${t("QuoteBy")}</cite></blockquote>`
+  + `<ul>${items("Ul1", "Ul2", "Ul3")}</ul><table><thead>${cells("th", "Th1", "Th2", "Th3")}</thead><tbody>${cells("td", "Row11", "Row12", "Row13")}${cells("td", "Row21", "Row22", "Row23")}</tbody></table>`;
 
-export function samplePages(sheetOf) {
-  return PAGES.map((build, index) => ({
-    id: `sample${index}`, name: index === 0 ? t("Title") : [t("Chapter1"), t("ListTitle"), t("FoundryTitle"), t("Chapter2")][index - 1],
-    type: "sample", html: build(), isOwner: false, title: { show: false }, getFlag: (scope, key) => (key === "sheet" ? sheetOf(index) : undefined)
-  }));
+const page = (id, name, html, sheet) => ({
+  id, name, type: "sample", html, isOwner: false, title: { show: false }, getFlag: (scope, key) => (key === "sheet" ? sheet : undefined)
+});
+
+export const SAMPLE_TITLE = () => t("Title");
+export const sheetPageId = key => `sample-sheet-${key}`;
+
+export function samplePages(sheetNames) {
+  const names = [t("Title"), t("Chapter1"), t("ListTitle"), t("FoundryTitle"), t("Chapter2")];
+  return [
+    ...PAGES.map((build, index) => page(`sample${index}`, names[index], build())),
+    ...Object.entries(sheetNames).map(([key, name]) => page(sheetPageId(key), name, sheetPage(name), key))
+  ];
 }
