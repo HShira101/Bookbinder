@@ -7,4 +7,6 @@ export const localize = (key, data) => data
   ? game.i18n.format(`BOOKBINDER.${key}`, data)
   : game.i18n.localize(`BOOKBINDER.${key}`);
 
+export const userName = id => game.users.get(id)?.name ?? "?";
+
 export const escapeHTML = text => Handlebars.escapeExpression(text ?? "");

@@ -4,15 +4,9 @@ import { migrate } from "../scripts/theme/migrate.mjs";
 import { THEME_MIGRATIONS, upgradeFiles } from "../scripts/theme/migrations.mjs";
 import { sanitizeFiles } from "../scripts/theme/schemas/index.mjs";
 import { compareVersions, formatOf, isNewer } from "../scripts/theme/version.mjs";
-
-const results = [];
-const test = (name, fn) => results.push([name, fn]);
-const equal = (actual, expected) => {
-  if (JSON.stringify(actual) !== JSON.stringify(expected)) throw new Error(`expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
-};
-const truthy = (value, message) => {
-  if (!value) throw new Error(message);
-};
+import "./design.test.mjs";
+import "./lang.test.mjs";
+import { equal, runAll, test, truthy } from "./harness.mjs";
 
 const FORMATS = ["0.1.0", "0.3.0", "0.6.0"];
 const VERSIONS = ["0.1.0", "0.2.0", "0.3.0", "0.4.0", "0.5.0", "0.6.0"];
@@ -168,20 +162,7 @@ export async function presetTests(loadJSON, slugs) {
   }
 }
 
-export async function runAll() {
-  const out = [];
-  for (const [name, fn] of results) {
-    try {
-      await fn();
-      out.push({ name, ok: true });
-    } catch (error) {
-      out.push({ name, ok: false, message: error.message });
-    }
-  }
-  return out;
-}
-
-export { THEME_MIGRATIONS };
+export { THEME_MIGRATIONS, runAll };
 
 if (typeof process !== "undefined" && process.argv?.[1]?.endsWith("run.mjs")) {
   const { readFile, readdir } = await import("node:fs/promises");

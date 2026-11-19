@@ -1,10 +1,12 @@
 import { BOOK_SHEET_CLASS, MODULE_ID, localize } from "./constants.mjs";
 import { toggleMenu } from "./menu.mjs";
-import { listThemes, sourceOf, useTemplate } from "./theme/store.mjs";
+import { canSeeTheme } from "./permissions.mjs";
+import { applyTemplate } from "./theme/storage.mjs";
+import { listThemes, sourceOf } from "./theme/store.mjs";
 
 const journalTheme = journal => journal.getFlag(MODULE_ID, "theme") ?? null;
 
-function applyTheme(journal, theme) {
+export function applyTheme(journal, theme) {
   if (theme === journalTheme(journal)) return;
   return journal.update({
     [`flags.${MODULE_ID}.theme`]: theme,
@@ -12,9 +14,11 @@ function applyTheme(journal, theme) {
   });
 }
 
-async function menuItems(current) {
-  const { world, presets } = await listThemes();
-  const active = current && (await sourceOf(current))?.source;
+export async function menuItems(current) {
+  const listed = await listThemes();
+  const world = listed.world.filter(entry => entry.available && canSeeTheme(game.user, entry.meta));
+  const presets = listed.presets.filter(entry => entry.available);
+  const active = current && ((await sourceOf(current))?.source === "preset" ? "preset" : "world");
   const entry = (theme, source) => ({ id: `${source}:${theme.slug}`, label: theme.name, active: source === active && theme.slug === current });
   const groups = [
     [localize("Theme.WorldGroup"), world.map(theme => entry(theme, "world"))],
@@ -25,16 +29,18 @@ async function menuItems(current) {
   return items;
 }
 
+export async function applyChoice(journal, choice) {
+  const [source, slug] = choice.split(/:(.+)/);
+  return applyTheme(journal, source === "preset" ? await applyTemplate(slug) : slug || null);
+}
+
 async function showMenu(app, button) {
   const journal = app.document, current = journalTheme(journal);
   const items = await menuItems(current);
   const activeItem = items.find(item => item.active);
   toggleMenu({
     frame: app.element, anchor: button, items, current: activeItem?.id,
-    onPick: async choice => {
-      const [source, slug] = choice.split(/:(.+)/);
-      applyTheme(journal, source === "preset" ? await useTemplate(slug) : slug || null);
-    }
+    onPick: choice => applyChoice(journal, choice)
   });
 }
 

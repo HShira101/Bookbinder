@@ -18,6 +18,7 @@ const SETTINGS = {
 };
 
 export function registerSettings() {
+  game.settings.register(MODULE_ID, "permissions", { scope: "world", config: false, type: Array, default: [] });
   for (const [key, data] of Object.entries(SETTINGS)) {
     game.settings.register(MODULE_ID, key, {
       name: `BOOKBINDER.Settings.${key}.Name`,

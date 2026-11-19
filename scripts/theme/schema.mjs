@@ -1,4 +1,4 @@
-const isObject = value => value !== null && typeof value === "object" && !Array.isArray(value);
+import { isObject } from "./util.mjs";
 const NAME = /^[A-Za-z][\w-]*$/;
 
 export const color = value => typeof value === "string"
@@ -15,8 +15,9 @@ export const padding = value => [].concat(value).length >= 1 && [].concat(value)
 
 export const object = (fields, { open = false } = {}) => ({ fields, open });
 export const map = (item, keyOf = key) => ({ item, keyOf });
+export const list = (item, max = 100) => ({ list: item, max });
 
-const isNode = node => isObject(node) && ("fields" in node || "item" in node);
+const isNode = node => isObject(node) && ("fields" in node || "item" in node || "list" in node);
 
 export function sanitize(value, node, where = "", warnings = []) {
   if (!isNode(node)) {
@@ -24,6 +25,7 @@ export function sanitize(value, node, where = "", warnings = []) {
     warnings.push({ path: where, value });
     return undefined;
   }
+  if (node.list) return sanitizeList(value, node, where, warnings);
   if (!isObject(value)) {
     warnings.push({ path: where, value });
     return undefined;
@@ -36,6 +38,14 @@ export function sanitize(value, node, where = "", warnings = []) {
     if (clean !== undefined) out[name] = clean;
   }
   return out;
+}
+
+function sanitizeList(value, node, where, warnings) {
+  if (!Array.isArray(value)) {
+    warnings.push({ path: where, value });
+    return undefined;
+  }
+  return value.slice(0, node.max).map((child, index) => sanitize(child, node.list, `${where}.${index}`, warnings)).filter(child => child !== undefined);
 }
 
 export function checkStructure(files, spec) {
@@ -55,4 +65,4 @@ export function checkStructure(files, spec) {
   return { ok: true };
 }
 
-const matches = (value, type) => type === "object" ? isObject(value) : typeof value === type;
+const matches = (value, type) => (type === "object" ? isObject(value) : type === "array" ? Array.isArray(value) : typeof value === type);

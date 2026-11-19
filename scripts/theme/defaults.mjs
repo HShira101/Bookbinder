@@ -1,4 +1,4 @@
-const isObject = value => value !== null && typeof value === "object" && !Array.isArray(value);
+import { isObject } from "./util.mjs";
 
 export function merge(base, extra) {
   const out = { ...base };

@@ -1,22 +1,19 @@
 import { MODULE_ID, modulePath } from "../constants.mjs";
 import { resolveTheme } from "./defaults.mjs";
+import { pendingCount, pendingOf, typeOf } from "./design.mjs";
 import { upgradeFiles } from "./migrations.mjs";
 
-const FILES = ["theme", "styles", "effect"];
-const HIDDEN_TRANSITIONS = new Set(["roll", "shuffle"]);
-const COPY_FILES = ["styles", "effect"];
-const WORLD_FOLDERS = ["theme", "img", "assets", "assets/sounds"];
+export const THEME_FILES = ["theme", "styles", "effect"];
 const loaded = new Map();
 
-const picker = () => foundry.applications.apps.FilePicker.implementation;
-const route = path => foundry.utils.getRoute(path);
-const moduleVersion = () => game.modules.get(MODULE_ID).version;
-const sameJSON = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+export const picker = () => foundry.applications.apps.FilePicker.implementation;
+export const route = path => foundry.utils.getRoute(path);
+export const moduleVersion = () => game.modules.get(MODULE_ID).version;
 
 export const worldRoot = () => `worlds/${game.world.id}/Bookbinder_themes`;
 export const presetRoot = () => modulePath("presets");
-export const slugify = name => name.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "theme";
 export const canWrite = () => game.user.can("FILES_UPLOAD");
+export const hasFont = name => Object.hasOwn(CONFIG.fontDefinitions, name);
 
 export const resourceUrl = path => route(path.startsWith("modules/") ? path : `${worldRoot()}/${path}`);
 export const moduleAsset = file => route(modulePath(`presets/${file}`));
@@ -29,27 +26,35 @@ export const makeAssets = resources => ({
   module: moduleAsset
 });
 
-async function fetchJSON(path, fresh) {
+export async function fetchJSON(path, fresh) {
   const response = await fetch(route(path), fresh ? { cache: "no-store" } : undefined);
   if (!response.ok) throw new Error(`${path}: ${response.status}`);
   return response.json();
 }
 
-const readIndex = async root => fetchJSON(`${root}/theme/index.json`, true).then(list => (Array.isArray(list) ? list : []), () => []);
+export const readIndex = async root => fetchJSON(`${root}/theme/index.json`, true).then(list => (Array.isArray(list) ? list : []), () => []);
+
+export function pendingEntries() {
+  return game.users.contents.flatMap(user => Object.entries(user.getFlag(MODULE_ID, "pendingThemes") ?? {}).map(([slug, files]) => ({ slug, files, userId: user.id })));
+}
 
 async function themeSources() {
   const [world, presets] = await Promise.all([readIndex(worldRoot()), readIndex(presetRoot())]);
-  return { world, presets };
+  return { world, presets, pending: pendingEntries() };
 }
 
 export async function sourceOf(slug) {
-  const { world, presets } = await themeSources();
+  const { world, presets, pending } = await themeSources();
   if (world.includes(slug)) return { source: "world", root: worldRoot() };
-  return presets.includes(slug) ? { source: "preset", root: presetRoot() } : null;
+  if (presets.includes(slug)) return { source: "preset", root: presetRoot() };
+  const entry = pending.find(candidate => candidate.slug === slug);
+  return entry ? { source: "pending", files: entry.files } : null;
 }
 
-async function readFiles(root, slug) {
-  const entries = await Promise.all(FILES.map(async name => [name, await fetchJSON(`${root}/theme/${slug}/${name}.json`, true)]));
+export const worldLocation = () => ({ source: "world", root: worldRoot() });
+
+export async function readFiles(root, slug) {
+  const entries = await Promise.all(THEME_FILES.map(async name => [name, await fetchJSON(`${root}/theme/${slug}/${name}.json`, true)]));
   return Object.fromEntries(entries);
 }
 
@@ -67,11 +72,11 @@ function localizePreset(slug, files) {
   };
 }
 
-async function readTheme(slug, location = null) {
+export async function readTheme(slug, location = null) {
   location ??= await sourceOf(slug);
   if (!location) return { ok: false, slug, reason: "missing" };
   try {
-    const result = upgradeFiles(await readFiles(location.root, slug), moduleVersion());
+    const result = upgradeFiles(location.files ?? await readFiles(location.root, slug), moduleVersion());
     if (!result.ok) return { ok: false, slug, reason: result.newer ? "newer" : "invalid", detail: result };
     const files = location.source === "preset" ? localizePreset(slug, result.files) : result.files;
     return { ok: true, slug, source: location.source, files, warnings: result.warnings, theme: resolveTheme(files) };
@@ -95,79 +100,25 @@ export function reportProblems(result) {
   if (key) ui.notifications.warn(game.i18n.format(`BOOKBINDER.${key}`, { slug: result.slug, count: result.ok ? result.warnings.length : 0 }));
 }
 
+export function entryOf(result) {
+  const type = typeOf(result.files);
+  return { slug: result.slug, name: result.theme.meta.name, source: result.source, meta: result.files.theme, files: result.files, type: type.id, available: type.available, pending: pendingOf(result.files, hasFont) };
+}
+
+export const countPending = entry => pendingCount(entry.pending);
+
+async function readEntries(slugs, location) {
+  const results = await Promise.all(slugs.map(slug => readTheme(slug, location(slug))));
+  return results.filter(result => result.ok).map(entryOf);
+}
+
 export async function listThemes() {
-  const { world, presets } = await themeSources();
-  const read = async (slug, location) => {
-    const result = await readTheme(slug, location);
-    return result.ok && !HIDDEN_TRANSITIONS.has(result.theme.effect.transition.type) ? { slug, name: result.theme.meta.name, source: location.source } : null;
-  };
-  const [own, templates] = await Promise.all([
-    Promise.all(world.map(slug => read(slug, { source: "world", root: worldRoot() }))),
-    Promise.all(presets.map(slug => read(slug, { source: "preset", root: presetRoot() })))
+  const { world, presets, pending } = await themeSources();
+  const pendingOnly = pending.filter(entry => !world.includes(entry.slug));
+  const [own, queued, templates] = await Promise.all([
+    readEntries(world, () => worldLocation()),
+    readEntries(pendingOnly.map(entry => entry.slug), slug => ({ source: "pending", files: pendingOnly.find(entry => entry.slug === slug).files })),
+    readEntries(presets, () => ({ source: "preset", root: presetRoot() }))
   ]);
-  return { world: own.filter(Boolean), presets: templates.filter(Boolean) };
-}
-
-async function directoryExists(path) {
-  try {
-    await picker().browse("data", path);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function ensureDirectory(path) {
-  if (!(await directoryExists(path))) await picker().createDirectory("data", path);
-}
-
-async function uploadJSON(directory, name, data) {
-  const file = new File([JSON.stringify(data, null, 2)], name, { type: "application/json" });
-  await picker().upload("data", directory, file, {}, { notify: false });
-}
-
-export async function ensureWorldFolders() {
-  if (!game.user.isGM) return;
-  const root = worldRoot();
-  await ensureDirectory(root);
-  for (const folder of WORLD_FOLDERS) await ensureDirectory(`${root}/${folder}`);
-  if (!(await fetch(route(`${root}/theme/index.json`), { cache: "no-store" })).ok) await uploadJSON(`${root}/theme`, "index.json", []);
-}
-
-async function takenSlugs(root) {
-  const listing = await picker().browse("data", `${root}/theme`).catch(() => ({ dirs: [] }));
-  return new Set([...listing.dirs.map(dir => decodeURIComponent(dir.split("/").at(-1))), ...(await readIndex(root))]);
-}
-
-async function uniqueSlug(name) {
-  const taken = await takenSlugs(worldRoot());
-  const base = slugify(name);
-  let slug = base;
-  for (let n = 2; taken.has(slug); n++) slug = `${base}-${n}`;
-  return slug;
-}
-
-async function findPristineCopy(template, world) {
-  for (const slug of world) {
-    const copy = await readTheme(slug, { source: "world", root: worldRoot() });
-    if (copy.ok && COPY_FILES.every(name => sameJSON(copy.files[name], template.files[name])) && sameJSON(copy.files.theme.resources, template.files.theme.resources)) return slug;
-  }
-  return null;
-}
-
-export async function useTemplate(slug) {
-  const template = await loadTheme(slug);
-  if (!template.ok || template.source !== "preset" || !canWrite()) return slug;
-  const { world } = await themeSources();
-  const existing = await findPristineCopy(template, world);
-  if (existing) return existing;
-  const copySlug = await uniqueSlug(template.files.theme.name);
-  const directory = `${worldRoot()}/theme/${copySlug}`;
-  await ensureDirectory(directory);
-  const meta = { ...template.files.theme, author: { id: game.user.id, name: game.user.name }, visibility: "all", moduleVersion: moduleVersion(), updatedBy: game.user.id, updatedAt: Date.now() };
-  await uploadJSON(directory, "theme.json", meta);
-  for (const name of COPY_FILES) await uploadJSON(directory, `${name}.json`, template.files[name]);
-  await uploadJSON(`${worldRoot()}/theme`, "index.json", [...(await readIndex(worldRoot())), copySlug]);
-  forgetTheme(copySlug);
-  return copySlug;
+  return { world: [...own, ...queued], presets: templates };
 }

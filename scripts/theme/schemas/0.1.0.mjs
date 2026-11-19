@@ -1,4 +1,4 @@
-import { bool, color, family, int, key, map, num, object, oneOf, padding, path, text } from "../schema.mjs";
+import { bool, color, family, int, key, list, map, num, object, oneOf, padding, path, text } from "../schema.mjs";
 
 const border = object({ width: num(0, 20), color, style: oneOf("solid", "dashed", "dotted", "double") });
 const shadows = oneOf("none", "soft", "medium", "strong", "glow", "emboss");
@@ -71,7 +71,8 @@ export const values = {
     typography: TYPOGRAPHY,
     elements: object(ELEMENTS),
     ornaments: object(ORNAMENTS),
-    sheets: map(object({ name: text(60), ...SHEET_PARTS }))
+    sheets: map(object({ name: text(60), ...SHEET_PARTS })),
+    retiredSheets: list(key, 200)
   }),
   effect: object({
     transition: object({
@@ -89,6 +90,6 @@ export const values = {
 
 export const structure = {
   theme: { required: { name: "string", resources: "object" }, optional: { author: "object", visibility: "string", moduleVersion: "string", importedFrom: "string", updatedBy: "string", updatedAt: "number" } },
-  styles: { required: { palette: "object", surfaces: "object", typography: "object", elements: "object", ornaments: "object" }, optional: { sheets: "object" } },
+  styles: { required: { palette: "object", surfaces: "object", typography: "object", elements: "object", ornaments: "object" }, optional: { sheets: "object", retiredSheets: "array" } },
   effect: { required: { transition: "object" }, optional: { sound: "object", layout: "object", navigation: "object", toc: "object", pagination: "object" } }
 };

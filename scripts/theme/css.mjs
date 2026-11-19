@@ -1,6 +1,6 @@
 const TEXT_SHADOW = { none: "none", soft: "0 1px 1px rgba(0,0,0,.28)", medium: "0 1px 3px rgba(0,0,0,.5)", strong: "0 2px 5px rgba(0,0,0,.75)", glow: "0 0 5px currentColor,0 0 15px currentColor", emboss: "0 1px 0 rgba(255,255,255,.3),0 -1px 0 rgba(0,0,0,.45)" };
 const BOX_SHADOW = { none: "none", soft: "0 1px 4px rgba(0,0,0,.28)", medium: "0 3px 9px rgba(0,0,0,.42)", strong: "0 16px 38px rgba(0,0,0,.65),0 3px 8px rgba(0,0,0,.5)", glow: "0 0 12px var(--bb-pal-accent)", emboss: "none" };
-const SELECTORS = {
+export const SELECTORS = {
   h1: "h1", h2: "h2", h3: "h3", h4: "h4", h5: "h5", h6: "h6", p: "p", strong: "strong", em: "em", u: "u", s: "s", a: "a:not([class])", code: "code",
   blockquote: "blockquote", cite: "cite", ul: "ul", ol: "ol", li: "li", hr: "hr", table: "table", contentLink: "a.content-link", inlineRoll: "a.inline-roll",
   secret: "section.secret", img: "img", figcaption: "figcaption"

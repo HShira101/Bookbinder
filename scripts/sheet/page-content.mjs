@@ -20,6 +20,7 @@ const BODY = {
     secrets: page.isOwner,
     relativeTo: page
   })),
+  sample: page => both(page.html),
   image: page => both(`<figure class="bookbinder-figure"><img src="${escapeHTML(page.src)}" alt="${escapeHTML(page.name)}">`
     + (page.image?.caption ? `<figcaption>${escapeHTML(page.image.caption)}</figcaption>` : "") + "</figure>"),
   video: page => ({

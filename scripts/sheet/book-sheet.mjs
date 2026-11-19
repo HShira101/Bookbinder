@@ -18,6 +18,12 @@ export class BookSheet extends JournalEntrySheet {
     for (const app of BookSheet.#instancesOf(journal)) app.#reload();
   }
 
+  static reloadSlug(slug) {
+    for (const app of foundry.applications.instances.values()) {
+      if (app instanceof BookSheet && app.document.getFlag(MODULE_ID, "theme") === slug) app.#reload();
+    }
+  }
+
   static refreshPage(page) {
     for (const app of BookSheet.#instancesOf(page.parent)) {
       app.#view?.invalidate(page.id);
