@@ -13,8 +13,15 @@ export const moduleVersion = () => game.modules.get(MODULE_ID).version;
 export const worldRoot = () => `worlds/${game.world.id}/Bookbinder_themes`;
 export const presetRoot = () => modulePath("presets");
 export const canWrite = () => game.user.can("FILES_UPLOAD");
-export const hasFont = name => Object.hasOwn(CONFIG.fontDefinitions, name);
-export const fontNames = () => Object.keys(CONFIG.fontDefinitions).sort((a, b) => a.localeCompare(b));
+const worldFonts = () => {
+  try {
+    return Object.keys(game.settings.get("core", foundry.applications.settings.menus.FontConfig.SETTING) ?? {});
+  } catch {
+    return [];
+  }
+};
+export const fontNames = () => [...new Set([...Object.keys(CONFIG.fontDefinitions), ...worldFonts()])].sort((a, b) => a.localeCompare(b));
+export const hasFont = name => fontNames().includes(name);
 
 export const dataPath = path => (/^(?:img|assets)\//.test(path) ? `${worldRoot()}/${path}` : path);
 export const resourceUrl = path => route(dataPath(path));
