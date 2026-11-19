@@ -1,4 +1,4 @@
-import { escapeHTML, localize } from "../constants.mjs";
+import { escapeHTML, localize, worldJournals } from "../constants.mjs";
 import { canCreateThemes, canDeleteTheme, canEditTheme, canSeeTheme } from "../permissions.mjs";
 import { setting } from "../settings.mjs";
 import { pendingCount } from "../theme/design.mjs";
@@ -35,7 +35,7 @@ function themeOptions(items, { keep = false } = {}) {
 }
 
 async function showUses(slug) {
-  const journals = game.journals.filter(journal => usesTheme(journal, slug));
+  const journals = worldJournals().filter(journal => usesTheme(journal, slug));
   const rows = await Promise.all(journals.map(async journal => `<div class="form-group"><label>${escapeHTML(journal.name)}</label><select name="journal-${journal.id}">${themeOptions(await menuItems(slug))}</select></div>`));
   const idle = (await menuItems(slug)).map(item => ({ ...item, active: false }));
   const everything = `<div class="form-group"><label>${localize("Manager.ChangeAll")}</label><select name="all">${themeOptions(idle, { keep: true })}</select></div>`;

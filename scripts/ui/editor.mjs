@@ -1,4 +1,4 @@
-import { escapeHTML, localize, userName } from "../constants.mjs";
+import { escapeHTML, localize, userName, worldJournals } from "../constants.mjs";
 import { canEditTheme } from "../permissions.mjs";
 import { setting } from "../settings.mjs";
 import { addSheet, clone, contrastRatio, fingerprint, getPath, isDirty, pendingCount, pendingOf, removeSheet, replaceFont, resolveColor, sheetKeys, sheetsOf, stamp, typeOf, useImage, usedFonts, validSheet } from "../theme/design.mjs";
@@ -164,7 +164,7 @@ export class DesignEditor extends ShellApplication {
   #drawBar() {
     const root = this.element;
     root.querySelector("[data-sheet]").innerHTML = sheetOptions(this.#draft, this.#sheet);
-    const journals = game.journals.filter(journal => journal.testUserPermission(game.user, "OBSERVER"));
+    const journals = worldJournals().filter(journal => journal.testUserPermission(game.user, "OBSERVER"));
     root.querySelector("[data-journal]").innerHTML = options([["", localize("Editor.SampleText")], ...journals.map(journal => [journal.id, journal.name])], this.#journalId);
     root.querySelectorAll("[data-sub]").forEach(node => { node.hidden = this.#sheet === "main"; });
   }
@@ -217,7 +217,7 @@ export class DesignEditor extends ShellApplication {
   }
 
   #showPreview(options = {}) {
-    this.#preview.show(this.#draft, { sheet: this.#sheet, journal: game.journals.get(this.#journalId) ?? null, ...options });
+    this.#preview.show(this.#draft, { sheet: this.#sheet, journal: worldJournals().get(this.#journalId) ?? null, ...options });
   }
 
   #touched() {
@@ -277,7 +277,7 @@ export class DesignEditor extends ShellApplication {
   }
 
   async #deleteSheet() {
-    const key = this.#sheet, pages = countSheetPages([...game.journals], this.#slug, key);
+    const key = this.#sheet, pages = countSheetPages([...worldJournals()], this.#slug, key);
     const content = pages
       ? `<div class="bookbinder-notice"><i class="fa-solid fa-book"></i><div>${localize("Editor.SheetUsed", { count: pages })}</div></div><p class="notes">${localize("Editor.SheetUsedHelp")}</p>`
       : `<p>${localize("Editor.SheetUnused")}</p>`;

@@ -1,4 +1,4 @@
-import { MODULE_ID } from "../constants.mjs";
+import { MODULE_ID, worldJournals } from "../constants.mjs";
 
 const THEME_FIELD = `flags.${MODULE_ID}.theme`;
 
@@ -25,7 +25,7 @@ async function compendiumUses(slug) {
 }
 
 export async function findUsage(slug) {
-  const worldUses = game.journals.filter(journal => usesTheme(journal, slug)).map(journal => ({ uuid: journal.uuid, name: journal.name, compendium: false }));
+  const worldUses = worldJournals().filter(journal => usesTheme(journal, slug)).map(journal => ({ uuid: journal.uuid, name: journal.name, compendium: false }));
   const { uses, unchecked } = await compendiumUses(slug);
   return { journals: [...worldUses, ...uses], count: worldUses.length + uses.length, unchecked };
 }

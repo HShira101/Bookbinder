@@ -10,3 +10,5 @@ export const localize = (key, data) => data
 export const userName = id => game.users.get(id)?.name ?? "?";
 
 export const escapeHTML = text => Handlebars.escapeExpression(text ?? "");
+
+export const worldJournals = () => game.collections.get("JournalEntry");
