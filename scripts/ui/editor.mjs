@@ -226,10 +226,12 @@ export class DesignEditor extends ShellApplication {
 
   #select({ section, element }) {
     if (!sectionIds(this.#sheet).includes(section)) return;
+    const entering = section === "cover" && this.#section !== "cover";
     this.#section = section;
     if (element) this.#element = element;
     this.#drawNav();
     this.#drawProps();
+    if (entering) this.#showPreview({ focus: "cover", immediate: true });
   }
 
   #setSheet(key) {

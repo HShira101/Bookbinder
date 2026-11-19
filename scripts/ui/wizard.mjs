@@ -11,6 +11,7 @@ import { COVER_TITLE_FONT, QUICK_TYPE, wizardFields } from "./schema.mjs";
 
 const STEPS = ["Base", "Cover", "Sheets", "Typography"];
 const DEFAULT_BASE = "book";
+const COVER_STEP = 1;
 
 const skeleton = () => `
 <ol class="bookbinder-steps"></ol>
@@ -146,7 +147,7 @@ export class DesignWizard extends ShellApplication {
     this.#preview.show(this.#draft, { sheet: validSheet(this.#draft, this.#sheet), ...options });
   }
 
-  #goTo(step, focus = "keep") {
+  #goTo(step, focus = step === COVER_STEP && typeOf(this.#draft).id === "book" ? "cover" : "keep") {
     this.#step = Math.max(0, Math.min(STEPS.length - 1, step));
     this.#draw();
     this.#showPreview({ focus, immediate: true });
