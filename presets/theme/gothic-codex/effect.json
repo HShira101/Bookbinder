@@ -1,0 +1,16 @@
+{
+  "transition": {
+    "type": "flip3d",
+    "durationMs": 1050,
+    "easing": "smooth",
+    "leafShadow": 0.42,
+    "bend": 0.22
+  },
+  "layout": {
+    "mode": "auto",
+    "minSpreadWidth": 900
+  },
+  "pagination": {
+    "mode": "perPage"
+  }
+}

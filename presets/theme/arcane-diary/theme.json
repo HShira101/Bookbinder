@@ -1,0 +1,55 @@
+{
+  "name": "Arcane Diary",
+  "author": {
+    "id": "bookbinder",
+    "name": "Bookbinder"
+  },
+  "visibility": "all",
+  "moduleVersion": "0.2.0",
+  "resources": {
+    "images": {
+      "cover": {
+        "path": "modules/bookbinder/presets/img/arcane-diary/cover.svg",
+        "status": "ready"
+      },
+      "stars": {
+        "path": "modules/bookbinder/presets/img/arcane-diary/stars.svg",
+        "status": "ready"
+      },
+      "endpaper": {
+        "path": "modules/bookbinder/presets/img/arcane-diary/endpaper.svg",
+        "status": "ready"
+      },
+      "circle": {
+        "path": "modules/bookbinder/presets/img/arcane-diary/circle.svg",
+        "status": "ready"
+      },
+      "figure": {
+        "path": "modules/bookbinder/presets/img/arcane-diary/figure.svg",
+        "status": "ready"
+      },
+      "grimoirePaper": {
+        "path": "modules/bookbinder/presets/img/arcane-diary/grimoire-paper.svg",
+        "status": "ready"
+      },
+      "grimoireSigil": {
+        "path": "modules/bookbinder/presets/img/arcane-diary/grimoire-sigil.svg",
+        "status": "ready"
+      }
+    },
+    "fonts": {
+      "Amiri": {
+        "status": "ready"
+      },
+      "Courier New": {
+        "status": "ready"
+      },
+      "Modesto Condensed": {
+        "status": "ready"
+      },
+      "Signika": {
+        "status": "ready"
+      }
+    }
+  }
+}

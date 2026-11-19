@@ -1,0 +1,369 @@
+{
+  "palette": {
+    "ink": "#2e2218",
+    "inkSoft": "#5c452e",
+    "accent": "#9e2b25",
+    "accentSoft": "#701d19",
+    "metal": "#b08d3f",
+    "paper": "#efe6cf",
+    "cover": "#7a1c1c"
+  },
+  "surfaces": {
+    "background": {
+      "color": "#0c0707",
+      "highlight": "#2a1516"
+    },
+    "cover": {
+      "color": "$cover",
+      "image": "cover",
+      "texture": "none",
+      "width": 14,
+      "radius": 3,
+      "shadow": "strong"
+    },
+    "endpaper": {
+      "color": "#e9dfc4",
+      "image": "flecks",
+      "fit": "repeat",
+      "noise": 0.3
+    },
+    "paper": {
+      "color": "$paper",
+      "image": "fibers",
+      "fit": "repeat",
+      "imageOpacity": 0.85,
+      "noise": 0.3,
+      "vignette": 0.1,
+      "frame": {
+        "enabled": true,
+        "color": "rgba(176,141,63,.6)",
+        "double": true,
+        "inset": 13
+      }
+    },
+    "spine": {
+      "shadow": 0.5,
+      "width": 90
+    }
+  },
+  "typography": {
+    "base": {
+      "font": "Amiri",
+      "fallback": "Signika",
+      "size": 14.5,
+      "lineHeight": 1.55,
+      "color": "$ink",
+      "generic": "serif"
+    }
+  },
+  "elements": {
+    "h1": {
+      "size": 31,
+      "weight": 800,
+      "color": "$accentSoft",
+      "align": "center",
+      "letterSpacing": 0.08,
+      "lineHeight": 1.25
+    },
+    "h2": {
+      "size": 20,
+      "weight": 800,
+      "color": "$accentSoft",
+      "letterSpacing": 0.08,
+      "borderBottom": {
+        "width": 2,
+        "color": "$accent"
+      },
+      "marginBottom": 8
+    },
+    "h3": {
+      "size": 16,
+      "weight": 800,
+      "color": "$accentSoft",
+      "letterSpacing": 0.12,
+      "borderBottom": {
+        "width": 1,
+        "color": "$metal"
+      }
+    },
+    "h4": {
+      "size": 15.5,
+      "weight": 600,
+      "color": "$accent"
+    },
+    "h5": {
+      "size": 12,
+      "weight": 600,
+      "transform": "uppercase",
+      "letterSpacing": 0.18,
+      "color": "$inkSoft"
+    },
+    "h6": {
+      "size": 14,
+      "weight": 400,
+      "style": "italic",
+      "color": "$inkSoft"
+    },
+    "strong": {
+      "weight": 800,
+      "color": "$accentSoft"
+    },
+    "em": {
+      "style": "italic"
+    },
+    "u": {
+      "underline": "solid"
+    },
+    "s": {
+      "color": "$inkSoft"
+    },
+    "a": {
+      "color": "$accent",
+      "underline": "solid"
+    },
+    "code": {
+      "font": "Courier New",
+      "fallback": "Signika",
+      "size": 13,
+      "background": "rgba(158,43,37,.09)",
+      "color": "$accentSoft",
+      "generic": "monospace"
+    },
+    "blockquote": {
+      "style": "italic",
+      "color": "$inkSoft",
+      "borderLeft": {
+        "width": 3,
+        "color": "$accent"
+      }
+    },
+    "cite": {
+      "color": "$accentSoft",
+      "letterSpacing": 0.08
+    },
+    "ul": {
+      "bullet": "◆",
+      "bulletColor": "$accent"
+    },
+    "ol": {
+      "numbering": "decimal",
+      "bulletColor": "$accent"
+    },
+    "hr": {
+      "type": "ornament",
+      "symbol": "❖",
+      "color": "$metal",
+      "length": 60
+    },
+    "table": {
+      "header": {
+        "size": 11,
+        "weight": 600,
+        "transform": "uppercase",
+        "letterSpacing": 0.1,
+        "color": "$inkSoft",
+        "borderBottom": {
+          "width": 1.5,
+          "color": "$metal"
+        }
+      },
+      "cell": {
+        "borderBottom": {
+          "width": 1,
+          "color": "rgba(90,62,30,.3)"
+        }
+      }
+    },
+    "contentLink": {
+      "color": "$accentSoft",
+      "background": "rgba(255,250,235,.55)",
+      "border": {
+        "width": 1,
+        "color": "$accent"
+      }
+    },
+    "inlineRoll": {
+      "color": "#fff7e6",
+      "background": "$accent",
+      "border": {
+        "width": 1,
+        "color": "$accentSoft"
+      }
+    },
+    "secret": {
+      "background": "rgba(158,43,37,.07)",
+      "borderLeft": {
+        "width": 3,
+        "color": "$accent"
+      }
+    },
+    "img": {
+      "border": {
+        "width": 2,
+        "color": "$metal"
+      },
+      "shadow": "soft"
+    },
+    "figcaption": {
+      "color": "$inkSoft"
+    },
+    "dropCap": {
+      "enabled": false
+    }
+  },
+  "ornaments": {
+    "coverTitle": {
+      "layout": "label",
+      "font": "Amiri",
+      "fallback": "Signika",
+      "size": 21,
+      "weight": 600,
+      "color": "#2e2218",
+      "letterSpacing": 0.14,
+      "generic": "serif"
+    },
+    "watermark": {
+      "type": "text",
+      "text": "録",
+      "font": "Modesto Condensed",
+      "size": 250,
+      "color": "$accentSoft",
+      "opacity": 0.055
+    },
+    "folio": {
+      "format": "· {n} ·",
+      "color": "$inkSoft",
+      "letterSpacing": 0.3
+    },
+    "corners": {
+      "style": "none"
+    }
+  },
+  "sheets": {
+    "letter": {
+      "name": "Washi Letter",
+      "paper": {
+        "color": "#f6f0e0",
+        "imageOpacity": 1,
+        "noise": 0.2,
+        "vignette": 0,
+        "frame": {
+          "enabled": false
+        },
+        "inset": 20,
+        "tilt": 0.8
+      },
+      "typography": {
+        "base": {
+          "font": "Amiri",
+          "fallback": "Signika",
+          "size": 15.5,
+          "lineHeight": 1.6,
+          "color": "#2a2019",
+          "style": "italic",
+          "generic": "cursive"
+        }
+      },
+      "elements": {
+        "h1": {
+          "font": "Amiri",
+          "size": 26,
+          "weight": 600,
+          "align": "left",
+          "letterSpacing": 0.02,
+          "style": "italic"
+        },
+        "h2": {
+          "font": "Amiri",
+          "size": 20,
+          "weight": 600,
+          "borderBottom": {
+            "width": 0,
+            "color": "$accent"
+          },
+          "style": "italic"
+        },
+        "h3": {
+          "borderBottom": {
+            "width": 0,
+            "color": "$metal"
+          }
+        }
+      },
+      "ornaments": {
+        "watermark": {
+          "type": "none"
+        },
+        "folio": {
+          "format": ""
+        },
+        "stamp": {
+          "resource": "hanko",
+          "size": 46,
+          "position": "bottom right",
+          "offsetX": 30,
+          "offsetY": 30,
+          "opacity": 0.9,
+          "tilt": -4
+        }
+      }
+    },
+    "edict": {
+      "name": "Imperial Edict",
+      "paper": {
+        "color": "#f3e7c4",
+        "image": "flecks",
+        "imageOpacity": 0.9,
+        "noise": 0.3,
+        "vignette": 0.18,
+        "frame": {
+          "enabled": true,
+          "color": "#9e2b25",
+          "double": true,
+          "inset": 16,
+          "width": 2
+        }
+      },
+      "elements": {
+        "h1": {
+          "size": 36
+        },
+        "h2": {
+          "align": "center",
+          "size": 23,
+          "borderBottom": {
+            "width": 0,
+            "color": "$accent"
+          }
+        },
+        "h3": {
+          "align": "center",
+          "borderBottom": {
+            "width": 0,
+            "color": "$metal"
+          }
+        }
+      },
+      "ornaments": {
+        "folio": {
+          "format": ""
+        },
+        "watermark": {
+          "type": "image",
+          "resource": "hanko",
+          "size": 58,
+          "opacity": 0.09
+        },
+        "stamp": {
+          "resource": "hanko",
+          "size": 62,
+          "position": "bottom right",
+          "offsetX": 36,
+          "offsetY": 42,
+          "opacity": 0.92,
+          "tilt": 3
+        }
+      }
+    }
+  }
+}

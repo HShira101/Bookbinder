@@ -1,0 +1,32 @@
+{
+  "name": "Sheet",
+  "author": {
+    "id": "bookbinder",
+    "name": "Bookbinder"
+  },
+  "visibility": "all",
+  "moduleVersion": "0.2.0",
+  "resources": {
+    "images": {
+      "figure": {
+        "path": "modules/bookbinder/presets/img/sheet/figure.svg",
+        "status": "ready"
+      },
+      "seal": {
+        "path": "modules/bookbinder/presets/img/common/seal.svg",
+        "status": "ready"
+      }
+    },
+    "fonts": {
+      "Amiri": {
+        "status": "ready"
+      },
+      "Courier New": {
+        "status": "ready"
+      },
+      "Signika": {
+        "status": "ready"
+      }
+    }
+  }
+}

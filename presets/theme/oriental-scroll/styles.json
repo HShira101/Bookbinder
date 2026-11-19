@@ -1,0 +1,228 @@
+{
+  "palette": {
+    "ink": "#2e2218",
+    "inkSoft": "#5c452e",
+    "accent": "#9e2b25",
+    "accentSoft": "#701d19",
+    "metal": "#b08d3f",
+    "paper": "#efe6d0",
+    "cover": "#3a1a12"
+  },
+  "surfaces": {
+    "background": {
+      "color": "#090606",
+      "highlight": "#241a17"
+    },
+    "cover": {
+      "color": "$cover",
+      "texture": "none",
+      "width": 0,
+      "radius": 0,
+      "shadow": "none"
+    },
+    "mount": {
+      "color": "#1d2a4a",
+      "image": "band",
+      "line": "$metal",
+      "rod": "#7a2a1c"
+    },
+    "paper": {
+      "color": "$paper",
+      "image": "fibers",
+      "fit": "repeat",
+      "imageOpacity": 0.9,
+      "noise": 0.3,
+      "vignette": 0.12,
+      "frame": {
+        "enabled": false
+      }
+    },
+    "spine": {
+      "shadow": 0,
+      "width": 0
+    }
+  },
+  "typography": {
+    "base": {
+      "font": "Amiri",
+      "fallback": "Signika",
+      "size": 15,
+      "lineHeight": 1.6,
+      "color": "$ink",
+      "generic": "serif"
+    }
+  },
+  "elements": {
+    "h1": {
+      "font": "Modesto Condensed",
+      "size": 40,
+      "weight": 400,
+      "color": "$ink",
+      "align": "center",
+      "letterSpacing": 0.1,
+      "lineHeight": 1.25
+    },
+    "h2": {
+      "font": "Modesto Condensed",
+      "size": 24,
+      "weight": 400,
+      "color": "$accentSoft",
+      "borderBottom": {
+        "width": 1,
+        "color": "$accent"
+      },
+      "marginBottom": 8
+    },
+    "h3": {
+      "size": 17,
+      "weight": 800,
+      "color": "$accentSoft",
+      "letterSpacing": 0.1
+    },
+    "h4": {
+      "size": 15.5,
+      "weight": 600,
+      "color": "$accent"
+    },
+    "h5": {
+      "size": 12,
+      "weight": 600,
+      "transform": "uppercase",
+      "letterSpacing": 0.18,
+      "color": "$inkSoft"
+    },
+    "h6": {
+      "size": 14,
+      "weight": 400,
+      "style": "italic",
+      "color": "$inkSoft"
+    },
+    "strong": {
+      "weight": 800,
+      "color": "$accentSoft"
+    },
+    "em": {
+      "style": "italic"
+    },
+    "u": {
+      "underline": "solid"
+    },
+    "s": {
+      "color": "$inkSoft"
+    },
+    "a": {
+      "color": "$accent",
+      "underline": "solid"
+    },
+    "code": {
+      "font": "Courier New",
+      "fallback": "Signika",
+      "size": 13,
+      "background": "rgba(158,43,37,.09)",
+      "color": "$accentSoft",
+      "generic": "monospace"
+    },
+    "blockquote": {
+      "style": "italic",
+      "color": "$inkSoft",
+      "borderLeft": {
+        "width": 3,
+        "color": "$accent"
+      }
+    },
+    "cite": {
+      "color": "$accentSoft"
+    },
+    "ul": {
+      "bullet": "◆",
+      "bulletColor": "$accent"
+    },
+    "ol": {
+      "numbering": "decimal",
+      "bulletColor": "$accent"
+    },
+    "hr": {
+      "type": "ornament",
+      "symbol": "〜",
+      "color": "$accent",
+      "length": 50
+    },
+    "table": {
+      "header": {
+        "size": 11,
+        "weight": 600,
+        "transform": "uppercase",
+        "letterSpacing": 0.1,
+        "color": "$inkSoft",
+        "borderBottom": {
+          "width": 1.5,
+          "color": "$metal"
+        }
+      },
+      "cell": {
+        "borderBottom": {
+          "width": 1,
+          "color": "rgba(90,62,30,.3)"
+        }
+      }
+    },
+    "contentLink": {
+      "color": "$accentSoft",
+      "background": "rgba(255,250,235,.55)",
+      "border": {
+        "width": 1,
+        "color": "$accent"
+      }
+    },
+    "inlineRoll": {
+      "color": "#fff7e6",
+      "background": "$accent",
+      "border": {
+        "width": 1,
+        "color": "$accentSoft"
+      }
+    },
+    "secret": {
+      "background": "rgba(158,43,37,.07)",
+      "borderLeft": {
+        "width": 3,
+        "color": "$accent"
+      }
+    },
+    "img": {
+      "border": {
+        "width": 0,
+        "color": "transparent"
+      },
+      "shadow": "none"
+    },
+    "figcaption": {
+      "color": "$inkSoft"
+    },
+    "dropCap": {
+      "enabled": false
+    }
+  },
+  "ornaments": {
+    "watermark": {
+      "type": "text",
+      "text": "巻",
+      "font": "Modesto Condensed",
+      "size": 330,
+      "color": "$accentSoft",
+      "opacity": 0.045
+    },
+    "stamp": {
+      "resource": "hanko",
+      "size": 54,
+      "position": "bottom right",
+      "offsetX": 60,
+      "offsetY": 64,
+      "opacity": 0.92,
+      "tilt": -3
+    },
+    "corners": {
+      "style": "none"
+    }
+  }
+}

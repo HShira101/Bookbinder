@@ -1,0 +1,571 @@
+{
+  "palette": {
+    "ink": "#26282b",
+    "inkSoft": "#646a70",
+    "accent": "#34506b",
+    "accentSoft": "#7d93a8",
+    "metal": "#8b8f94",
+    "paper": "#f4f1e8",
+    "cover": "#33302c"
+  },
+  "surfaces": {
+    "background": {
+      "color": "#0c0b0a",
+      "highlight": "#33302c"
+    },
+    "cover": {
+      "color": "$cover",
+      "texture": "none",
+      "width": 22,
+      "radius": 0,
+      "shadow": "none"
+    },
+    "paper": {
+      "color": "$paper",
+      "noise": 0.25,
+      "vignette": 0.05,
+      "frame": {
+        "enabled": false
+      }
+    },
+    "spine": {
+      "shadow": 0,
+      "width": 0
+    }
+  },
+  "typography": {
+    "base": {
+      "font": "Amiri",
+      "fallback": "Signika",
+      "size": 15,
+      "lineHeight": 1.5,
+      "color": "$ink",
+      "generic": "serif"
+    }
+  },
+  "elements": {
+    "h1": {
+      "font": "Signika",
+      "fallback": "Signika",
+      "size": 31,
+      "weight": 700,
+      "color": "$ink",
+      "align": "center",
+      "lineHeight": 1.15,
+      "generic": "sans-serif"
+    },
+    "h2": {
+      "font": "Signika",
+      "fallback": "Signika",
+      "size": 20,
+      "weight": 700,
+      "color": "$accent",
+      "borderBottom": {
+        "width": 2,
+        "color": "$accent"
+      },
+      "marginBottom": 8,
+      "generic": "sans-serif"
+    },
+    "h3": {
+      "font": "Signika",
+      "fallback": "Signika",
+      "size": 16.5,
+      "weight": 700,
+      "color": "$ink",
+      "generic": "sans-serif"
+    },
+    "h4": {
+      "font": "Signika",
+      "fallback": "Signika",
+      "size": 13.5,
+      "weight": 700,
+      "transform": "uppercase",
+      "letterSpacing": 0.08,
+      "color": "$accent",
+      "generic": "sans-serif"
+    },
+    "h5": {
+      "font": "Signika",
+      "fallback": "Signika",
+      "size": 11.5,
+      "weight": 600,
+      "transform": "uppercase",
+      "letterSpacing": 0.14,
+      "color": "$inkSoft",
+      "generic": "sans-serif"
+    },
+    "h6": {
+      "size": 14,
+      "weight": 400,
+      "style": "italic",
+      "color": "$inkSoft"
+    },
+    "strong": {
+      "weight": 600
+    },
+    "em": {
+      "style": "italic"
+    },
+    "u": {
+      "underline": "solid"
+    },
+    "s": {
+      "color": "$inkSoft"
+    },
+    "a": {
+      "color": "$accent",
+      "underline": "solid"
+    },
+    "code": {
+      "font": "Courier New",
+      "fallback": "Signika",
+      "size": 13,
+      "background": "rgba(52,80,107,.1)",
+      "color": "$accent",
+      "generic": "monospace"
+    },
+    "blockquote": {
+      "style": "italic",
+      "color": "$inkSoft",
+      "borderLeft": {
+        "width": 3,
+        "color": "$accentSoft"
+      }
+    },
+    "cite": {
+      "color": "$accent"
+    },
+    "ul": {
+      "bullet": "•",
+      "bulletColor": "$accent"
+    },
+    "ol": {
+      "numbering": "decimal",
+      "bulletColor": "$accent"
+    },
+    "hr": {
+      "type": "line",
+      "color": "rgba(38,40,43,.25)"
+    },
+    "table": {
+      "header": {
+        "font": "Signika",
+        "fallback": "Signika",
+        "size": 12,
+        "weight": 700,
+        "transform": "uppercase",
+        "letterSpacing": 0.06,
+        "color": "$ink",
+        "borderBottom": {
+          "width": 1.5,
+          "color": "$ink"
+        },
+        "generic": "sans-serif"
+      },
+      "cell": {
+        "borderBottom": {
+          "width": 1,
+          "color": "rgba(38,40,43,.15)"
+        }
+      },
+      "stripedRows": "rgba(38,40,43,.035)"
+    },
+    "contentLink": {
+      "color": "$accent",
+      "background": "rgba(52,80,107,.08)",
+      "border": {
+        "width": 1,
+        "color": "rgba(52,80,107,.35)"
+      },
+      "radius": 4
+    },
+    "inlineRoll": {
+      "color": "#7a3b1e",
+      "background": "rgba(181,83,47,.1)",
+      "border": {
+        "width": 1,
+        "color": "rgba(181,83,47,.4)"
+      },
+      "radius": 4
+    },
+    "secret": {
+      "color": "$inkSoft",
+      "background": "rgba(38,40,43,.05)",
+      "border": {
+        "width": 1,
+        "color": "$inkSoft",
+        "style": "dashed"
+      }
+    },
+    "img": {
+      "border": {
+        "width": 1,
+        "color": "rgba(38,40,43,.35)"
+      },
+      "shadow": "soft"
+    },
+    "figcaption": {
+      "size": 12.5,
+      "color": "$inkSoft"
+    },
+    "dropCap": {
+      "enabled": false
+    }
+  },
+  "ornaments": {
+    "watermark": {
+      "type": "none"
+    },
+    "corners": {
+      "style": "none"
+    },
+    "folio": {
+      "format": "{n}",
+      "color": "$inkSoft",
+      "font": "Signika",
+      "fallback": "Signika",
+      "size": 11.5,
+      "generic": "sans-serif"
+    }
+  },
+  "sheets": {
+    "letter": {
+      "name": "Letter Paper",
+      "paper": {
+        "color": "#f7efdb",
+        "noise": 0.35,
+        "vignette": 0.12,
+        "pattern": {
+          "type": "ruled",
+          "color": "rgba(120,100,70,.2)",
+          "size": 28,
+          "offset": -3,
+          "margin": 0,
+          "marginColor": "transparent"
+        }
+      },
+      "typography": {
+        "base": {
+          "font": "Amiri",
+          "fallback": "Signika",
+          "size": 20,
+          "lineHeight": 1.4,
+          "color": "#2d2a3d",
+          "style": "italic",
+          "generic": "cursive"
+        }
+      },
+      "elements": {
+        "h1": {
+          "font": "Amiri",
+          "fallback": "Signika",
+          "size": 40,
+          "weight": 700,
+          "color": "#2d2a3d",
+          "align": "left",
+          "lineHeight": 1.4,
+          "style": "italic",
+          "generic": "cursive"
+        },
+        "h2": {
+          "font": "Amiri",
+          "fallback": "Signika",
+          "size": 28,
+          "weight": 700,
+          "color": "#2d2a3d",
+          "lineHeight": 1,
+          "borderBottom": {
+            "width": 0,
+            "color": "$accent"
+          },
+          "marginBottom": 0,
+          "style": "italic",
+          "generic": "cursive"
+        },
+        "h3": {
+          "font": "Amiri",
+          "fallback": "Signika",
+          "size": 24,
+          "weight": 700,
+          "color": "#2d2a3d",
+          "style": "italic",
+          "generic": "cursive"
+        },
+        "h4": {
+          "font": "Amiri",
+          "fallback": "Signika",
+          "size": 22,
+          "transform": "none",
+          "letterSpacing": 0,
+          "color": "#2d2a3d",
+          "style": "italic",
+          "generic": "cursive"
+        },
+        "h5": {
+          "font": "Amiri",
+          "fallback": "Signika",
+          "size": 17,
+          "transform": "none",
+          "letterSpacing": 0,
+          "style": "italic",
+          "generic": "cursive"
+        },
+        "h6": {
+          "size": 18
+        },
+        "p": {
+          "marginBottom": 0,
+          "indent": 1.5
+        },
+        "strong": {
+          "weight": 700
+        },
+        "a": {
+          "color": "#5b3a6e"
+        },
+        "code": {
+          "size": 13
+        },
+        "blockquote": {
+          "color": "#4c4760",
+          "borderLeft": {
+            "width": 2,
+            "color": "#8a7f9c"
+          }
+        },
+        "cite": {
+          "color": "#5b3a6e"
+        },
+        "ul": {
+          "bulletColor": "#5b3a6e"
+        },
+        "ol": {
+          "bulletColor": "#5b3a6e"
+        },
+        "hr": {
+          "type": "line",
+          "color": "rgba(45,42,61,.35)",
+          "length": 40
+        },
+        "table": {
+          "header": {
+            "font": "Amiri",
+            "fallback": "Signika",
+            "size": 19,
+            "transform": "none",
+            "letterSpacing": 0,
+            "color": "#2d2a3d",
+            "borderBottom": {
+              "width": 1,
+              "color": "#2d2a3d"
+            },
+            "style": "italic",
+            "generic": "cursive"
+          }
+        },
+        "contentLink": {
+          "color": "#5b3a6e",
+          "background": "rgba(91,58,110,.08)",
+          "border": {
+            "width": 1,
+            "color": "rgba(91,58,110,.4)"
+          }
+        },
+        "figcaption": {
+          "size": 17
+        }
+      },
+      "ornaments": {
+        "folio": {
+          "format": ""
+        },
+        "stamp": {
+          "resource": "seal",
+          "size": 54,
+          "position": "bottom right",
+          "offsetX": 40,
+          "offsetY": 46,
+          "opacity": 0.95,
+          "tilt": -8
+        }
+      }
+    },
+    "typed": {
+      "name": "Typed Page",
+      "paper": {
+        "color": "#f3f1ea",
+        "noise": 0.4,
+        "vignette": 0.1
+      },
+      "typography": {
+        "base": {
+          "font": "Courier New",
+          "fallback": "Signika",
+          "size": 13.5,
+          "lineHeight": 1.6,
+          "color": "#1c1c1c",
+          "generic": "monospace"
+        }
+      },
+      "elements": {
+        "h1": {
+          "font": "Courier New",
+          "fallback": "Signika",
+          "size": 19,
+          "weight": 700,
+          "transform": "uppercase",
+          "letterSpacing": 0.08,
+          "underline": "solid",
+          "color": "#1c1c1c",
+          "lineHeight": 1.5,
+          "generic": "monospace"
+        },
+        "h2": {
+          "font": "Courier New",
+          "fallback": "Signika",
+          "size": 14.5,
+          "weight": 700,
+          "transform": "uppercase",
+          "underline": "solid",
+          "color": "#1c1c1c",
+          "borderBottom": {
+            "width": 0,
+            "color": "$accent"
+          },
+          "generic": "monospace"
+        },
+        "h3": {
+          "font": "Courier New",
+          "fallback": "Signika",
+          "size": 13.5,
+          "weight": 700,
+          "color": "#1c1c1c",
+          "generic": "monospace"
+        },
+        "h4": {
+          "font": "Courier New",
+          "fallback": "Signika",
+          "size": 13.5,
+          "transform": "none",
+          "letterSpacing": 0,
+          "color": "#1c1c1c",
+          "generic": "monospace"
+        },
+        "h5": {
+          "font": "Courier New",
+          "fallback": "Signika",
+          "color": "#444",
+          "generic": "monospace"
+        },
+        "strong": {
+          "weight": 700
+        },
+        "a": {
+          "color": "#1c1c1c"
+        },
+        "code": {
+          "background": "rgba(0,0,0,.08)",
+          "color": "#1c1c1c"
+        },
+        "blockquote": {
+          "style": "normal",
+          "color": "#1c1c1c",
+          "borderLeft": {
+            "width": 2,
+            "color": "#1c1c1c"
+          }
+        },
+        "cite": {
+          "color": "#444"
+        },
+        "ul": {
+          "bullet": "-",
+          "bulletColor": "#1c1c1c"
+        },
+        "ol": {
+          "bulletColor": "#1c1c1c"
+        },
+        "hr": {
+          "type": "dashed",
+          "color": "#1c1c1c"
+        },
+        "table": {
+          "header": {
+            "font": "Courier New",
+            "fallback": "Signika",
+            "size": 13,
+            "color": "#1c1c1c",
+            "borderBottom": {
+              "width": 1.5,
+              "color": "#1c1c1c"
+            },
+            "generic": "monospace"
+          },
+          "cell": {
+            "borderBottom": {
+              "width": 1,
+              "color": "rgba(0,0,0,.25)"
+            }
+          },
+          "stripedRows": "transparent"
+        },
+        "contentLink": {
+          "color": "#1c1c1c",
+          "background": "transparent",
+          "border": {
+            "width": 1,
+            "color": "#1c1c1c"
+          },
+          "radius": 0
+        },
+        "inlineRoll": {
+          "color": "#1c1c1c",
+          "background": "rgba(0,0,0,.06)",
+          "border": {
+            "width": 1,
+            "color": "#1c1c1c"
+          },
+          "radius": 0
+        },
+        "secret": {
+          "color": "#1c1c1c",
+          "background": "transparent",
+          "border": {
+            "width": 1,
+            "color": "#1c1c1c",
+            "style": "dashed"
+          }
+        },
+        "figcaption": {
+          "size": 12,
+          "color": "#444"
+        }
+      },
+      "ornaments": {
+        "folio": {
+          "format": "— {n} —",
+          "color": "#1c1c1c",
+          "font": "Courier New",
+          "fallback": "Signika",
+          "size": 12,
+          "generic": "monospace"
+        },
+        "stamp": {
+          "text": "COPIA",
+          "font": "Courier New",
+          "fallback": "Signika",
+          "size": 20,
+          "weight": 700,
+          "color": "#b3261e",
+          "position": "bottom right",
+          "offsetX": 38,
+          "offsetY": 62,
+          "tilt": -9,
+          "opacity": 0.6,
+          "generic": "monospace"
+        }
+      }
+    }
+  }
+}

@@ -15,13 +15,31 @@
       "paper": {
         "path": "modules/bookbinder/presets/img/book/paper.svg",
         "status": "ready"
+      },
+      "letter": {
+        "path": "modules/bookbinder/presets/img/book/letter.svg",
+        "status": "ready"
+      },
+      "torn": {
+        "path": "modules/bookbinder/presets/img/book/torn.svg",
+        "status": "ready"
+      },
+      "figure": {
+        "path": "modules/bookbinder/presets/img/book/figure.svg",
+        "status": "ready"
       }
     },
     "fonts": {
       "Amiri": {
         "status": "ready"
       },
+      "Courier New": {
+        "status": "ready"
+      },
       "Modesto Condensed": {
+        "status": "ready"
+      },
+      "Signika": {
         "status": "ready"
       }
     }

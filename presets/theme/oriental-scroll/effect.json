@@ -1,0 +1,13 @@
+{
+  "transition": {
+    "type": "roll",
+    "durationMs": 900,
+    "easing": "smooth"
+  },
+  "layout": {
+    "mode": "scroll"
+  },
+  "pagination": {
+    "mode": "columns"
+  }
+}

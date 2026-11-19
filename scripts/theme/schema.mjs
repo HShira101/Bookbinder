@@ -2,7 +2,7 @@ const isObject = value => value !== null && typeof value === "object" && !Array.
 const NAME = /^[A-Za-z][\w-]*$/;
 
 export const color = value => typeof value === "string"
-  && (/^\$[A-Za-z]\w*$/.test(value) || /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(value) || /^(?:rgba?|hsla?)\([\d\s.,%/-]+\)$/i.test(value));
+  && (value === "transparent" || /^\$[A-Za-z]\w*$/.test(value) || /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(value) || /^(?:rgba?|hsla?)\([\d\s.,%/-]+\)$/i.test(value));
 export const num = (min, max) => value => typeof value === "number" && Number.isFinite(value) && value >= min && value <= max;
 export const int = (min, max) => value => Number.isInteger(value) && value >= min && value <= max;
 export const oneOf = (...values) => value => values.includes(value);

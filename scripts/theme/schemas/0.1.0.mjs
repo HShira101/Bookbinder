@@ -19,7 +19,7 @@ const place = oneOf("top left", "top right", "bottom left", "bottom right");
 const ELEMENTS = {
   ...Object.fromEntries(["h1", "h2", "h3", "h4", "h5", "h6", "p", "strong", "em", "u", "s", "a", "code", "cite", "li",
     "contentLink", "inlineRoll", "secret", "img", "figcaption"].map(name => [name, element()])),
-  blockquote: element({ variant: oneOf("tape", "seal") }),
+  blockquote: element({ variant: oneOf("plain", "tape", "seal") }),
   ul: element({ bullet: text(4), bulletColor: color }),
   ol: element({ numbering: oneOf("decimal", "roman", "alpha"), bulletColor: color }),
   hr: element({ type: oneOf("line", "double", "dashed", "fade", "ornament"), symbol: text(8), symbolSize: num(0.4, 4), symbolFont: family, width: num(0, 12), length: num(5, 100) }),
@@ -38,7 +38,7 @@ const ORNAMENTS = {
 };
 
 const FRAME = object({ enabled: bool, color, double: bool, style: oneOf("solid", "brackets"), inset: num(0, 80), width: num(0, 12) });
-const PATTERN = object({ type: oneOf("ruled", "grid", "scanlines", "dots"), color, size: num(2, 200), margin: num(0, 200), marginColor: color, offset: num(0, 200) });
+const PATTERN = object({ type: oneOf("none", "ruled", "grid", "scanlines", "dots"), color, size: num(2, 200), margin: num(0, 200), marginColor: color, offset: num(-200, 200) });
 const PAPER = object({
   color, image: key, imageOpacity: num(0, 1), fit: oneOf("cover", "contain", "repeat"), noise: num(0, 1), vignette: num(0, 1), vignetteColor: color,
   frame: FRAME, pattern: PATTERN, edge: oneOf("straight", "deckle", "torn"), seed: int(1, 99999), columns: int(1, 4),

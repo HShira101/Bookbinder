@@ -53,13 +53,28 @@ async function readFiles(root, slug) {
   return Object.fromEntries(entries);
 }
 
+const presetText = (slug, path, fallback) => {
+  const key = `BOOKBINDER.Presets.${slug}.${path}`;
+  return game.i18n.has(key) ? game.i18n.localize(key) : fallback;
+};
+
+function localizePreset(slug, files) {
+  const sheets = Object.entries(files.styles.sheets ?? {}).map(([id, sheet]) => [id, { ...sheet, name: presetText(slug, `Sheets.${id}`, sheet.name) }]);
+  return {
+    ...files,
+    theme: { ...files.theme, name: presetText(slug, "Name", files.theme.name) },
+    styles: sheets.length ? { ...files.styles, sheets: Object.fromEntries(sheets) } : files.styles
+  };
+}
+
 async function readTheme(slug, location = null) {
   location ??= await sourceOf(slug);
   if (!location) return { ok: false, slug, reason: "missing" };
   try {
     const result = upgradeFiles(await readFiles(location.root, slug), moduleVersion());
     if (!result.ok) return { ok: false, slug, reason: result.newer ? "newer" : "invalid", detail: result };
-    return { ok: true, slug, source: location.source, files: result.files, warnings: result.warnings, theme: resolveTheme(result.files) };
+    const files = location.source === "preset" ? localizePreset(slug, result.files) : result.files;
+    return { ok: true, slug, source: location.source, files, warnings: result.warnings, theme: resolveTheme(files) };
   } catch (error) {
     console.error(error);
     return { ok: false, slug, reason: "unreadable", detail: error };

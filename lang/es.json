@@ -57,6 +57,66 @@
     },
     "Menu": {
       "Empty": "Nada que elegir"
+    },
+    "Presets": {
+      "book": {
+        "Name": "Libro",
+        "Sheets": {
+          "letter": "Carta",
+          "torn": "Pergamino arrancado",
+          "travel": "Diario de viaje",
+          "sketch": "Boceto",
+          "tome": "Compendio",
+          "entry": "Entrada de diccionario",
+          "table": "Tabla de referencia"
+        }
+      },
+      "lacquer-and-silk": {
+        "Name": "Laca y seda",
+        "Sheets": {
+          "letter": "Carta en washi",
+          "edict": "Edicto imperial"
+        }
+      },
+      "investigator-notebook": {
+        "Name": "Cuaderno de investigador",
+        "Sheets": {
+          "clipping": "Recorte de periódico",
+          "report": "Informe policial"
+        }
+      },
+      "datapad": {
+        "Name": "Datapad",
+        "Sheets": {
+          "classified": "Informe clasificado",
+          "alert": "Alerta"
+        }
+      },
+      "gothic-codex": {
+        "Name": "Códice gótico",
+        "Sheets": {
+          "decree": "Decreto"
+        }
+      },
+      "oriental-scroll": {
+        "Name": "Pergamino oriental"
+      },
+      "arcane-diary": {
+        "Name": "Diario de magia",
+        "Sheets": {
+          "spell": "Página de hechizo",
+          "recipe": "Receta alquímica",
+          "grimoire": "Grimorio oscuro",
+          "cursed": "Página maldita"
+        }
+      },
+      "sheet": {
+        "Name": "Hoja",
+        "Sheets": {
+          "letter": "Papel de carta",
+          "typed": "Folio mecanografiado"
+        }
+      }
     }
   }
 }

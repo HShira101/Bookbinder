@@ -1,0 +1,20 @@
+{
+  "transition": {
+    "type": "shuffle",
+    "durationMs": 900,
+    "easing": "smooth",
+    "bend": 0.5,
+    "bundle": {
+      "pxPerLeaf": 2,
+      "maxThickness": 24,
+      "lineRatio": 1,
+      "maxLines": 12
+    }
+  },
+  "layout": {
+    "mode": "stack"
+  },
+  "pagination": {
+    "mode": "perPage"
+  }
+}

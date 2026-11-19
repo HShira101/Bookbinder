@@ -1,0 +1,44 @@
+{
+  "name": "Lacquer and Silk",
+  "author": {
+    "id": "bookbinder",
+    "name": "Bookbinder"
+  },
+  "visibility": "all",
+  "moduleVersion": "0.2.0",
+  "resources": {
+    "images": {
+      "cover": {
+        "path": "modules/bookbinder/presets/img/lacquer-and-silk/cover.svg",
+        "status": "ready"
+      },
+      "fibers": {
+        "path": "modules/bookbinder/presets/img/common/fibers.svg",
+        "status": "ready"
+      },
+      "flecks": {
+        "path": "modules/bookbinder/presets/img/lacquer-and-silk/endpaper.svg",
+        "status": "ready"
+      },
+      "hanko": {
+        "path": "modules/bookbinder/presets/img/lacquer-and-silk/hanko.svg",
+        "status": "ready"
+      },
+      "figure": {
+        "path": "modules/bookbinder/presets/img/lacquer-and-silk/figure.svg",
+        "status": "ready"
+      }
+    },
+    "fonts": {
+      "Amiri": {
+        "status": "ready"
+      },
+      "Courier New": {
+        "status": "ready"
+      },
+      "Modesto Condensed": {
+        "status": "ready"
+      }
+    }
+  }
+}
