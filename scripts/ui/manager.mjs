@@ -11,6 +11,7 @@ import { ask, button, usageNotice } from "./dialogs.mjs";
 import { DesignCard } from "./card.mjs";
 import { DesignEditor } from "./editor.mjs";
 import { PermissionsApp } from "./permissions-app.mjs";
+import { exportDesign, importDesign } from "./transfer.mjs";
 import { DesignWizard } from "./wizard.mjs";
 
 const CHANGED = "bookbinder.themeChanged";
@@ -56,6 +57,8 @@ export class DesignManager extends HTMLApplication {
     actions: {
       permissions() { return new PermissionsApp().render({ force: true }); },
       add() { return DesignWizard.open(); },
+      import() { return importDesign(); },
+      export(event, target) { return exportDesign(target.dataset.slug); },
       view(event, target) { return DesignCard.open(target.dataset.slug, { trashed: target.dataset.trashed === "true" }); },
       edit(event, target) { return DesignEditor.open(target.dataset.slug); },
       trash(event, target) { return this.#confirmTrash(target.dataset.slug, target.dataset.name); },
@@ -85,11 +88,12 @@ export class DesignManager extends HTMLApplication {
     const allowed = setting("permissions"), canCreate = canCreateThemes(game.user, allowed);
     const row = entry => `<li><button type="button" class="name" data-action="view" data-slug="${entry.slug}">${escapeHTML(entry.name)}</button>${visibilityChip(entry)}${pendingChip(entry)}`
       + `<span class="actions">${iconButton("view", "fa-eye", "Manager.View", entry.slug)}${canEditTheme(game.user, entry.meta, allowed) ? iconButton("edit", "fa-pen", "Manager.Edit", entry.slug) : '<i class="icon"></i>'}`
+      + `${iconButton("export", "fa-file-export", "Manager.Export", entry.slug)}`
       + `${canDeleteTheme(game.user) ? iconButton("trash", "fa-trash", "Manager.Delete", entry.slug, `data-name="${escapeHTML(entry.name)}"`) : ""}</span></li>`;
     const trashRow = entry => `<li><button type="button" class="name" data-action="view" data-trashed="true" data-slug="${entry.slug}">${escapeHTML(entry.name)}</button>`
       + `<span class="actions">${iconButton("view", "fa-eye", "Manager.View", entry.slug, 'data-trashed="true"')}<button type="button" data-action="restore" data-slug="${entry.slug}" data-name="${escapeHTML(entry.name)}"><i class="fa-solid fa-rotate-left"></i> ${localize("Manager.Restore")}</button></span></li>`;
     return `${game.user.isGM ? `<div class="bookbinder-toolbar"><button type="button" data-action="permissions"><i class="fa-solid fa-key"></i> ${localize("Manager.Permissions")}</button></div>` : ""}`
-      + `<header class="bookbinder-list-head"><h2>${localize("Manager.Designs")}</h2>${canCreate ? `<button type="button" class="primary" data-action="add"><i class="fa-solid fa-plus"></i> ${localize("Manager.Add")}</button>` : ""}</header>`
+      + `<header class="bookbinder-list-head"><h2>${localize("Manager.Designs")}</h2>${canCreate ? `<span class="bookbinder-buttons"><button type="button" data-action="import"><i class="fa-solid fa-file-import"></i> ${localize("Manager.Import")}</button><button type="button" class="primary" data-action="add"><i class="fa-solid fa-plus"></i> ${localize("Manager.Add")}</button></span>` : ""}</header>`
       + `<ul class="bookbinder-design-list">${designs.map(row).join("") || `<li class="empty">${localize("Manager.Empty")}</li>`}</ul>`
       + `${canCreate ? "" : `<p class="notes"><i class="fa-solid fa-lock"></i> ${localize("Manager.NoPermission")}</p>`}`
       + `${trashed.length ? `<header class="bookbinder-list-head"><h2>${localize("Manager.Trash")}</h2><span class="notes">${localize("Manager.TrashHint")}</span></header><ul class="bookbinder-design-list trash">${trashed.map(trashRow).join("")}</ul>` : ""}`;

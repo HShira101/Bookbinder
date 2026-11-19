@@ -149,7 +149,24 @@
       "UsesTitle": "Journals using the design",
       "ChangeAll": "Change all to…",
       "Apply": "Apply",
-      "NoUses": "No world journal uses it any more: it can be deleted without breaking anything."
+      "NoUses": "No world journal uses it any more: it can be deleted without breaking anything.",
+      "Import": "Import",
+      "Export": "Export"
+    },
+    "Transfer": {
+      "NotTheme": "This file is not a Bookbinder theme.",
+      "Invalid": "This theme file cannot be read.",
+      "NewerTitle": "Theme from a newer version",
+      "Newer": "Created with Bookbinder {version}: update the module. If you import it anyway, some details may be left out.",
+      "Anyway": "Import anyway",
+      "Failed": "Could not import: {reason}.",
+      "Pending": "Pending: {images} image(s), {fonts} font(s).",
+      "Imported": "Imported: «{name}».",
+      "ConflictTitle": "«{name}» already exists",
+      "Conflict": "This world already has a design called «{name}». What should we do with the imported file?",
+      "AsCopy": "Import as copy",
+      "Overwrite": "Overwrite the existing one",
+      "ExportFailed": "This design could not be exported."
     },
     "Permissions": {
       "Title": "Permissions settings",
@@ -225,7 +242,7 @@
       "InheritedHint": "Value inherited from the main sheet",
       "ResetInherited": "Inherit from the main sheet again",
       "Missing": "missing \"{name}\"",
-      "Resolve": "Choose image",
+      "Upload": "Upload",
       "FontUnconfirmed": "unconfirmed",
       "FontMissing": "not in Foundry's fonts",
       "ChooseFont": "Choose font…",

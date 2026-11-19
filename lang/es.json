@@ -149,7 +149,24 @@
       "UsesTitle": "Journals que usan el diseño",
       "ChangeAll": "Cambiar todos a…",
       "Apply": "Aplicar",
-      "NoUses": "Ningún Journal del mundo lo usa ya: se puede borrar sin romper nada."
+      "NoUses": "Ningún Journal del mundo lo usa ya: se puede borrar sin romper nada.",
+      "Import": "Importar",
+      "Export": "Exportar"
+    },
+    "Transfer": {
+      "NotTheme": "Este archivo no es un tema de Bookbinder.",
+      "Invalid": "Este archivo de tema no se puede leer.",
+      "NewerTitle": "Tema de una versión más nueva",
+      "Newer": "Creado con Bookbinder {version}: actualiza el módulo. Si lo traes igual, algunos detalles pueden quedar fuera.",
+      "Anyway": "Traer igual",
+      "Failed": "No se pudo importar: {reason}.",
+      "Pending": "Pendientes: {images} imagen(es), {fonts} fuente(s).",
+      "Imported": "Importado: «{name}».",
+      "ConflictTitle": "Ya existe «{name}»",
+      "Conflict": "Ya tienes un diseño llamado «{name}» en este mundo. ¿Qué hacemos con el archivo importado?",
+      "AsCopy": "Importar como copia",
+      "Overwrite": "Sobrescribir el existente",
+      "ExportFailed": "No se pudo exportar este diseño."
     },
     "Permissions": {
       "Title": "Configuración de permisos",
@@ -225,7 +242,7 @@
       "InheritedHint": "Valor heredado de la hoja principal",
       "ResetInherited": "Volver a heredar de la hoja principal",
       "Missing": "falta «{name}»",
-      "Resolve": "Elegir imagen",
+      "Upload": "Subir",
       "FontUnconfirmed": "sin confirmar",
       "FontMissing": "no está en las fuentes de Foundry",
       "ChooseFont": "Elegir fuente…",

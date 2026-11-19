@@ -195,7 +195,7 @@ export class DesignEditor extends ShellApplication {
     host.oninput = host.onchange = host.onclick = null;
     const pending = pendingOf(this.#draft, hasFont);
     const imageRow = name => `<li><i class="fa-solid fa-image"></i><span><b>${escapeHTML(name)}</b> · ${localize("Editor.Missing", { name: escapeHTML(this.#draft.theme.resources.images[name].path.split("/").at(-1)) })}</span>`
-      + `<button type="button" data-resolve-image="${escapeHTML(name)}">${localize("Editor.Resolve")}</button></li>`;
+      + `<button type="button" data-resolve-image="${escapeHTML(name)}">${localize("Editor.Upload")}</button></li>`;
     const fontRow = name => `<li><i class="fa-solid fa-font"></i><span><b>${escapeHTML(name)}</b> · ${localize(hasFont(name) ? "Editor.FontUnconfirmed" : "Editor.FontMissing")}</span>`
       + `${fontControl("", { clearable: false, extra: `data-font-for="${escapeHTML(name)}"` })}</li>`;
     const images = Object.entries(this.#draft.theme.resources.images ?? {}).map(([key, image]) => `<li><i class="fa-solid fa-image"></i><b>${escapeHTML(key)}</b><small>${escapeHTML(image.status === "pending" ? localize("Editor.Pending") : image.path)}</small></li>`).join("");
