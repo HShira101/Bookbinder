@@ -12,7 +12,7 @@ import { drawFontNames, fontControl, handleFontClick } from "./font-picker.mjs";
 import { options, renderFields, sheetOptions } from "./fields.mjs";
 import { pickImage } from "./image-picker.mjs";
 import { PreviewPane } from "./preview.mjs";
-import { ELEMENTS, SECTIONS, elementFields, elementRoot, read, sectionIds, sheetPath } from "./schema.mjs";
+import { ELEMENTS, SECTIONS, elementFields, elementRoot, hasFields, read, sectionIds, sheetPath } from "./schema.mjs";
 
 const CHANGED = "bookbinder.themeChanged";
 const idOf = slug => `bookbinder-editor-${slug}`;
@@ -95,6 +95,10 @@ export class DesignEditor extends ShellApplication {
     return { files: this.#draft, sheet: this.#sheet, changed: () => this.#touched(), rerender: () => this.#drawProps() };
   }
 
+  get #sections() {
+    return sectionIds(this.#sheet).filter(id => hasFields(id, this.#context));
+  }
+
   get #elementDef() {
     return ELEMENTS.find(entry => entry.id === this.#element);
   }
@@ -170,7 +174,7 @@ export class DesignEditor extends ShellApplication {
   }
 
   #drawNav() {
-    const ids = sectionIds(this.#sheet);
+    const ids = this.#sections;
     if (!ids.includes(this.#section)) this.#section = "paper";
     const count = pendingCount(pendingOf(this.#draft, hasFont));
     const edited = entry => this.#sheet !== "main" && Object.keys(getPath(this.#draft, sheetPath(elementRoot(entry), this.#sheet)) ?? {}).length > 0;
@@ -228,7 +232,7 @@ export class DesignEditor extends ShellApplication {
   }
 
   #select({ section, element }) {
-    if (!sectionIds(this.#sheet).includes(section)) return;
+    if (!this.#sections.includes(section)) return;
     const entering = section === "cover" && this.#section !== "cover";
     this.#section = section;
     if (element) this.#element = element;

@@ -2,7 +2,7 @@
   "id": "bookbinder",
   "title": "Bookbinder — Journals as Books",
   "description": "Shows Foundry journals as books, with animated page turns and customizable themes. System agnostic.",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "authors": [{ "name": "HShira101" }],
   "compatibility": {
     "minimum": "14",
@@ -16,7 +16,7 @@
   ],
   "url": "https://github.com/HShira101/Bookbinder",
   "manifest": "https://raw.githubusercontent.com/HShira101/Bookbinder/main/module.json",
-  "download": "https://github.com/HShira101/Bookbinder/releases/download/v0.5.0/module.zip",
+  "download": "https://github.com/HShira101/Bookbinder/releases/download/v0.6.0/module.zip",
   "readme": "https://github.com/HShira101/Bookbinder#readme",
   "bugs": "https://github.com/HShira101/Bookbinder/issues"
 }

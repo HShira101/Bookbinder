@@ -1,4 +1,4 @@
-import { buildCss } from "../scripts/theme/css.mjs";
+import { buildCss, flowOf } from "../scripts/theme/css.mjs";
 import { resolveTheme } from "../scripts/theme/defaults.mjs";
 import { migrate } from "../scripts/theme/migrate.mjs";
 import { THEME_MIGRATIONS, upgradeFiles } from "../scripts/theme/migrations.mjs";
@@ -146,6 +146,35 @@ test("an unknown palette reference falls back to the base text colour (casos lí
   const css = buildCss(resolveTheme(upgradeFiles(files, "0.2.0").files), ".s", fakeAssets);
   truthy(css.includes("h1{color:var(--bb-pal-ink)}") || css.includes("h1{color:"), "fallback color");
   truthy(!css.includes("--bb-pal-ghost"), "no dangling var");
+});
+
+const cssOf = tweak => buildCss(resolveTheme(upgradeFiles(at01(tweak), "0.2.0").files), ".s", fakeAssets);
+
+test("flowOf: roll flows as a strip, columns as pages, the rest scrolls inside the page (LIB-03, PLT-13)", () => {
+  const effect = (type, mode) => ({ transition: { type }, pagination: { mode } });
+  equal([flowOf(effect("roll", "columns")), flowOf(effect("roll", "perPage")), flowOf(effect("flip3d", "columns")), flowOf(effect("shuffle", "columns")), flowOf(effect("flip3d", "perPage"))],
+    ["strip", "strip", "pages", "pages", null]);
+});
+
+test("buildCss paginates by columns without touching the per-page layout (Specs/08)", () => {
+  const twoColumns = data => { data.styles.surfaces.paper = { columns: 2 }; };
+  const paged = data => { data.effect.pagination = { mode: "columns" }; };
+  truthy(!cssOf().includes("column-count"), "per page, one column: no column rules");
+  truthy(cssOf(twoColumns).includes("column-count:2;column-gap:22px;column-fill:balance"), "per page keeps balanced columns");
+  truthy(cssOf(paged).includes("column-count:1;column-gap:22px;column-fill:auto"), "paged single column");
+  truthy(cssOf(data => { twoColumns(data); paged(data); }).includes("column-count:2;column-gap:22px;column-fill:auto"), "paged text columns");
+});
+
+test("buildCss dresses the scroll mount and leaves its columns to the strip (PLT-13)", () => {
+  const css = cssOf(data => {
+    data.effect.transition = { type: "roll" };
+    data.styles.palette = { ink: "#000000", metal: "#b08d3f" };
+    data.styles.surfaces = { paper: { columns: 2 }, mount: { color: "#1d2a4a", line: "$metal", rod: "#7a2a1c" } };
+  });
+  truthy(css.includes(".s .bookbinder-band{background:#1d2a4a;--bb-band-line:var(--bb-pal-metal)}"), "bands");
+  truthy(css.includes("--bb-rod2:#7a2a1c"), "rods");
+  truthy(!css.includes("column-count"), "strip columns come from the stylesheet");
+  truthy(cssOf(data => { data.effect.transition = { type: "roll" }; }).includes("--bb-rod2:"), "a scroll without mount still gets rods");
 });
 
 export async function presetTests(loadJSON, slugs) {

@@ -15,6 +15,9 @@ const TEXTURES = {
   none: () => ["none", "normal"]
 };
 const CORNER_POSITIONS = ["left top", "right top", "left bottom", "right bottom"];
+const MOUNT = { color: "$cover", line: "$metal", rod: "$accent" };
+
+export const flowOf = effect => (effect.transition.type === "roll" ? "strip" : effect.pagination.mode === "columns" ? "pages" : null);
 
 const str = value => JSON.stringify(String(value));
 const numberList = list => [].concat(list).map(n => `${n}px`).join(" ");
@@ -150,7 +153,7 @@ function ruleRules(selector, props, { color, str: quote }) {
   }
 }
 
-function sheetRules(id, sheet, main, styler, assets) {
+function sheetRules(id, sheet, main, flow, styler, assets) {
   const { declarations, color, tone, image, str: quote } = styler;
   const scope = `.bookbinder-pg[data-sheet="${id}"]`, content = `${scope} .bookbinder-content`;
   const { typography: { base }, elements, ornaments, paper } = sheet;
@@ -162,7 +165,8 @@ function sheetRules(id, sheet, main, styler, assets) {
     rules.push(`${scope}{--bb-stack-color:${tone(paper.color, -0.3)}}`, paperRules(`${scope}>.bookbinder-paper`, paper, ornaments, styler));
   }
   rules.push(`${scope}{--bb-fallback:${styler.stack(base, DEFAULT_STACK)}}`);
-  rules.push(`${content}{${declarations(base)}${base.font ? "" : ";font-family:var(--bb-fallback)"}${paper.columns ? `;column-count:${paper.columns};column-gap:22px;column-fill:balance` : ""}}`);
+  const columns = flow === "strip" ? 0 : paper.columns ?? Number(flow === "pages");
+  rules.push(`${content}{${declarations(base)}${base.font ? "" : ";font-family:var(--bb-fallback)"}${columns ? `;column-count:${columns};column-gap:22px;column-fill:${flow ? "auto" : "balance"}` : ""}}`);
   for (const [name, props] of Object.entries(elements)) {
     if (!SELECTORS[name]) continue;
     const selector = `${content} ${SELECTORS[name]}`;
@@ -204,6 +208,12 @@ function rootVars(theme, styler, assets) {
   return Object.entries(entries).map(([name, value]) => `${name}:${value}`).join(";");
 }
 
+function mountRules(scope, surfaces, { color, tone, image }) {
+  const mount = { ...MOUNT, ...surfaces.mount };
+  return `${scope} .bookbinder-band{background:${mount.image ? `${image(mount.image)} center/auto,` : ""}${color(mount.color)};--bb-band-line:${color(mount.line)}}`
+    + `${scope} .bookbinder-rod{--bb-rod1:${tone(mount.rod, 0.35)};--bb-rod2:${color(mount.rod)};--bb-rod3:${tone(mount.rod, -0.7)};--bb-roll-paper:${tone(surfaces.paper.color, -0.1)}}`;
+}
+
 function backgroundRule(background, styler) {
   const { color, highlight, image: key, fit } = background;
   if (key) return `background:${styler.image(key)} center/${fit === "repeat" ? "auto" : fit ?? "cover"},${styler.color(color)}`;
@@ -212,12 +222,12 @@ function backgroundRule(background, styler) {
 
 export function buildCss(theme, scope, assets) {
   const styler = createStyler(theme, assets);
-  const main = theme.sheets.main, { surfaces } = theme;
+  const main = theme.sheets.main, { surfaces } = theme, flow = flowOf(theme.effect);
   const prefixed = css => css.replaceAll(".bookbinder-pg[", `${scope} .bookbinder-pg[`);
   const rules = [`${scope}{${rootVars(theme, styler, assets)};${backgroundRule(surfaces.background, styler)}}`,
     `${scope} .bookbinder-cv-title{${styler.declarations(main.ornaments.coverTitle)}${main.ornaments.coverTitle.top ? `;top:${main.ornaments.coverTitle.top}%` : ""}}`];
   if (hasKeys(surfaces.endpaper)) rules.push(paperRules(`${scope} .bookbinder-endpaper`, surfaces.endpaper, {}, styler));
-  if (surfaces.mount) rules.push(`${scope} .bookbinder-band{background:${surfaces.mount.image ? `${styler.image(surfaces.mount.image)} center/auto,` : ""}${styler.color(surfaces.mount.color)}}`);
-  for (const [id, sheet] of Object.entries(theme.sheets)) rules.push(prefixed(sheetRules(id, sheet, main, styler, assets)));
+  if (surfaces.mount || flow === "strip") rules.push(mountRules(scope, surfaces, styler));
+  for (const [id, sheet] of Object.entries(theme.sheets)) rules.push(prefixed(sheetRules(id, sheet, main, flow, styler, assets)));
   return rules.filter(Boolean).join("\n");
 }

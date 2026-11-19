@@ -111,7 +111,7 @@ export function reportProblems(result) {
 
 export function entryOf(result) {
   const type = typeOf(result.files);
-  return { slug: result.slug, name: result.theme.meta.name, source: result.source, meta: result.files.theme, files: result.files, type: type.id, available: type.available, pending: pendingOf(result.files, hasFont) };
+  return { slug: result.slug, name: result.theme.meta.name, source: result.source, meta: result.files.theme, files: result.files, type: type.id, pending: pendingOf(result.files, hasFont) };
 }
 
 export const countPending = entry => pendingCount(entry.pending);

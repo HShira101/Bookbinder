@@ -7,7 +7,7 @@ import { listThemes, moduleVersion } from "../theme/store.mjs";
 import { ShellApplication } from "./app.mjs";
 import { renderFields, sheetOptions } from "./fields.mjs";
 import { PreviewPane } from "./preview.mjs";
-import { COVER_TITLE_FONT, QUICK_TYPE, wizardFields } from "./schema.mjs";
+import { COVER_TITLE_FONT, QUICK_TYPE, hasFields, wizardFields } from "./schema.mjs";
 
 const STEPS = ["Base", "Cover", "Sheets", "Typography"];
 const DEFAULT_BASE = "book";
@@ -53,7 +53,7 @@ export class DesignWizard extends ShellApplication {
     }
     const app = new DesignWizard();
     const { world, presets } = await listThemes();
-    const usable = entry => entry.available && canSeeTheme(game.user, entry.meta);
+    const usable = entry => canSeeTheme(game.user, entry.meta);
     app.#bases = new Map([...presets, ...world].filter(usable).map(entry => [entry.slug, entry]));
     app.#duplicates = new Set(world.filter(entry => presets.some(template => template.name === entry.name && isUnmodifiedCopy(entry, template))).map(entry => entry.slug));
     app.#setBase(app.#bases.has(baseSlug) ? baseSlug : DEFAULT_BASE, { name: "", visibility: game.user.isGM ? "all" : "author" });
@@ -111,7 +111,8 @@ export class DesignWizard extends ShellApplication {
     const sheetName = key => ({ path: `styles.sheets.${key}.name`, id: "name", type: "text" });
     return [
       [{ fields: [name, this.#baseField(), ...rest] }],
-      [{ title: localize("Headings.background"), fields: wizardFields("background") }, { title: localize(`Types.${typeOf(draft).id}.Part`), fields: wizardFields("cover") }],
+      [{ title: localize("Headings.background"), fields: wizardFields("background") },
+        ...(hasFields("cover", { files: draft, sheet: "main" }) ? [{ title: localize(`Types.${typeOf(draft).id}.Part`), fields: wizardFields("cover") }] : [])],
       [{ title: localize("Wizard.MainSheet"), fields: wizardFields("paper") }, { title: localize("Wizard.SubSheets"), add: true, toggleAll: true, fields: [] },
         ...this.#sheetGroups(key => [sheetName(key), ...wizardFields("paper", 2)], true)],
       [...(typeOf(draft).id === "book" ? [{ title: localize("Wizard.CoverTitle"), fields: [COVER_TITLE_FONT] }] : []),

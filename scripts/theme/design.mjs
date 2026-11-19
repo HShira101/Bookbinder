@@ -8,13 +8,13 @@ const COVER_TITLE = { layout: "center", size: 26, weight: 700, color: "#e6d3a1",
 const EMPTY_FILES = ["theme", "styles", "effect"];
 
 export const TYPES = [
-  { id: "book", transition: "flip3d", layout: "auto", pagination: "perPage", available: true,
+  { id: "book", transition: "flip3d", layout: "auto", pagination: "perPage",
     surfaces: { cover: { width: 14, radius: 8, shadow: "strong" }, spine: { shadow: 0.5, width: 90 } } },
-  { id: "scroll", transition: "roll", layout: "scroll", pagination: "columns", available: false,
+  { id: "scroll", transition: "roll", layout: "scroll", pagination: "columns",
     surfaces: { cover: { width: 0, radius: 0, shadow: "none", texture: "none" }, spine: { shadow: 0, width: 0 }, mount: { color: "#1d2a4a", line: "$metal", rod: "#7a2a1c" } } },
-  { id: "stack", transition: "shuffle", layout: "stack", pagination: "perPage", available: false,
+  { id: "stack", transition: "shuffle", layout: "stack", pagination: "perPage",
     surfaces: { cover: { width: 22, radius: 0, shadow: "none", texture: "none" }, spine: { shadow: 0, width: 0 } } },
-  { id: "pad", transition: "slide", layout: "auto", pagination: "perPage", available: true,
+  { id: "pad", transition: "slide", layout: "auto", pagination: "perPage",
     surfaces: { cover: { width: 20, radius: 20, shadow: "strong", texture: "metal" }, spine: { shadow: 0, width: 0 } } }
 ];
 

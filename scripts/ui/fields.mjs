@@ -40,7 +40,7 @@ const CONTROLS = {
     const body = field.groups ? field.groups.map(group => `<optgroup label="${escapeHTML(group.label)}">${options(group.values.map(entry), value)}</optgroup>`).join("") : options(field.values.map(entry), value);
     return `<select data-input>${field.required ? "" : options([["", "—"]], value)}${body}</select>`;
   },
-  cards: (field, value) => field.options.map(option => `<button type="button" class="bookbinder-card-option${option.id === value ? " active" : ""}" data-choice="${option.id}"${option.disabled ? ' disabled data-tooltip="' + localize("Types.Later") + '"' : ""}>`
+  cards: (field, value) => field.options.map(option => `<button type="button" class="bookbinder-card-option${option.id === value ? " active" : ""}" data-choice="${option.id}">`
     + `<b>${localize(`Types.${option.id}.Glyph`)}</b>${localize(`Types.${option.id}.Name`)}</button>`).join(""),
   color: colorControl,
   font: (field, value) => fontControl(value),

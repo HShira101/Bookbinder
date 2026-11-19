@@ -1,6 +1,6 @@
 import { canCreateThemes, canDeleteTheme, canEditTheme, canSeeTheme } from "../scripts/permissions.mjs";
 import { path as isPath } from "../scripts/theme/schema.mjs";
-import { allFields, parseValue } from "../scripts/ui/schema.mjs";
+import { SECTIONS, allFields, hasFields, parseValue } from "../scripts/ui/schema.mjs";
 import { TYPES, addSheet, applyType, canonical, clone, contrastRatio, copyDesign, fingerprint, getPath, isDirty, pendingOf, removeSheet, replaceFont, resolveColor, setPath, sheetKeys, stamp, toThemePath, typeOf, useImage, usedFonts, validSheet } from "../scripts/theme/design.mjs";
 import { upgradeFiles } from "../scripts/theme/migrations.mjs";
 import { identifier, slugify, uniqueKey, versionName } from "../scripts/theme/slug.mjs";
@@ -63,7 +63,17 @@ test("applyType sets transition, layout and per-type surfaces (PLT-10)", () => {
   const scroll = applyType(sample(), "scroll");
   equal([scroll.effect.layout.mode, scroll.effect.pagination.mode, scroll.styles.surfaces.mount.rod], ["scroll", "columns", "#7a2a1c"]);
   truthy(applyType(sample(), "book").styles.ornaments.coverTitle.layout === "center", "cover title for books");
-  equal(TYPES.filter(type => type.available).map(type => type.id), ["book", "pad"]);
+  equal(TYPES.map(type => type.id), ["book", "scroll", "stack", "pad"]);
+});
+
+test("each type only offers the parts and ornaments it draws (EDT-32)", () => {
+  const ctx = type => ({ files: applyType(sample(), type), sheet: "main" });
+  const shown = (section, type) => SECTIONS[section].filter(field => !field.when || field.when(ctx(type))).map(field => field.id ?? field.path);
+  equal(TYPES.map(type => hasFields("cover", ctx(type.id))), [true, true, false, true]);
+  equal(shown("cover", "scroll"), ["rod", "band", "bandLine", "bandImage"]);
+  truthy(hasFields("resources", ctx("stack")), "sections without a field list are always offered");
+  truthy(shown("ornaments", "book").includes("folioFormat") && !shown("ornaments", "scroll").includes("folioFormat"), "a scroll has no folio");
+  truthy(shown("effect", "stack").includes("pagination") && !shown("effect", "scroll").includes("pagination"), "a scroll always flows in columns");
 });
 
 test("sub-sheets: add, duplicate, remove and never reuse a removed key (EDT-22, EDT-23)", () => {

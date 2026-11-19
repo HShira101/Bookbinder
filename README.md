@@ -6,7 +6,7 @@
 
 Foundry VTT module that shows journals as a **book**: closed cover with the journal's name, two-page spreads, 3D page turns you can drag by hand, and Foundry's own side index (search, add page, drag to reorder) kept as is. System agnostic. Requires **Foundry VTT v14** or later.
 
-> Version 0.2 added themes: six ready-made templates, each with its own sub-styles. Two more (Oriental Scroll and Sheet) are included but stay hidden until their page effects arrive in 0.6. Version 0.3 adds the **design editor**: create and edit your own themes with a live preview (details below). Import/export arrives in 0.5 and the font picker with search in 0.4.
+> Version 0.2 added themes: six ready-made templates, each with its own sub-styles. Version 0.6 brings the last two (Oriental Scroll and Sheet) with their own page effects, and splitting long text into pages. Version 0.3 adds the **design editor**: create and edit your own themes with a live preview (details below). Import/export arrives in 0.5 and the font picker with search in 0.4.
 
 ### Install
 In Foundry: **Add-on Modules → Install Module → Manifest URL**:
@@ -17,13 +17,18 @@ https://raw.githubusercontent.com/HShira101/Bookbinder/main/module.json
 
 ### Use
 1. Open a journal you own.
-2. Click the **book icon** next to the window's close button (✕) and choose a theme: **World themes** or **Templates** (Book, Lacquer and Silk, Investigator's Notebook, Datapad, Gothic Codex, Arcane Diary).
+2. Click the **book icon** next to the window's close button (✕) and choose a theme: **World themes** or **Templates** (Book, Lacquer and Silk, Investigator's Notebook, Datapad, Gothic Codex, Oriental Scroll, Arcane Diary, Sheet).
 3. The journal now opens as a book for everyone. Choose **None (Foundry sheet)** to go back.
 4. Below it, the **Aa** button picks one of the theme's sub-styles (a letter, a report…) for that page.
 
 A template is used **straight from the module**: applying it to a journal does not copy anything into your world, and templates only use fonts bundled with Foundry. To customize one, open **Bookbinder** and use it as the base of a new design.
 
 Turn pages with the side arrows, the page corners, the ← → keys (while the window has focus), or by dragging the page edge. Clicking a page in the side index, or a link to a page of the same journal, turns the pages to it. The side index is Foundry's own: add, search and reorder pages there as usual. Outside the book, at the top corner next to each page, ✎ opens that page in Foundry's editor.
+
+### Scrolls, loose sheets and long text (0.6)
+- **Scroll** (Oriental Scroll, or any design of type 📜 Scroll): each journal page is one scroll. Changing page rolls it up and unrolls the next one; a long page flows in columns and the strip scrolls sideways (mouse wheel or the bar).
+- **Loose sheet** (Sheet, or any design of type 📄 Loose sheet): a pile of sheets with no cover. Going forward sends the top sheet to the bottom of the pile, going back brings the last one on top, and a jump of several pages moves the whole bundle.
+- **Long text**: in the advanced editor, **Effect → Long text → Split into pages** makes a journal page that does not fit continue on the following book pages instead of scrolling inside its own.
 
 ### Designs (0.3)
 Open **Configure Settings → Bookbinder → Open Bookbinder**. There you can:
@@ -47,7 +52,7 @@ Per-user settings: animation on/off, page-turn speed, page-turn sound and volume
 
 Módulo de Foundry VTT que muestra los diarios como un **libro**: tapa cerrada con el nombre del diario, pliegos de dos páginas, paso de página en 3D que se puede arrastrar con la mano y el índice lateral propio de Foundry (buscar, añadir página, reordenar arrastrando) tal cual. Agnóstico de sistema. Requiere **Foundry VTT v14** o superior.
 
-> La versión 0.2 añadió los temas: seis plantillas listas, cada una con sus sub-estilos. Otras dos (Pergamino oriental y Hoja) vienen incluidas pero quedan ocultas hasta que sus efectos de página lleguen en la 0.6. La versión 0.3 añade el **editor de diseños**: crea y edita tus propios temas con vista previa en vivo (detalle abajo). Importar y exportar llegan en la 0.5 y el selector de fuentes con búsqueda en la 0.4.
+> La versión 0.2 añadió los temas: seis plantillas listas, cada una con sus sub-estilos. La versión 0.6 trae las dos últimas (Pergamino oriental y Hoja) con sus propios efectos de página, y el reparto del texto largo en páginas. La versión 0.3 añade el **editor de diseños**: crea y edita tus propios temas con vista previa en vivo (detalle abajo). Importar y exportar llegan en la 0.5 y el selector de fuentes con búsqueda en la 0.4.
 
 ### Instalar
 En Foundry: **Módulos complementarios → Instalar módulo → URL del manifiesto**:
@@ -58,13 +63,18 @@ https://raw.githubusercontent.com/HShira101/Bookbinder/main/module.json
 
 ### Uso
 1. Abre un diario del que seas propietario.
-2. Pulsa el **icono de libro** junto al botón de cerrar (✕) de la ventana y elige un tema: **Diseños del mundo** o **Plantillas** (Libro, Laca y seda, Cuaderno de investigador, Datapad, Códice gótico, Diario de magia).
+2. Pulsa el **icono de libro** junto al botón de cerrar (✕) de la ventana y elige un tema: **Diseños del mundo** o **Plantillas** (Libro, Laca y seda, Cuaderno de investigador, Datapad, Códice gótico, Pergamino oriental, Diario de magia, Hoja).
 3. El diario se abre ahora como libro para todos. Elige **Ninguno (hoja de Foundry)** para volver.
 4. Debajo, el botón **Aa** elige uno de los sub-estilos del tema (una carta, un informe…) para esa página.
 
 Una plantilla se usa **directamente desde el módulo**: aplicarla a un diario no copia nada a tu mundo, y las plantillas usan solo fuentes incluidas en Foundry. Para personalizar una, abre **Bookbinder** y úsala como base de un diseño nuevo.
 
 Pasa las páginas con las flechas laterales, las esquinas de la página, las teclas ← → (con la ventana enfocada) o arrastrando el borde de la hoja. Pulsar una página en el índice lateral, o un enlace a una página del mismo diario, pasa las hojas hasta ella. El índice lateral es el de Foundry: ahí se añaden, buscan y reordenan las páginas como siempre. Fuera del libro, en la esquina superior junto a cada página, ✎ la abre en el editor de Foundry.
+
+### Pergaminos, hojas sueltas y texto largo (0.6)
+- **Pergamino** (Pergamino oriental, o cualquier diseño de tipo 📜 Pergamino): cada página del diario es un pergamino. Al cambiar de página se enrolla y se desenrolla el siguiente; una página larga se reparte en columnas y la tira se desplaza de lado (rueda del ratón o la barra).
+- **Hoja suelta** (Hoja, o cualquier diseño de tipo 📄 Hoja suelta): una pila de hojas sin tapa. Al avanzar, la hoja de arriba pasa al fondo de la pila; al retroceder, la última vuelve encima; y un salto de varias páginas mueve el fajo entero.
+- **Texto largo**: en el editor avanzado, **Efecto → Texto largo → Repartir en páginas** hace que una página del diario que no cabe siga en las páginas siguientes del libro en lugar de desplazarse dentro de la suya.
 
 ### Diseños (0.3)
 Abre **Configurar ajustes → Bookbinder → Abrir Bookbinder**. Ahí puedes:

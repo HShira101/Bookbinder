@@ -286,7 +286,6 @@
       "Keep": "Seguir editando"
     },
     "Types": {
-      "Later": "Llega en la v0.6",
       "book": {
         "Glyph": "📖",
         "Name": "Libro",
@@ -373,7 +372,8 @@
       "titlePosition": "El título de la tapa es siempre el nombre del Journal.",
       "inset": "Con margen, la sub-hoja se dibuja como una hoja suelta encima de la principal.",
       "folioFormat": "{n} se sustituye por el número; vacío = sin folio.",
-      "base": "Una plantilla o un diseño existente: se copia (sin vínculo con el original) y rellena todos los pasos."
+      "base": "Una plantilla o un diseño existente: se copia (sin vínculo con el original) y rellena todos los pasos.",
+      "pagination": "Con «Repartir en páginas», el texto que no cabe en una página sigue en la siguiente en lugar de desplazarse dentro de ella."
     },
     "Fields": {
       "paletteGroup": "Paleta del diseño",
@@ -419,6 +419,11 @@
       "easing": "Curva",
       "leafShadow": "Sombra de la hoja",
       "bend": "Curvatura de la hoja",
+      "pagination": "Texto largo",
+      "rod": "Varillas",
+      "band": "Bandas",
+      "bandLine": "Filete de las bandas",
+      "bandImage": "Imagen de las bandas",
       "soundEnabled": "Sonido al pasar página",
       "volume": "Volumen",
       "layoutMode": "Páginas",
@@ -598,6 +603,10 @@
         "auto": "Automática",
         "double": "Dos páginas",
         "single": "Una página"
+      },
+      "pagination": {
+        "perPage": "Desplazar dentro de la página",
+        "columns": "Repartir en páginas"
       },
       "visibility": {
         "all": "Compartido con todos",

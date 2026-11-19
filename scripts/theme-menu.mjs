@@ -15,13 +15,12 @@ export function applyTheme(journal, theme) {
 
 export async function menuItems(current) {
   const listed = await listThemes();
-  const world = listed.world.filter(entry => entry.available && canSeeTheme(game.user, entry.meta));
-  const presets = listed.presets.filter(entry => entry.available);
+  const world = listed.world.filter(entry => canSeeTheme(game.user, entry.meta));
   const active = current && ((await sourceOf(current))?.source === "preset" ? "preset" : "world");
   const entry = (theme, source) => ({ id: `${source}:${theme.slug}`, label: theme.name, active: source === active && theme.slug === current });
   const groups = [
     [localize("Theme.WorldGroup"), world.map(theme => entry(theme, "world"))],
-    [localize("Theme.TemplateGroup"), presets.map(theme => entry(theme, "preset"))]
+    [localize("Theme.TemplateGroup"), listed.presets.map(theme => entry(theme, "preset"))]
   ];
   const items = [{ id: "", label: localize("Theme.None"), active: !current }];
   for (const [label, group] of groups) if (group.length) items.push({ heading: true, label }, ...group);

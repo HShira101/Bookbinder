@@ -24,10 +24,12 @@ export const orClear = (ctx, path, value) => (inSubSheet(ctx, path) ? value : un
 export const imageOf = (ctx, key) => (key && key !== "none" ? ctx.files.theme.resources.images?.[key] : null);
 
 const typeIs = (...ids) => ctx => ids.includes(TYPES.find(type => type.transition === ctx.files.effect.transition.type)?.id);
+const leafed = typeIs("book", "pad", "stack");
+const onLeaves = fields => fields.map(field => ({ ...field, when: both(leafed, field.when) }));
 const onSubSheet = ctx => ctx.sheet !== "main";
 const hasImage = path => ctx => Boolean(imageOf(ctx, read(ctx, path)));
 const valueIs = (path, ...values) => ctx => values.includes(read(ctx, path));
-const both = (...tests) => ctx => tests.every(test => test(ctx));
+const both = (...tests) => ctx => tests.every(test => !test || test(ctx));
 const defaults = (base, values) => ctx => {
   for (const [name, value] of Object.entries(values)) if (read(ctx, `${base}.${name}`) === undefined) write(ctx, `${base}.${name}`, value);
 };
@@ -83,7 +85,7 @@ const TITLE_FONT = {
 
 const TYPE_FIELD = {
   id: "type", type: "cards", w: 1, rerender: true,
-  options: TYPES.map(type => ({ id: type.id, disabled: !type.available })),
+  options: TYPES.map(type => ({ id: type.id })),
   get: ctx => TYPES.find(type => type.transition === ctx.files.effect.transition.type)?.id ?? "book",
   set: (ctx, value) => applyType(ctx.files, value)
 };
@@ -114,7 +116,11 @@ export const SECTIONS = {
     colorField("styles.surfaces.endpaper.color", { id: "color", w: 1, when: typeIs("book") }),
     textureField("styles.surfaces.endpaper", ["blank", "grain", "dots", "image"], { w: 1, when: typeIs("book") }),
     imageField("styles.surfaces.endpaper.image", { id: "endpaperImage", w: 1, when: both(typeIs("book"), hasImage("styles.surfaces.endpaper.image")) }),
-    range("styles.surfaces.spine.shadow", 0, 1, 0.05, { id: "spineShadow", when: typeIs("book") })
+    range("styles.surfaces.spine.shadow", 0, 1, 0.05, { id: "spineShadow", when: typeIs("book") }),
+    colorField("styles.surfaces.mount.rod", { id: "rod", w: 1, when: typeIs("scroll") }),
+    colorField("styles.surfaces.mount.color", { id: "band", w: 1, when: typeIs("scroll") }),
+    colorField("styles.surfaces.mount.line", { id: "bandLine", when: typeIs("scroll") }),
+    imageField("styles.surfaces.mount.image", { id: "bandImage", w: 1, when: typeIs("scroll") })
   ],
   paper: [
     colorField("paper.color", { id: "color", w: 2 }),
@@ -133,32 +139,37 @@ export const SECTIONS = {
     choice("paper.attach", "attach", ["none", "tape", "clip", "seal"], { when: onSubSheet })
   ],
   ornaments: [
-    heading("folio"),
-    text("ornaments.folio.format", { id: "folioFormat", hint: true }),
-    choice("ornaments.folio.position", "folioPosition", ["center", "outer"], { id: "folioPosition" }),
-    choice("ornaments.folio.numbering", "numbering", ["decimal", "roman"]),
-    fontField("ornaments.folio.font", "folioFont"),
-    colorField("ornaments.folio.color", { id: "color" }),
-    heading("corners"),
-    choice("ornaments.corners.style", "corners", ["none", "fold", "triangle", "symbol"], { id: "cornerStyle", rerender: true, after: defaults("ornaments.corners", { color: "$metal", symbol: "✦" }) }),
-    colorField("ornaments.corners.color", { id: "color", when: valueIs("ornaments.corners.style", "fold", "triangle", "symbol") }),
-    text("ornaments.corners.symbol", { id: "symbol", when: valueIs("ornaments.corners.style", "symbol") }),
+    ...onLeaves([
+      heading("folio"),
+      text("ornaments.folio.format", { id: "folioFormat", hint: true }),
+      choice("ornaments.folio.position", "folioPosition", ["center", "outer"], { id: "folioPosition" }),
+      choice("ornaments.folio.numbering", "numbering", ["decimal", "roman"]),
+      fontField("ornaments.folio.font", "folioFont"),
+      colorField("ornaments.folio.color", { id: "color" }),
+      heading("corners"),
+      choice("ornaments.corners.style", "corners", ["none", "fold", "triangle", "symbol"], { id: "cornerStyle", rerender: true, after: defaults("ornaments.corners", { color: "$metal", symbol: "✦" }) }),
+      colorField("ornaments.corners.color", { id: "color", when: valueIs("ornaments.corners.style", "fold", "triangle", "symbol") }),
+      text("ornaments.corners.symbol", { id: "symbol", when: valueIs("ornaments.corners.style", "symbol") })
+    ]),
     heading("watermark"),
     choice("ornaments.watermark.type", "watermark", ["none", "text", "image"], { id: "watermarkType", rerender: true, after: defaults("ornaments.watermark", { opacity: 0.08, text: "❦" }) }),
     text("ornaments.watermark.text", { id: "watermarkText", when: valueIs("ornaments.watermark.type", "text") }),
     fontField("ornaments.watermark.font", "watermarkFont", { when: valueIs("ornaments.watermark.type", "text") }),
     imageField("ornaments.watermark.resource", { id: "image", when: valueIs("ornaments.watermark.type", "image") }),
     range("ornaments.watermark.opacity", 0, 0.5, 0.01, { id: "opacity", when: valueIs("ornaments.watermark.type", "text", "image") }),
-    heading("header"),
-    toggle("ornaments.header.enabled", { id: "enabled" }),
-    fontField("ornaments.header.font", "headerFont"),
-    colorField("ornaments.header.color", { id: "color" })
+    ...onLeaves([
+      heading("header"),
+      toggle("ornaments.header.enabled", { id: "enabled" }),
+      fontField("ornaments.header.font", "headerFont"),
+      colorField("ornaments.header.color", { id: "color" })
+    ])
   ],
   effect: [
     range("effect.transition.durationMs", 200, 2000, 50, { id: "duration" }),
     choice("effect.transition.easing", "easing", ["linear", "smooth", "easeOut"]),
     range("effect.transition.leafShadow", 0, 1, 0.05, { id: "leafShadow", when: typeIs("book") }),
     range("effect.transition.bend", 0, 1, 0.05, { id: "bend", when: typeIs("book", "stack") }),
+    choice("effect.pagination.mode", "pagination", ["perPage", "columns"], { id: "pagination", when: leafed, hint: true }),
     heading("sound"),
     toggle("effect.sound.enabled", { id: "soundEnabled" }),
     range("effect.sound.volume", 0, 1, 0.05, { id: "volume" }),
@@ -245,6 +256,8 @@ export const elementFields = element => element.props.split(" ").map(prop => ({
 }));
 
 export const wizardFields = (section, level = 1) => SECTIONS[section].filter(field => field.w >= level);
+
+export const hasFields = (section, ctx) => !SECTIONS[section] || SECTIONS[section].some(field => !field.when || field.when(ctx));
 
 export const sectionIds = sheet => (sheet === "main" ? ["base", "background", "cover", "paper", "type", "ornaments", "effect", "resources"] : ["paper", "type", "ornaments"]);
 

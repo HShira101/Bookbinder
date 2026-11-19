@@ -286,7 +286,6 @@
       "Keep": "Keep editing"
     },
     "Types": {
-      "Later": "Arrives in v0.6",
       "book": {
         "Glyph": "📖",
         "Name": "Book",
@@ -373,7 +372,8 @@
       "titlePosition": "The cover title is always the journal's name.",
       "inset": "With a margin, the sub-sheet is drawn as a loose sheet on top of the main one.",
       "folioFormat": "{n} is replaced by the number; empty = no folio.",
-      "base": "A template or an existing design: it is copied (not linked to the original) and fills in every step."
+      "base": "A template or an existing design: it is copied (not linked to the original) and fills in every step.",
+      "pagination": "With \"Split into pages\", text that does not fit on a page continues on the next one instead of scrolling inside it."
     },
     "Fields": {
       "paletteGroup": "Design palette",
@@ -419,6 +419,11 @@
       "easing": "Curve",
       "leafShadow": "Leaf shadow",
       "bend": "Leaf curvature",
+      "pagination": "Long text",
+      "rod": "Rods",
+      "band": "Bands",
+      "bandLine": "Band trim",
+      "bandImage": "Band image",
       "soundEnabled": "Page-turn sound",
       "volume": "Volume",
       "layoutMode": "Pages",
@@ -598,6 +603,10 @@
         "auto": "Automatic",
         "double": "Two pages",
         "single": "One page"
+      },
+      "pagination": {
+        "perPage": "Scroll inside the page",
+        "columns": "Split into pages"
       },
       "visibility": {
         "all": "Shared with everyone",

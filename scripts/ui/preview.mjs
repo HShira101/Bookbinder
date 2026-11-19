@@ -9,7 +9,7 @@ import { SAMPLE_TITLE, samplePages } from "./sample.mjs";
 
 const DEBOUNCE = 150;
 const AREAS = [
-  [".bookbinder-cv, .bookbinder-board, .bookbinder-endpaper, .bookbinder-edge", "cover"],
+  [".bookbinder-cv, .bookbinder-board, .bookbinder-endpaper, .bookbinder-edge, .bookbinder-rod, .bookbinder-band", "cover"],
   [".bookbinder-folio, .bookbinder-rhead, .bookbinder-cn, .bookbinder-wm, .bookbinder-st", "ornaments"],
   [".bookbinder-pg, .bookbinder-paper", "paper"]
 ];
@@ -101,7 +101,7 @@ export class PreviewPane {
     this.#container.append(host);
     const theme = resolveTheme(files);
     const source = journal ?? { name: SAMPLE_TITLE(), pages: new Map() };
-    const view = new BookView({ host, journal: source, theme, assets: makeAssets(files.theme.resources), onSpread: () => this.onSpread?.() });
+    const view = new BookView({ host, journal: source, theme, assets: makeAssets(files.theme.resources), onSpread: () => this.onSpread?.(), intro: !this.#view });
     const pages = journal ? journalPages(journal) : samplePages(theme.sheetNames);
     await view.open(pages, this.#target(intent, pages, typeOf(files).id === "book"));
     if (token !== this.#token) {
