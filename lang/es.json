@@ -19,12 +19,12 @@
     "Book": {
       "Previous": "Página anterior",
       "Next": "Página siguiente",
-      "Edit": "Editar página",
       "Open": "Abrir",
       "NoPages": "Este diario no tiene páginas que puedas ver.",
       "RenderError": "No se pudo mostrar esta página.",
       "PageStyle": "Estilo de página",
-      "MainSheet": "Hoja principal"
+      "MainSheet": "Hoja principal",
+      "EditPage": "Editar {name}"
     },
     "Settings": {
       "animation": {

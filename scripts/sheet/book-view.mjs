@@ -53,6 +53,10 @@ const PAPER_LAYERS = '<i class="bookbinder-im"></i><i class="bookbinder-fr"></i>
 
 const face = side => `<div class="bookbinder-face bookbinder-${side}"><div class="bookbinder-slot"></div><i class="bookbinder-shade"></i></div>`;
 
+const TOOLS = side => `<div class="bookbinder-tools bookbinder-tools-${side}" hidden>`
+  + '<button type="button" class="bookbinder-tool" data-bookbinder-open="">✎</button>'
+  + '<button type="button" class="bookbinder-tool bookbinder-tool-sheet" data-bookbinder-sheet="">Aa</button></div>';
+
 const SHELL = (uid, mode, cw) => `<div class="bookbinder-view" data-uid="${uid}" data-mode="${mode}">${control("nav", -1, "‹")}`
   + `<div class="bookbinder-fit"><div class="bookbinder-scaler"><div class="bookbinder-shift">`
   + `<div class="bookbinder-book" data-mode="${mode}" style="--bb-pw:${PW}px;--bb-ph:${PH}px;--bb-cw:${cw}px">`
@@ -61,7 +65,7 @@ const SHELL = (uid, mode, cw) => `<div class="bookbinder-view" data-uid="${uid}"
   + `<div class="bookbinder-screen"><section class="bookbinder-page bookbinder-page-l"></section><section class="bookbinder-page bookbinder-page-r"></section></div>`
   + `<i class="bookbinder-spine"></i><i class="bookbinder-cast"></i><div class="bookbinder-cover-static"></div>`
   + `<div class="bookbinder-leaf">${`<div class="bookbinder-strip">${face("front")}${face("back")}</div>`.repeat(STRIPS)}</div>`
-  + `${control("hot", -1)}${control("hot", 1)}</div></div></div></div>${control("nav", 1, "›")}</div>`;
+  + `${control("hot", -1)}${control("hot", 1)}${TOOLS("l")}${TOOLS("r")}</div></div></div></div>${control("nav", 1, "›")}</div>`;
 
 export class BookView {
   #pages = [];
@@ -133,7 +137,7 @@ export class BookView {
     const $ = selector => root.querySelector(`.bookbinder-${selector}`);
     this.#el = {
       root, book: $("book"), fit: $("fit"), scaler: $("scaler"), shift: $("shift"), cast: $("cast"), leaf: $("leaf"),
-      pageL: $("page-l"), pageR: $("page-r")
+      pageL: $("page-l"), pageR: $("page-r"), toolsL: $("tools-l"), toolsR: $("tools-r")
     };
     $("board-r").innerHTML = this.#coverHTML(false, "r");
     $("board-l").innerHTML = this.#coverHTML(false, "l");
@@ -276,6 +280,8 @@ export class BookView {
     book.dataset.cover = 0;
     this.#setPage(pageL, closed ? -1 : left, "l");
     this.#setPage(pageR, right, "r");
+    this.#setTools(this.#el.toolsL, closed ? -1 : left);
+    this.#setTools(this.#el.toolsR, closed ? -1 : right);
     this.#setShift(closed ? 0 : 1);
     leaf.classList.remove("bookbinder-on");
     cast.style.background = "none";
@@ -306,10 +312,15 @@ export class BookView {
     return `<div class="bookbinder-folio" data-pos="${folio.position ?? "center"}">${escapeHTML(folio.format.replace("{n}", number))}</div>`;
   }
 
-  #controlsHTML(page) {
-    const button = (kind, label, glyph) => `<button type="button" class="bookbinder-${kind}" data-bookbinder-${kind === "edit" ? "open" : kind}="${page.id}"`
-      + ` aria-label="${localize(label)}" data-tooltip="${localize(label)}">${glyph}</button>`;
-    return button("edit", "Book.Edit", "✎") + (Object.keys(this.theme.sheetNames).length ? button("sheet", "Book.PageStyle", "Aa") : "");
+  #setTools(tools, index) {
+    const page = index >= 0 ? this.#pages[index] : null;
+    tools.hidden = !page?.isOwner;
+    if (tools.hidden) return;
+    const [edit, sheet] = tools.children;
+    edit.dataset.bookbinderOpen = sheet.dataset.bookbinderSheet = page.id;
+    edit.dataset.tooltip = edit.ariaLabel = localize("Book.EditPage", { name: page.name });
+    sheet.dataset.tooltip = sheet.ariaLabel = localize("Book.PageStyle");
+    sheet.hidden = !Object.keys(this.theme.sheetNames).length;
   }
 
   #pageHTML(index, side, live) {
@@ -324,7 +335,7 @@ export class BookView {
     return `<div class="bookbinder-pg" data-sheet="${id}" data-side="${side}"${loose ? " data-loose" : ""}${header ? " data-head" : ""}>`
       + `<div class="bookbinder-paper">${PAPER_LAYERS}</div><div class="bookbinder-loose">${loose ? `<div class="bookbinder-paper">${PAPER_LAYERS}</div>` : ""}`
       + `<div class="bookbinder-content${fill}">${body}</div>${attach}${stamp}</div>`
-      + `${page ? this.#cornersHTML(ornaments.corners) + header + this.#folioHTML(ornaments.folio, index) : ""}${live && page?.isOwner ? this.#controlsHTML(page) : ""}</div>`;
+      + `${page ? this.#cornersHTML(ornaments.corners) + header + this.#folioHTML(ornaments.folio, index) : ""}</div>`;
   }
 
   #setPage(element, index, side) {
@@ -387,6 +398,7 @@ export class BookView {
   #begin(from, to) {
     const dir = Math.sign(to - from), lo = Math.min(from, to), hi = Math.max(from, to), leaves = hi - lo, cover = lo < 0;
     const { book, pageL, pageR, leaf } = this.#el;
+    this.#el.toolsL.hidden = this.#el.toolsR.hidden = true;
     const moving = dir > 0 ? pageR : pageL, scroll = moving.querySelector(".bookbinder-content")?.scrollTop ?? 0;
     const kind = cover ? "cover" : leaves > 1 ? "bundle" : "leaf";
     const width = cover ? PW + this.#cw : PW, { bundle } = this.#fx;

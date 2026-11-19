@@ -19,11 +19,11 @@ https://raw.githubusercontent.com/HShira101/Bookbinder/main/module.json
 1. Open a journal you own.
 2. Click the **book icon** next to the window's close button (✕) and choose a theme: **World themes** or **Templates** (Book, Lacquer and Silk, Investigator's Notebook, Datapad, Gothic Codex, Arcane Diary).
 3. The journal now opens as a book for everyone. Choose **None (Foundry sheet)** to go back.
-4. On each page, the **Aa** button picks one of the theme's sub-styles (a letter, a report…) for that page.
+4. Below it, the **Aa** button picks one of the theme's sub-styles (a letter, a report…) for that page.
 
 Applying a template copies it into `worlds/<world>/Bookbinder_themes/` (if you can upload files), so later module updates never change your journals. Templates use only fonts bundled with Foundry.
 
-Turn pages with the side arrows, the page corners, the ← → keys (while the window has focus), or by dragging the page edge. Links to pages of the same journal turn the pages to them. The ✎ button on a page opens it in Foundry's editor. **Add page** (bottom of the index) opens Foundry's own new-page dialog and then the new page's editor.
+Turn pages with the side arrows, the page corners, the ← → keys (while the window has focus), or by dragging the page edge. Links to pages of the same journal turn the pages to them. Outside the book, at the top corner next to each page, ✎ opens that page in Foundry's editor. **Add page** (bottom of the index) opens Foundry's own new-page dialog and then the new page's editor.
 
 Per-user settings: animation on/off, page-turn speed, page-turn sound and volume, index collapsed by default. Reduced motion is always respected.
 
@@ -51,11 +51,11 @@ https://raw.githubusercontent.com/HShira101/Bookbinder/main/module.json
 1. Abre un diario del que seas propietario.
 2. Pulsa el **icono de libro** junto al botón de cerrar (✕) de la ventana y elige un tema: **Diseños del mundo** o **Plantillas** (Libro, Laca y seda, Cuaderno de investigador, Datapad, Códice gótico, Diario de magia).
 3. El diario se abre ahora como libro para todos. Elige **Ninguno (hoja de Foundry)** para volver.
-4. En cada página, el botón **Aa** elige uno de los sub-estilos del tema (una carta, un informe…) para esa página.
+4. Debajo, el botón **Aa** elige uno de los sub-estilos del tema (una carta, un informe…) para esa página.
 
 Aplicar una plantilla la copia a `worlds/<mundo>/Bookbinder_themes/` (si puedes subir archivos), así las actualizaciones del módulo nunca cambian tus diarios. Las plantillas usan solo fuentes incluidas en Foundry.
 
-Pasa las páginas con las flechas laterales, las esquinas de la página, las teclas ← → (con la ventana enfocada) o arrastrando el borde de la hoja. Los enlaces a páginas del mismo diario pasan las hojas hasta ellas. El botón ✎ de cada página la abre en el editor de Foundry. **Añadir página** (abajo del índice) abre el mismo diálogo de Foundry para crear la página y luego su editor.
+Pasa las páginas con las flechas laterales, las esquinas de la página, las teclas ← → (con la ventana enfocada) o arrastrando el borde de la hoja. Los enlaces a páginas del mismo diario pasan las hojas hasta ellas. Fuera del libro, en la esquina superior junto a cada página, ✎ la abre en el editor de Foundry. **Añadir página** (abajo del índice) abre el mismo diálogo de Foundry para crear la página y luego su editor.
 
 Ajustes por usuario: animación sí/no, velocidad del paso de página, sonido y volumen del paso de página, índice contraído por defecto. El movimiento reducido del sistema siempre se respeta.
 

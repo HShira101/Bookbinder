@@ -19,12 +19,12 @@
     "Book": {
       "Previous": "Previous page",
       "Next": "Next page",
-      "Edit": "Edit page",
       "Open": "Open",
       "NoPages": "This journal has no pages you can see.",
       "RenderError": "This page could not be displayed.",
       "PageStyle": "Page style",
-      "MainSheet": "Main sheet"
+      "MainSheet": "Main sheet",
+      "EditPage": "Edit {name}"
     },
     "Settings": {
       "animation": {
