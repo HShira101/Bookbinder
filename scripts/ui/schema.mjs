@@ -39,6 +39,15 @@ const choice = (path, group, values, extra) => ({ path, type: "select", group, v
 const toggle = (path, extra) => ({ path, type: "toggle", ...extra });
 const text = (path, extra) => ({ path, type: "text", ...extra });
 const imageField = (path, extra) => ({ path, type: "image", ...extra });
+const fontField = (path, id, extra) => ({ path, id, type: "font", ...extra });
+
+const NUMERIC = new Set(["number", "range"]);
+
+export function parseValue(field, raw, checked = false) {
+  if (field.type === "toggle") return checked;
+  if (raw === "") return field.type === "text" || field.type === "swatch" ? raw : undefined;
+  return NUMERIC.has(field.type) || (field.type === "select" && field.numeric) ? Number(raw) : raw;
+}
 
 function textureField(base, values, extra) {
   return {
@@ -98,6 +107,7 @@ export const SECTIONS = {
     imageField("styles.surfaces.cover.image", { id: "image", w: 1, when: typeIs("book", "pad") }),
     range("styles.surfaces.cover.radius", 0, 30, 1, { id: "radius", when: typeIs("book", "pad") }),
     choice("styles.ornaments.coverTitle.layout", "coverTitle", ["center", "plate", "sticker", "label", "low"], { id: "titlePosition", w: 1, when: typeIs("book"), hint: true }),
+    fontField("styles.ornaments.coverTitle.font", "coverFont", { w: 1, when: typeIs("book") }),
     colorField("styles.ornaments.coverTitle.color", { id: "titleColor", when: typeIs("book") }),
     { path: "styles.ornaments.coverTitle.size", type: "number", min: 10, max: 60, step: 1, id: "titleSize", when: typeIs("book") },
     heading("endpaper", { w: 1, when: typeIs("book") }),
@@ -127,6 +137,7 @@ export const SECTIONS = {
     text("ornaments.folio.format", { id: "folioFormat", hint: true }),
     choice("ornaments.folio.position", "folioPosition", ["center", "outer"], { id: "folioPosition" }),
     choice("ornaments.folio.numbering", "numbering", ["decimal", "roman"]),
+    fontField("ornaments.folio.font", "folioFont"),
     colorField("ornaments.folio.color", { id: "color" }),
     heading("corners"),
     choice("ornaments.corners.style", "corners", ["none", "fold", "triangle", "symbol"], { id: "cornerStyle", rerender: true, after: defaults("ornaments.corners", { color: "$metal", symbol: "✦" }) }),
@@ -135,10 +146,12 @@ export const SECTIONS = {
     heading("watermark"),
     choice("ornaments.watermark.type", "watermark", ["none", "text", "image"], { id: "watermarkType", rerender: true, after: defaults("ornaments.watermark", { opacity: 0.08, text: "❦" }) }),
     text("ornaments.watermark.text", { id: "watermarkText", when: valueIs("ornaments.watermark.type", "text") }),
+    fontField("ornaments.watermark.font", "watermarkFont", { when: valueIs("ornaments.watermark.type", "text") }),
     imageField("ornaments.watermark.resource", { id: "image", when: valueIs("ornaments.watermark.type", "image") }),
     range("ornaments.watermark.opacity", 0, 0.5, 0.01, { id: "opacity", when: valueIs("ornaments.watermark.type", "text", "image") }),
     heading("header"),
     toggle("ornaments.header.enabled", { id: "enabled" }),
+    fontField("ornaments.header.font", "headerFont"),
     colorField("ornaments.header.color", { id: "color" })
   ],
   effect: [
@@ -204,21 +217,21 @@ const AFTER = { "elements.hr.type": defaults("elements.hr", { symbol: "❦" }) }
 export const ELEMENTS = [
   { id: "base", root: "typography.base", props: "font fallback size lineHeight color" },
   ...HEADINGS.map(id => ({ id, props: HEADING_PROPS })),
-  { id: "p", props: "align indent marginBottom" },
-  { id: "strong", props: "weight color" },
-  { id: "em", props: "style color" },
+  { id: "p", props: "font align indent marginBottom" },
+  { id: "strong", props: "font weight color" },
+  { id: "em", props: "font style color" },
   { id: "u", props: "underline color" },
   { id: "s", props: "color" },
-  { id: "a", props: "color underline" },
+  { id: "a", props: "font color underline" },
   { id: "code", props: "font size color background" },
-  { id: "blockquote", props: "variant style color background borderLeft.width borderLeft.color" },
+  { id: "blockquote", props: "font variant style color background borderLeft.width borderLeft.color" },
   { id: "ul", props: "bullet bulletColor" },
   { id: "ol", props: "numbering bulletColor" },
   { id: "hr", props: "type symbol color length" },
   { id: "table", props: "header.color header.background header.transform stripedRows" },
-  { id: "contentLink", props: "color background border.color" },
-  { id: "inlineRoll", props: "color background border.color" },
-  { id: "secret", props: "style color background" },
+  { id: "contentLink", props: "font color background border.color" },
+  { id: "inlineRoll", props: "font color background border.color" },
+  { id: "secret", props: "font style color background" },
   { id: "img", props: "border.width border.color shadow tilt" },
   { id: "dropCap", props: "enabled lines font weight color" }
 ];

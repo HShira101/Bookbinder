@@ -16,8 +16,8 @@ const PAGES = [
   () => `<h2>${t("Chapter2")}</h2><p>${t("Prose1")}</p><p>${t("Prose2")}</p><p>${t("Prose3")}</p>`
 ];
 
-const sheetPage = name => `<h1>${escapeHTML(name)}</h1><p>${t("Lead")}</p><blockquote><p>${t("Quote")}</p><cite>— ${t("QuoteBy")}</cite></blockquote>`
-  + `<ul>${items("Ul1", "Ul2", "Ul3")}</ul><table><thead>${cells("th", "Th1", "Th2", "Th3")}</thead><tbody>${cells("td", "Row11", "Row12", "Row13")}${cells("td", "Row21", "Row22", "Row23")}</tbody></table>`;
+const sheetPage = name => `<h1>${escapeHTML(name)}</h1><h2>${t("Chapter1")}</h2><p>${t("Lead")}</p><p>${t("Inline")}</p>`
+  + `<blockquote><p>${t("Quote")}</p><cite>— ${t("QuoteBy")}</cite></blockquote><h3>${t("ListTitle")}</h3><ul>${items("Ul1", "Ul2")}</ul><p>${t("Foundry")}</p>`;
 
 const page = (id, name, html, sheet) => ({
   id, name, type: "sample", html, isOwner: false, title: { show: false }, getFlag: (scope, key) => (key === "sheet" ? sheet : undefined)

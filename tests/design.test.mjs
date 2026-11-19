@@ -1,5 +1,6 @@
 import { canCreateThemes, canDeleteTheme, canEditTheme, canSeeTheme } from "../scripts/permissions.mjs";
 import { path as isPath } from "../scripts/theme/schema.mjs";
+import { allFields, parseValue } from "../scripts/ui/schema.mjs";
 import { TYPES, addSheet, applyType, canonical, clone, contrastRatio, copyDesign, fingerprint, getPath, isDirty, pendingOf, removeSheet, replaceFont, resolveColor, setPath, sheetKeys, stamp, toThemePath, typeOf, useImage, usedFonts, validSheet } from "../scripts/theme/design.mjs";
 import { upgradeFiles } from "../scripts/theme/migrations.mjs";
 import { identifier, slugify, uniqueKey, versionName } from "../scripts/theme/slug.mjs";
@@ -161,4 +162,10 @@ test("image paths from Foundry's file picker are stored relative to the theme fo
 test("image path validator accepts Data paths and rejects traversal, protocols and absolute paths (FMT-05)", () => {
   for (const good of ["img/x/a.png", "icons/svg/book.svg", "worlds/w/mapa de ñandú.webp", "modules/bookbinder/presets/img/book/cover.svg"]) truthy(isPath(good), good);
   for (const bad of ["../secret.png", "img/../../x.png", "https://evil/x.png", "data:image/png;base64,AAAA", "/etc/passwd", "img/x\\y.png", ""]) truthy(!isPath(bad), bad);
+});
+
+test("form values keep their type: fonts and text stay strings, ranges become numbers, empty clears (fonts bug)", () => {
+  equal([parseValue({ type: "font" }, "Amiri"), parseValue({ type: "font" }, ""), parseValue({ type: "select" }, "italic"), parseValue({ type: "select", numeric: true }, "700")], ["Amiri", undefined, "italic", 700]);
+  equal([parseValue({ type: "range" }, "0.5"), parseValue({ type: "number" }, ""), parseValue({ type: "text" }, ""), parseValue({ type: "toggle" }, "on", true)], [0.5, undefined, "", true]);
+  for (const field of allFields().filter(entry => entry.type === "font")) truthy(typeof parseValue(field, "Signika") === "string", `font field ${field.id}`);
 });

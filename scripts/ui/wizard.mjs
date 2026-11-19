@@ -92,8 +92,8 @@ export class DesignWizard extends ShellApplication {
     };
   }
 
-  #sheetGroups(fields) {
-    return Object.entries(sheetsOf(this.#draft)).map(([key, sheet]) => ({ title: sheet.name, sheet: key, removable: true, fields: fields(key) }));
+  #sheetGroups(fields, removable = false) {
+    return Object.entries(sheetsOf(this.#draft)).map(([key, sheet]) => ({ title: sheet.name, sheet: key, removable, fields: fields(key) }));
   }
 
   #groups() {
@@ -104,7 +104,7 @@ export class DesignWizard extends ShellApplication {
       [{ fields: [name, this.#baseField(), ...rest] }],
       [{ title: localize("Headings.background"), fields: wizardFields("background") }, { title: localize(`Types.${typeOf(draft).id}.Part`), fields: wizardFields("cover") }],
       [{ title: localize("Wizard.MainSheet"), fields: wizardFields("paper") }, { title: localize("Wizard.SubSheets"), add: true, fields: [] },
-        ...this.#sheetGroups(key => [sheetName(key), ...wizardFields("paper", 2)])],
+        ...this.#sheetGroups(key => [sheetName(key), ...wizardFields("paper", 2)], true)],
       [...(typeOf(draft).id === "book" ? [{ title: localize("Wizard.CoverTitle"), fields: [COVER_TITLE_FONT] }] : []),
         { title: localize("Wizard.MainSheet"), fields: QUICK_TYPE }, ...this.#sheetGroups(() => QUICK_TYPE)]
     ][this.#step];

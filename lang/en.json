@@ -452,7 +452,10 @@
       "header-background": "Header background",
       "header-transform": "Header transform",
       "stripedRows": "Alternate rows",
-      "askGM": "To choose or upload images you need the \"Browse files\" permission: ask the GM."
+      "askGM": "To choose or upload images you need the \"Browse files\" permission: ask the GM.",
+      "folioFont": "Folio font",
+      "headerFont": "Header font",
+      "watermarkFont": "Watermark font"
     },
     "Options": {
       "texture": {

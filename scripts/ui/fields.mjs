@@ -2,7 +2,7 @@ import { escapeHTML, localize } from "../constants.mjs";
 import { dataPath, hasFont, resourceUrl } from "../theme/store.mjs";
 import { resolveColor, sheetsOf, useImage } from "../theme/design.mjs";
 import { pickImage } from "./image-picker.mjs";
-import { HEX, PALETTE_KEYS, clearField, fieldPaths, fieldValue, hintKey, imageOf, isInheritable, isOwn, labelKey, optionKey, orClear, read, write } from "./schema.mjs";
+import { HEX, PALETTE_KEYS, clearField, fieldPaths, fieldValue, hintKey, imageOf, isInheritable, isOwn, labelKey, optionKey, orClear, parseValue, read, write } from "./schema.mjs";
 
 const labelOf = field => localize(labelKey(field));
 const optionLabel = (field, value) => localize(optionKey(field, value));
@@ -66,13 +66,6 @@ export function writeField(field, ctx, value) {
   ctx.changed(field);
 }
 
-function parse(field, input) {
-  if (field.type === "toggle") return input.checked;
-  if (field.type === "text" || field.type === "swatch") return input.value;
-  if (input.value === "") return undefined;
-  return field.type === "select" && !field.numeric ? input.value : Number(input.value);
-}
-
 export async function chooseImage(ctx, path) {
   const key = read(ctx, path), current = imageOf(ctx, key);
   const picked = await pickImage({ current: current && dataPath(current.path) });
@@ -99,7 +92,7 @@ export function renderFields(host, fields, ctx) {
     if (input.matches("[data-color-custom]")) return writeField(fieldOf(input), view, input.value);
     if (!input.matches("[data-input]")) return;
     const field = fieldOf(input);
-    writeField(field, view, parse(field, input));
+    writeField(field, view, parseValue(field, input.value, input.checked));
     if (input.nextElementSibling?.tagName === "OUTPUT") input.nextElementSibling.textContent = input.value;
   };
   host.onchange = event => {

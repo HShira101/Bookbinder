@@ -452,7 +452,10 @@
       "header-background": "Fondo de la cabecera",
       "header-transform": "Transformación de la cabecera",
       "stripedRows": "Filas alternas",
-      "askGM": "Para elegir o subir imágenes necesitas el permiso «Examinar archivos»: pídeselo al GM."
+      "askGM": "Para elegir o subir imágenes necesitas el permiso «Examinar archivos»: pídeselo al GM.",
+      "folioFont": "Fuente del folio",
+      "headerFont": "Fuente del encabezado",
+      "watermarkFont": "Fuente de la marca de agua"
     },
     "Options": {
       "texture": {
