@@ -199,7 +199,9 @@
       "Remove": "Quitar",
       "NameRequired": "Ponle un nombre al diseño antes de crearlo.",
       "Created": "Diseño «{name}» creado. Lo fino se ajusta con el lápiz, en el editor avanzado.",
-      "CreatedQueued": "Diseño «{name}» guardado en espera: se escribirá cuando un GM esté conectado."
+      "CreatedQueued": "Diseño «{name}» guardado en espera: se escribirá cuando un GM esté conectado.",
+      "ExpandAll": "Desplegar todas",
+      "CollapseAll": "Plegar todas"
     },
     "Editor": {
       "Title": "«{name}» · autor: {author}",

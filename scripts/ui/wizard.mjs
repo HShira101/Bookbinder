@@ -40,6 +40,8 @@ export class DesignWizard extends ShellApplication {
       cancel() { return this.close(); },
       create() { return this.#create(); },
       addSheet() { return this.#addSheet(); },
+      toggleGroup(event, target) { return this.#toggle([target.dataset.sheetKey]); },
+      toggleAll() { return this.#toggle(Object.keys(sheetsOf(this.#draft))); },
       removeSheet(event, target) { return this.#removeSheet(target.dataset.sheet); }
     }
   };
@@ -62,6 +64,7 @@ export class DesignWizard extends ShellApplication {
   #draft;
   #step = 0;
   #sheet = "main";
+  #open = new Set();
   #preview;
 
   async html() {
@@ -94,7 +97,7 @@ export class DesignWizard extends ShellApplication {
   }
 
   #sheetGroups(fields, removable = false) {
-    return Object.entries(sheetsOf(this.#draft)).map(([key, sheet]) => ({ title: sheet.name, sheet: key, removable, fields: fields(key) }));
+    return Object.entries(sheetsOf(this.#draft)).map(([key, sheet]) => ({ title: sheet.name, sheet: key, removable, collapsible: true, fields: fields(key) }));
   }
 
   #groups() {
@@ -104,10 +107,11 @@ export class DesignWizard extends ShellApplication {
     return [
       [{ fields: [name, this.#baseField(), ...rest] }],
       [{ title: localize("Headings.background"), fields: wizardFields("background") }, { title: localize(`Types.${typeOf(draft).id}.Part`), fields: wizardFields("cover") }],
-      [{ title: localize("Wizard.MainSheet"), fields: wizardFields("paper") }, { title: localize("Wizard.SubSheets"), add: true, fields: [] },
+      [{ title: localize("Wizard.MainSheet"), fields: wizardFields("paper") }, { title: localize("Wizard.SubSheets"), add: true, toggleAll: true, fields: [] },
         ...this.#sheetGroups(key => [sheetName(key), ...wizardFields("paper", 2)], true)],
       [...(typeOf(draft).id === "book" ? [{ title: localize("Wizard.CoverTitle"), fields: [COVER_TITLE_FONT] }] : []),
-        { title: localize("Wizard.MainSheet"), fields: QUICK_TYPE }, ...this.#sheetGroups(() => QUICK_TYPE)]
+        { title: localize("Wizard.MainSheet"), fields: QUICK_TYPE },
+        ...(Object.keys(sheetsOf(draft)).length ? [{ title: localize("Wizard.SubSheets"), toggleAll: true, fields: [] }] : []), ...this.#sheetGroups(() => QUICK_TYPE)]
     ][this.#step];
   }
 
@@ -121,10 +125,17 @@ export class DesignWizard extends ShellApplication {
     root.querySelector('[data-action="previous"]').disabled = this.#step === 0;
     root.querySelector('[data-action="next"]').disabled = this.#step === STEPS.length - 1;
     form.innerHTML = "";
+    const keys = Object.keys(sheetsOf(this.#draft)), everyOpen = keys.length > 0 && keys.every(key => this.#open.has(key));
     for (const group of this.#groups()) {
-      const extra = group.add ? `<button type="button" data-action="addSheet"><i class="fa-solid fa-plus"></i> ${localize("Wizard.Add")}</button>`
-        : group.removable ? `<button type="button" data-action="removeSheet" data-sheet="${escapeHTML(group.sheet)}"><i class="fa-solid fa-trash"></i> ${localize("Wizard.Remove")}</button>` : "";
-      form.insertAdjacentHTML("beforeend", `<section class="bookbinder-group"${group.sheet ? ` data-group="${escapeHTML(group.sheet)}"` : ""}>${group.title ? `<header><h3>${escapeHTML(group.title)}</h3>${extra}</header>` : ""}<div class="bookbinder-fields"></div></section>`);
+      const collapsed = group.collapsible && !this.#open.has(group.sheet);
+      const buttons = [group.add && `<button type="button" data-action="addSheet"><i class="fa-solid fa-plus"></i> ${localize("Wizard.Add")}</button>`,
+        group.toggleAll && keys.length > 0 && `<button type="button" data-action="toggleAll"><i class="fa-solid ${everyOpen ? "fa-angles-up" : "fa-angles-down"}"></i> ${localize(everyOpen ? "Wizard.CollapseAll" : "Wizard.ExpandAll")}</button>`,
+        group.removable && `<button type="button" data-action="removeSheet" data-sheet="${escapeHTML(group.sheet)}"><i class="fa-solid fa-trash"></i> ${localize("Wizard.Remove")}</button>`].filter(Boolean).join("");
+      const heading = group.collapsible
+        ? `<button type="button" class="bookbinder-fold" data-action="toggleGroup" data-sheet-key="${escapeHTML(group.sheet)}" aria-expanded="${!collapsed}"><i class="fa-solid ${collapsed ? "fa-chevron-right" : "fa-chevron-down"}"></i><h3>${escapeHTML(group.title)}</h3></button>`
+        : `<h3>${escapeHTML(group.title)}</h3>`;
+      form.insertAdjacentHTML("beforeend", `<section class="bookbinder-group${collapsed ? " collapsed" : ""}"${group.sheet ? ` data-group="${escapeHTML(group.sheet)}"` : ""}>${group.title ? `<header>${heading}${buttons}</header>` : ""}<div class="bookbinder-fields"></div></section>`);
+      if (collapsed) continue;
       const sheet = group.sheet ?? "main";
       renderFields(form.lastElementChild.querySelector(".bookbinder-fields"), group.fields, {
         files: this.#draft, sheet, rerender: () => this.#draw(),
@@ -153,8 +164,15 @@ export class DesignWizard extends ShellApplication {
     this.#showPreview({ focus, immediate: true });
   }
 
+  #toggle(keys) {
+    const open = keys.every(key => this.#open.has(key));
+    for (const key of keys) open ? this.#open.delete(key) : this.#open.add(key);
+    this.#draw();
+  }
+
   #addSheet() {
     this.#sheet = addSheet(this.#draft, localize("Editor.SheetDefault", { n: Object.keys(sheetsOf(this.#draft)).length + 1 }), null);
+    this.#open.add(this.#sheet);
     this.#draw();
     this.element.querySelector(`[data-group="${this.#sheet}"]`)?.scrollIntoView({ block: "center" });
     this.#showPreview({ focus: "sheet", immediate: true });
@@ -162,6 +180,7 @@ export class DesignWizard extends ShellApplication {
 
   #removeSheet(key) {
     removeSheet(this.#draft, key);
+    this.#open.delete(key);
     this.#sheet = "main";
     this.#draw();
     this.#showPreview({ focus: "sheet", immediate: true });

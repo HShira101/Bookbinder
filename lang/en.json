@@ -199,7 +199,9 @@
       "Remove": "Remove",
       "NameRequired": "Give the design a name before creating it.",
       "Created": "Design \"{name}\" created. Fine tuning is done with the pencil, in the advanced editor.",
-      "CreatedQueued": "Design \"{name}\" saved on hold: it will be written once a GM is connected."
+      "CreatedQueued": "Design \"{name}\" saved on hold: it will be written once a GM is connected.",
+      "ExpandAll": "Expand all",
+      "CollapseAll": "Collapse all"
     },
     "Editor": {
       "Title": "\"{name}\" · author: {author}",
