@@ -20,7 +20,7 @@ const numberList = list => [].concat(list).map(n => `${n}px`).join(" ");
 const hasKeys = object => object && Object.keys(object).length > 0;
 
 function parseColor(value) {
-  const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})/i.exec(value);
+  const hex = /^#([0-9a-f]{6}|[0-9a-f]{3})(?![0-9a-f])/i.exec(value);
   if (hex) {
     const digits = hex[1].length === 3 ? [...hex[1]].map(d => d + d).join("") : hex[1];
     return [0, 2, 4].map(i => parseInt(digits.slice(i, i + 2), 16));

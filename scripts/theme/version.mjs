@@ -1,5 +1,5 @@
 export const FORMATS = ["0.1.0"];
-export const VERSIONS = ["0.1.0", "0.2.0"];
+export const VERSIONS = ["0.1.0", "0.2.0", "0.2.1"];
 
 const parse = version => /^\d+\.\d+\.\d+$/.test(version) ? version.split(".").map(Number) : null;
 

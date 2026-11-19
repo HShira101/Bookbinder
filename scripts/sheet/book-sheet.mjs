@@ -62,16 +62,14 @@ export class BookSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
   }
 
   async #loadTheme() {
-    const slug = this.document.getFlag(MODULE_ID, "theme");
-    this.#loaded = await loadTheme(slug);
-    reportProblems(this.#loaded);
+    const loaded = await loadTheme(this.document.getFlag(MODULE_ID, "theme"));
+    reportProblems(loaded);
+    this.#loaded = loaded;
   }
 
   async #reload() {
     forgetTheme(this.document.getFlag(MODULE_ID, "theme"));
-    this.#loaded = null;
-    this.#view?.destroy();
-    this.#view = null;
+    await this.#loadTheme();
     await this.render({ force: true, parts: ["toc", "book"] });
   }
 
@@ -84,9 +82,19 @@ export class BookSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
     });
   }
 
+  async _onFirstRender(context, options) {
+    await super._onFirstRender(context, options);
+    this.element.addEventListener("keydown", event => this.#view?.onKey(event));
+  }
+
   async _onRender(context, options) {
     await super._onRender(context, options);
-    if (!this.#loaded.ok) return this.#fallBack();
+    if (!this.#loaded?.ok) return this.#fallBack();
+    const stage = this.element.querySelector(".bookbinder-stage");
+    if (this.#view && this.#view.host !== stage) {
+      this.#view.destroy();
+      this.#view = null;
+    }
     if (this.#view) await this.#view.refresh(this.#pages, options.pageId, options.anchor);
     else await this.#open(options);
     this.#markToc();
@@ -120,7 +128,6 @@ export class BookSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
       host: stage, journal: this.document, theme, assets: makeAssets(theme.resources),
       onSpread: () => this.#onSpread(), onSheet: (page, button) => this.#pickSheet(page, button)
     });
-    this.element.addEventListener("keydown", event => this.#view?.onKey(event));
     await this.#view.open(this.#pages, pageId ?? this.#bookmark, anchor);
     stage.focus({ preventScroll: true });
   }

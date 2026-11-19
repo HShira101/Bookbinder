@@ -141,6 +141,12 @@ test("buildCss generates scoped rules, sub-sheets and escapes strings (FMT-05)",
   truthy(css.includes('content:"a\\"b"'), "quotes are escaped");
 });
 
+test("six-digit hex colours are not read as three-digit ones", () => {
+  const files = at01(data => { data.styles.palette = { ink: "#000", cover: "#4c2c19" }; });
+  const css = buildCss(resolveTheme(upgradeFiles(files, "0.2.0").files), ".s", fakeAssets);
+  truthy(css.includes("--bb-cv-c3:rgb(42,24,14)"), "dark tone of #4c2c19");
+});
+
 test("an unknown palette reference falls back to the base text colour (casos límite)", () => {
   const files = at01(data => { data.styles.elements.h1 = { color: "$ghost" }; });
   const css = buildCss(resolveTheme(upgradeFiles(files, "0.2.0").files), ".s", fakeAssets);
