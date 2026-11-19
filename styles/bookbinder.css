@@ -1,0 +1,815 @@
+.bookbinder-sheet .window-content {
+  display: flex;
+  flex-direction: row;
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+}
+
+.bookbinder-theme-menu {
+  position: absolute;
+  z-index: 100;
+  margin: 2px 0 0;
+  padding: 4px 0;
+  min-width: 190px;
+  list-style: none;
+  background: var(--color-cool-5, #1c1c22);
+  border: 1px solid var(--color-cool-4, #3a3a44);
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .55);
+}
+.bookbinder-theme-menu button {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 12px;
+  color: #e8e6e3;
+  font-size: var(--font-size-13, 13px);
+  cursor: pointer;
+}
+.bookbinder-theme-menu button:is(:hover, :focus-visible) {
+  background: rgba(255, 255, 255, .1);
+}
+
+.bookbinder-toc {
+  flex: 0 0 210px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: #1d1611;
+  color: #e9dcc0;
+  border-right: 1px solid rgba(0, 0, 0, .6);
+  transition: flex-basis .28s ease;
+}
+.bookbinder-toc.bookbinder-collapsed {
+  flex-basis: 34px;
+}
+.bookbinder-toc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 8px 6px 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+}
+.bookbinder-toc-header h2 {
+  margin: 0;
+  border: 0;
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: .75;
+}
+.bookbinder-toc .bookbinder-toc-toggle {
+  all: unset;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  text-align: center;
+  line-height: 22px;
+  cursor: pointer;
+}
+.bookbinder-toc-toggle i {
+  transition: transform .28s ease;
+}
+.bookbinder-collapsed .bookbinder-toc-header {
+  padding-left: 6px;
+}
+.bookbinder-collapsed .bookbinder-toc-toggle i {
+  transform: rotate(180deg);
+}
+.bookbinder-collapsed :is(.bookbinder-toc-header h2, .bookbinder-toc-list) {
+  display: none;
+}
+.bookbinder-toc-list {
+  flex: 1;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+  overflow-y: auto;
+}
+.bookbinder-toc-list li {
+  margin: 0;
+}
+.bookbinder-toc .bookbinder-toc-list button {
+  all: unset;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  padding: 5px 10px 5px calc(9px + var(--bb-level, 1) * 12px - 12px);
+  border-left: 3px solid transparent;
+  font-size: 13px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.bookbinder-toc .bookbinder-toc-list button:is(:hover, :focus-visible) {
+  background: rgba(255, 255, 255, .06);
+  color: #fff;
+}
+.bookbinder-toc .bookbinder-toc-list button.bookbinder-active {
+  border-left-color: #c9a14a;
+  background: rgba(201, 161, 74, .14);
+  color: #fff;
+}
+
+.bookbinder-stage {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  outline: none;
+  background: radial-gradient(1200px 700px at 50% 42%, #33261c, #0f0b08 78%);
+}
+
+.bookbinder-view {
+  --bb-ink: #3b2a1a;
+  --bb-ink-soft: #6b5236;
+  --bb-accent: #7a1f17;
+  --bb-accent-soft: #a4533d;
+  --bb-metal: #a17c32;
+  --bb-paper: #ecdfc0;
+  --bb-stack: rgb(165, 156, 134);
+  --bb-stack-line: rgb(113, 107, 92);
+  --bb-cover: #4c2c19;
+  --bb-cover-light: rgb(106, 80, 64);
+  --bb-cover-dark: rgb(42, 24, 14);
+  --bb-body-font: "Amiri", "Signika", Georgia, serif;
+  --bb-title-font: "Modesto Condensed", "Amiri", "Signika", serif;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  user-select: none;
+}
+.bookbinder-view [hidden] {
+  display: none !important;
+}
+.bookbinder-view .bookbinder-nav {
+  all: unset;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, .25);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .35);
+  color: #fff;
+  font: 24px/36px serif;
+  text-align: center;
+  cursor: pointer;
+  transition: transform .12s, opacity .12s;
+}
+.bookbinder-view .bookbinder-nav:hover {
+  transform: scale(1.1);
+}
+.bookbinder-view .bookbinder-nav:disabled {
+  opacity: .2;
+  pointer-events: none;
+}
+.bookbinder-fit {
+  flex: 0 0 auto;
+  position: relative;
+}
+.bookbinder-scaler {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+}
+.bookbinder-shift {
+  transform: translateX(var(--bb-shift, 0px));
+}
+
+.bookbinder-book {
+  position: relative;
+  width: calc(2 * var(--bb-pw) + 2 * var(--bb-cw));
+  height: calc(var(--bb-ph) + 2 * var(--bb-cw));
+}
+.bookbinder-board {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, .65), 0 3px 8px rgba(0, 0, 0, .5);
+}
+.bookbinder-board-l {
+  left: 0;
+}
+.bookbinder-board-r {
+  left: 50%;
+}
+.bookbinder-cv {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-color: var(--bb-cover);
+  background-image: url("../presets/img/common/leather.svg"), linear-gradient(145deg, var(--bb-cover-light), var(--bb-cover) 45%, var(--bb-cover-dark));
+  background-blend-mode: overlay, normal;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07), inset 0 0 28px rgba(0, 0, 0, .45);
+}
+.bookbinder-cv[data-side="r"] {
+  border-radius: 2px 8px 8px 2px;
+}
+.bookbinder-cv[data-side="l"] {
+  border-radius: 8px 2px 2px 8px;
+}
+.bookbinder-cv-art {
+  position: absolute;
+  inset: 0;
+  background: url("../presets/img/book/cover.svg") center / 100% 100% no-repeat;
+}
+.bookbinder-cv-title {
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  top: 15%;
+  font-family: var(--bb-title-font);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  text-align: center;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  color: #dcbc6a;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .3), 0 -1px 0 rgba(0, 0, 0, .45);
+}
+.bookbinder-endpaper {
+  position: absolute;
+  inset: 6px 0 6px 6px;
+  overflow: hidden;
+  background: radial-gradient(rgba(70, 40, 15, .28) 1px, transparent 1.6px) 0 0 / 14px 14px, #b08c57;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .25);
+  --bb-noise: .5;
+  --bb-vignette: .35;
+}
+.bookbinder-cv[data-side="r"] .bookbinder-endpaper {
+  inset: 6px 6px 6px 0;
+}
+.bookbinder-cover-static {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  z-index: 8;
+  display: none;
+}
+.bookbinder-book[data-closed="1"] .bookbinder-cover-static {
+  display: block;
+}
+.bookbinder-book[data-closed="1"] :is(.bookbinder-board-l, .bookbinder-block, .bookbinder-page, .bookbinder-spine),
+.bookbinder-book[data-cover="1"] :is(.bookbinder-board-l, .bookbinder-block-l) {
+  display: none;
+}
+.bookbinder-screen {
+  position: absolute;
+  left: var(--bb-cw);
+  top: var(--bb-cw);
+  width: calc(2 * var(--bb-pw));
+  height: var(--bb-ph);
+}
+.bookbinder-page {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  z-index: 1;
+}
+.bookbinder-page-l {
+  left: 0;
+}
+.bookbinder-page-r {
+  left: 50%;
+}
+.bookbinder-block {
+  position: absolute;
+  top: calc(var(--bb-cw) + 2px);
+  bottom: calc(var(--bb-cw) + 2px);
+  width: 4px;
+  z-index: 0;
+  background: repeating-linear-gradient(90deg, var(--bb-stack) 0 1px, var(--bb-stack-line) 1px 2px);
+}
+.bookbinder-block-l {
+  right: calc(50% + var(--bb-pw) - 1px);
+  border-radius: 2px 0 0 2px;
+}
+.bookbinder-block-r {
+  left: calc(50% + var(--bb-pw) - 1px);
+  border-radius: 0 2px 2px 0;
+}
+.bookbinder-spine {
+  position: absolute;
+  top: var(--bb-cw);
+  left: calc(50% - 1px);
+  width: 2px;
+  height: var(--bb-ph);
+  z-index: 5;
+  background: rgba(0, 0, 0, .35);
+  pointer-events: none;
+}
+.bookbinder-cast {
+  position: absolute;
+  left: var(--bb-cw);
+  top: var(--bb-cw);
+  width: calc(2 * var(--bb-pw));
+  height: var(--bb-ph);
+  z-index: 6;
+  pointer-events: none;
+}
+.bookbinder-view .bookbinder-hot {
+  all: unset;
+  position: absolute;
+  top: var(--bb-cw);
+  width: 42px;
+  height: var(--bb-ph);
+  z-index: 20;
+  cursor: pointer;
+  touch-action: none;
+}
+.bookbinder-view .bookbinder-hot:disabled {
+  display: none;
+}
+.bookbinder-view .bookbinder-hot-l {
+  left: var(--bb-cw);
+}
+.bookbinder-view .bookbinder-hot-r {
+  right: var(--bb-cw);
+}
+.bookbinder-hot::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 42px;
+  height: 42px;
+  opacity: 0;
+  transition: opacity .15s;
+}
+.bookbinder-hot-r::after {
+  right: 0;
+  background: linear-gradient(315deg, rgba(255, 255, 255, .4) 0 50%, transparent 50%);
+}
+.bookbinder-hot-l::after {
+  left: 0;
+  background: linear-gradient(45deg, rgba(255, 255, 255, .4) 0 50%, transparent 50%);
+}
+.bookbinder-hot:is(:hover, :focus-visible)::after {
+  opacity: 1;
+}
+.bookbinder-view .bookbinder-book[data-closed="1"] .bookbinder-hot-r {
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+}
+.bookbinder-book[data-closed="1"] .bookbinder-hot-r::after {
+  display: none;
+}
+
+.bookbinder-leaf {
+  position: absolute;
+  left: 50%;
+  z-index: 10;
+  display: none;
+  perspective: 2200px;
+  perspective-origin: 0 50%;
+  pointer-events: none;
+}
+.bookbinder-leaf.bookbinder-on {
+  display: block;
+}
+.bookbinder-strip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform-origin: 0 50%;
+  will-change: transform;
+}
+.bookbinder-face {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -1.5px;
+  right: -1.5px;
+  z-index: 0;
+  transform: translateZ(0);
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+.bookbinder-back {
+  transform: translateZ(calc(var(--bb-thick, 0px) * -1)) rotateY(180deg);
+}
+.bookbinder-edge {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: var(--bb-thick, 0px);
+  height: 100%;
+  transform-origin: 0 50%;
+  transform: rotateY(90deg);
+  background: linear-gradient(90deg, var(--bb-cover), var(--bb-cover-dark));
+}
+.bookbinder-leaf[data-kind="bundle"] .bookbinder-edge {
+  background: var(--bb-lines), linear-gradient(90deg, var(--bb-paper), var(--bb-stack));
+}
+.bookbinder-slot {
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+.bookbinder-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+}
+
+.bookbinder-pg {
+  position: absolute;
+  inset: 0;
+  background: var(--bb-paper);
+}
+.bookbinder-pg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(var(--bb-spine-dir), rgba(0, 0, 0, .4) 0, rgba(0, 0, 0, .15) 11.7px, rgba(0, 0, 0, .035) 30.6px, rgba(255, 255, 255, .04) 46.8px, transparent 81px);
+}
+.bookbinder-pg[data-side="l"] {
+  --bb-spine-dir: to left;
+}
+.bookbinder-pg[data-side="r"] {
+  --bb-spine-dir: to right;
+}
+.bookbinder-paper {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: url("../presets/img/book/paper.svg") center / 100% 100%, var(--bb-paper);
+  --bb-noise: .55;
+  --bb-vignette: .2;
+}
+:is(.bookbinder-paper, .bookbinder-endpaper)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../presets/img/common/grain.svg");
+  opacity: var(--bb-noise);
+}
+:is(.bookbinder-paper, .bookbinder-endpaper)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, transparent 50%, #46301a 135%);
+  opacity: var(--bb-vignette);
+}
+.bookbinder-folio {
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  bottom: 14px;
+  z-index: 3;
+  font: 11px/1 var(--bb-body-font);
+  letter-spacing: .2em;
+  text-align: center;
+  color: var(--bb-ink-soft);
+}
+.bookbinder-view .bookbinder-edit {
+  all: unset;
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  z-index: 5;
+  width: 24px;
+  height: 24px;
+  margin-left: -12px;
+  border-radius: 50%;
+  font: 16px/24px serif;
+  text-align: center;
+  color: var(--bb-ink-soft);
+  opacity: .3;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.bookbinder-view .bookbinder-pg:hover .bookbinder-edit,
+.bookbinder-view .bookbinder-edit:focus-visible {
+  opacity: 1;
+}
+
+.bookbinder-view .bookbinder-content {
+  position: absolute;
+  top: 34px;
+  bottom: 44px;
+  z-index: 1;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  font-family: var(--bb-body-font);
+  font-size: 15.5px;
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: left;
+  color: var(--bb-ink);
+}
+.bookbinder-view .bookbinder-pg[data-side="l"] .bookbinder-content {
+  left: 46px;
+  right: 40px;
+}
+.bookbinder-view .bookbinder-pg[data-side="r"] .bookbinder-content {
+  left: 40px;
+  right: 46px;
+}
+.bookbinder-view .bookbinder-page .bookbinder-content {
+  overflow-y: auto;
+  user-select: text;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(90, 60, 25, .35) transparent;
+}
+.bookbinder-view .bookbinder-content > :first-child {
+  margin-top: 0;
+}
+.bookbinder-view .bookbinder-content :is(h1, h2, h3, h4, h5, h6) {
+  margin: .75em 0 .35em;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--bb-title-font);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--bb-accent);
+  text-shadow: none;
+}
+.bookbinder-view .bookbinder-content h1 {
+  font-size: 31px;
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: .04em;
+  text-align: center;
+}
+.bookbinder-view .bookbinder-content h2 {
+  margin-bottom: 8px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--bb-metal);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: .03em;
+}
+.bookbinder-view .bookbinder-content h3 {
+  font-family: var(--bb-body-font);
+  font-size: 19px;
+  font-variant: small-caps;
+  letter-spacing: .06em;
+}
+.bookbinder-view .bookbinder-content h4 {
+  font-family: var(--bb-body-font);
+  font-size: 17px;
+  font-style: italic;
+  color: var(--bb-ink);
+}
+.bookbinder-view .bookbinder-content h5 {
+  font-family: var(--bb-body-font);
+  font-size: 14px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--bb-ink-soft);
+}
+.bookbinder-view .bookbinder-content h6 {
+  font-family: var(--bb-body-font);
+  font-size: 14px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--bb-ink-soft);
+}
+.bookbinder-view .bookbinder-content p {
+  margin: 0 0 .62em;
+  text-align: justify;
+}
+.bookbinder-view .bookbinder-content:not(.bookbinder-fill) > p:first-of-type::first-letter {
+  float: left;
+  margin: .05em .12em 0 0;
+  font-family: var(--bb-title-font);
+  font-size: 58px;
+  font-weight: 700;
+  line-height: .84;
+  color: var(--bb-accent);
+}
+.bookbinder-view .bookbinder-content strong {
+  font-weight: 700;
+  color: #2a1c10;
+}
+.bookbinder-view .bookbinder-content a:not([class]) {
+  color: var(--bb-accent);
+  text-decoration: underline dotted;
+  text-underline-offset: .16em;
+}
+.bookbinder-view .bookbinder-content code {
+  padding: 0 .28em;
+  border-radius: 2px;
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+  background: rgba(90, 60, 25, .13);
+  color: #4a2f17;
+}
+.bookbinder-view .bookbinder-content blockquote {
+  margin: .8em .3em;
+  padding: .15em 0 .15em .9em;
+  border: 0;
+  border-left: 3px solid var(--bb-metal);
+  background: none;
+  font-style: italic;
+  color: var(--bb-ink-soft);
+}
+.bookbinder-view .bookbinder-content blockquote p {
+  margin: 0 0 .25em;
+}
+.bookbinder-view .bookbinder-content :is(ul, ol) {
+  margin: 0 0 .7em;
+  padding-left: 1.8em;
+}
+.bookbinder-view .bookbinder-content li {
+  margin: .12em 0;
+}
+.bookbinder-view .bookbinder-content ul {
+  list-style: none;
+}
+.bookbinder-view .bookbinder-content ul > li {
+  position: relative;
+}
+.bookbinder-view .bookbinder-content ul > li::before {
+  content: "❧";
+  position: absolute;
+  left: -1.25em;
+  color: var(--bb-accent);
+}
+.bookbinder-view .bookbinder-content ol {
+  list-style-type: upper-roman;
+}
+.bookbinder-view .bookbinder-content ol > li::marker {
+  color: var(--bb-accent);
+}
+.bookbinder-view .bookbinder-content hr {
+  width: 70%;
+  height: 1.3em;
+  margin: .9em auto;
+  border: 0;
+  overflow: visible;
+  text-align: center;
+  color: var(--bb-metal);
+  background: linear-gradient(currentColor, currentColor) left center / calc(50% - 1.2em) 1px no-repeat,
+    linear-gradient(currentColor, currentColor) right center / calc(50% - 1.2em) 1px no-repeat;
+}
+.bookbinder-view .bookbinder-content hr::before {
+  content: "❦";
+  font: 1.15em/1.1 serif;
+}
+.bookbinder-view .bookbinder-content table {
+  width: 100%;
+  margin: .4em 0 .8em;
+  border: 0;
+  border-collapse: collapse;
+  background: none;
+  font-size: .93em;
+}
+.bookbinder-view .bookbinder-content :is(th, td) {
+  padding: 3px 7px;
+  text-align: left;
+  vertical-align: top;
+}
+.bookbinder-view .bookbinder-content th {
+  border-bottom: 2px solid var(--bb-metal);
+  background: none;
+  font-variant: small-caps;
+  letter-spacing: .06em;
+  color: var(--bb-accent);
+}
+.bookbinder-view .bookbinder-content td {
+  border-bottom: 1px solid rgba(90, 60, 25, .28);
+}
+.bookbinder-view .bookbinder-content tbody tr:nth-child(even) {
+  background: rgba(90, 60, 25, .06);
+}
+.bookbinder-view .bookbinder-content :is(a.content-link, a.inline-roll) {
+  padding: 0 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+}
+.bookbinder-view .bookbinder-content a.content-link {
+  border: 1px solid var(--bb-metal);
+  background: rgba(255, 248, 225, .55);
+  color: #4a2f17;
+}
+.bookbinder-view .bookbinder-content a.inline-roll {
+  border: 1px solid var(--bb-accent-soft);
+  background: rgba(122, 31, 23, .08);
+  color: var(--bb-accent);
+}
+.bookbinder-view .bookbinder-content :is(a.content-link, a.inline-roll) i {
+  margin-right: .25em;
+}
+.bookbinder-view .bookbinder-content section.secret {
+  margin: .6em 0;
+  padding: .45em .7em;
+  border: 1px dashed var(--bb-accent-soft);
+  background: rgba(122, 31, 23, .07);
+  font-style: italic;
+}
+.bookbinder-view .bookbinder-content section.secret > :last-child {
+  margin-bottom: 0;
+}
+.bookbinder-view .bookbinder-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  border: 1px solid var(--bb-ink-soft);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .28);
+}
+.bookbinder-view .bookbinder-content figure {
+  margin: .6em auto 0;
+  text-align: center;
+}
+.bookbinder-view .bookbinder-content figcaption {
+  margin-top: .4em;
+  font-size: .86em;
+  font-style: italic;
+  color: var(--bb-ink-soft);
+}
+
+.bookbinder-view .bookbinder-content.bookbinder-fill {
+  display: flex;
+  flex-direction: column;
+}
+.bookbinder-view .bookbinder-figure {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+.bookbinder-view .bookbinder-figure img {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border: 0;
+  box-shadow: none;
+}
+.bookbinder-view .bookbinder-video {
+  display: block;
+  width: 100%;
+  max-height: 100%;
+}
+.bookbinder-view .bookbinder-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 60%;
+  text-align: center;
+}
+.bookbinder-view .bookbinder-card i {
+  font-size: 48px;
+  color: var(--bb-ink-soft);
+}
+.bookbinder-view .bookbinder-card button {
+  all: unset;
+  padding: 4px 14px;
+  border: 1px solid var(--bb-metal);
+  border-radius: 4px;
+  font: inherit;
+  color: var(--bb-accent);
+  cursor: pointer;
+}
+.bookbinder-view .bookbinder-card button:is(:hover, :focus-visible) {
+  background: rgba(161, 124, 50, .15);
+}
+.bookbinder-view :is(.bookbinder-empty, .bookbinder-error) {
+  margin-top: 40%;
+  font-style: italic;
+  text-align: center;
+  color: var(--bb-ink-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bookbinder-toc,
+  .bookbinder-toc-toggle i,
+  .bookbinder-view .bookbinder-nav,
+  .bookbinder-hot::after {
+    transition: none;
+  }
+}

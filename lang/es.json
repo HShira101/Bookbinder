@@ -1,0 +1,46 @@
+{
+  "BOOKBINDER": {
+    "Sheet": {
+      "Label": "Libro de Bookbinder"
+    },
+    "Theme": {
+      "Apply": "Aplicar tema",
+      "None": "Ninguno (hoja de Foundry)",
+      "Book": "Libro"
+    },
+    "Toc": {
+      "Title": "Páginas",
+      "Toggle": "Contraer o expandir el índice"
+    },
+    "Book": {
+      "Previous": "Página anterior",
+      "Next": "Página siguiente",
+      "Edit": "Editar página",
+      "Open": "Abrir",
+      "NoPages": "Este diario no tiene páginas que puedas ver.",
+      "RenderError": "No se pudo mostrar esta página."
+    },
+    "Settings": {
+      "animation": {
+        "Name": "Animación al pasar página",
+        "Hint": "Anima las páginas al pasarlas. La preferencia de movimiento reducido del sistema siempre la desactiva."
+      },
+      "speed": {
+        "Name": "Velocidad al pasar página",
+        "Hint": "Multiplicador de la velocidad del paso de página (1 = la del tema)."
+      },
+      "tocCollapsed": {
+        "Name": "Índice contraído por defecto",
+        "Hint": "Los libros se abren con el índice lateral contraído."
+      },
+      "isolation": {
+        "Name": "Aislamiento de estilos (prueba)",
+        "Hint": "Cómo se separan los estilos del libro de los de Foundry y del sistema de juego. Vuelve a abrir el libro tras cambiarlo.",
+        "Choices": {
+          "scoped": "CSS con alcance",
+          "shadow": "Shadow DOM (experimental)"
+        }
+      }
+    }
+  }
+}

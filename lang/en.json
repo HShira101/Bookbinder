@@ -1,0 +1,46 @@
+{
+  "BOOKBINDER": {
+    "Sheet": {
+      "Label": "Bookbinder book"
+    },
+    "Theme": {
+      "Apply": "Apply theme",
+      "None": "None (Foundry sheet)",
+      "Book": "Book"
+    },
+    "Toc": {
+      "Title": "Pages",
+      "Toggle": "Collapse or expand the index"
+    },
+    "Book": {
+      "Previous": "Previous page",
+      "Next": "Next page",
+      "Edit": "Edit page",
+      "Open": "Open",
+      "NoPages": "This journal has no pages you can see.",
+      "RenderError": "This page could not be displayed."
+    },
+    "Settings": {
+      "animation": {
+        "Name": "Page-turn animation",
+        "Hint": "Animate pages when turning them. Your system's reduced-motion preference always disables it."
+      },
+      "speed": {
+        "Name": "Page-turn speed",
+        "Hint": "Multiplier for the page-turn speed (1 = theme speed)."
+      },
+      "tocCollapsed": {
+        "Name": "Collapse the index by default",
+        "Hint": "Books open with the side index collapsed."
+      },
+      "isolation": {
+        "Name": "Style isolation (test)",
+        "Hint": "How the book's styles are kept apart from Foundry and the game system. Reopen the book after changing it.",
+        "Choices": {
+          "scoped": "Scoped CSS",
+          "shadow": "Shadow DOM (experimental)"
+        }
+      }
+    }
+  }
+}
