@@ -11,4 +11,12 @@
     <li><button type="button" data-action="goToPage" data-page-id="{{id}}" style="--bb-level:{{level}}">{{name}}</button></li>
     {{/each}}
   </ol>
+  {{#if canCreate}}
+  <footer class="bookbinder-toc-footer">
+    <button type="button" class="bookbinder-toc-create" data-action="createPage"
+            aria-label="{{localize "BOOKBINDER.Toc.AddPage"}}" data-tooltip="{{localize "BOOKBINDER.Toc.AddPage"}}">
+      <i class="fa-solid fa-file-circle-plus fa-fw"></i><span>{{localize "BOOKBINDER.Toc.AddPage"}}</span>
+    </button>
+  </footer>
+  {{/if}}
 </aside>

@@ -23,7 +23,7 @@ https://github.com/HShira101/Bookbinder/releases/latest/download/module.json
 
 Applying a template copies it into `worlds/<world>/Bookbinder_themes/` (if you can upload files), so later module updates never change your journals. Templates use only fonts bundled with Foundry.
 
-Turn pages with the side arrows, the page corners, the ← → keys (while the window has focus), or by dragging the page edge. Links to pages of the same journal turn the pages to them. The ✎ button on a page opens it in Foundry's editor.
+Turn pages with the side arrows, the page corners, the ← → keys (while the window has focus), or by dragging the page edge. Links to pages of the same journal turn the pages to them. The ✎ button on a page opens it in Foundry's editor. **Add page** (bottom of the index) opens Foundry's own new-page dialog and then the new page's editor.
 
 Per-user settings: animation on/off, page-turn speed, page-turn sound and volume, index collapsed by default. Reduced motion is always respected.
 
@@ -55,7 +55,7 @@ https://github.com/HShira101/Bookbinder/releases/latest/download/module.json
 
 Aplicar una plantilla la copia a `worlds/<mundo>/Bookbinder_themes/` (si puedes subir archivos), así las actualizaciones del módulo nunca cambian tus diarios. Las plantillas usan solo fuentes incluidas en Foundry.
 
-Pasa las páginas con las flechas laterales, las esquinas de la página, las teclas ← → (con la ventana enfocada) o arrastrando el borde de la hoja. Los enlaces a páginas del mismo diario pasan las hojas hasta ellas. El botón ✎ de cada página la abre en el editor de Foundry.
+Pasa las páginas con las flechas laterales, las esquinas de la página, las teclas ← → (con la ventana enfocada) o arrastrando el borde de la hoja. Los enlaces a páginas del mismo diario pasan las hojas hasta ellas. El botón ✎ de cada página la abre en el editor de Foundry. **Añadir página** (abajo del índice) abre el mismo diálogo de Foundry para crear la página y luego su editor.
 
 Ajustes por usuario: animación sí/no, velocidad del paso de página, sonido y volumen del paso de página, índice contraído por defecto. El movimiento reducido del sistema siempre se respeta.
 

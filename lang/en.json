@@ -13,7 +13,8 @@
     },
     "Toc": {
       "Title": "Pages",
-      "Toggle": "Collapse or expand the index"
+      "Toggle": "Collapse or expand the index",
+      "AddPage": "Add page"
     },
     "Book": {
       "Previous": "Previous page",

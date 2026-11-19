@@ -13,7 +13,8 @@ export class BookSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
     position: { width: 1240, height: 820 },
     actions: {
       toggleToc: BookSheet.#onToggleToc,
-      goToPage: BookSheet.#onGoToPage
+      goToPage: BookSheet.#onGoToPage,
+      createPage: BookSheet.#onCreatePage
     }
   };
 
@@ -78,6 +79,7 @@ export class BookSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
     if (!this.#loaded) await this.#loadTheme();
     return Object.assign(context, {
       collapsed: this.#tocCollapsed,
+      canCreate: this.isEditable,
       entries: this.#pages.map(page => ({ id: page.id, name: page.name, level: page.title?.level ?? 1 }))
     });
   }
@@ -154,5 +156,11 @@ export class BookSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
 
   static #onGoToPage(event, target) {
     this.#view?.goToPage(target.dataset.pageId);
+  }
+
+  static async #onCreatePage() {
+    const sort = Math.max(0, ...this.document.pages.map(page => page.sort)) + CONST.SORT_INTEGER_DENSITY;
+    const page = await foundry.documents.JournalEntryPage.implementation.createDialog({ sort }, { parent: this.document, renderSheet: true });
+    if (page) await this.render({ pageId: page.id });
   }
 }

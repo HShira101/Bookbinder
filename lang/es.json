@@ -13,7 +13,8 @@
     },
     "Toc": {
       "Title": "Páginas",
-      "Toggle": "Contraer o expandir el índice"
+      "Toggle": "Contraer o expandir el índice",
+      "AddPage": "Añadir página"
     },
     "Book": {
       "Previous": "Página anterior",

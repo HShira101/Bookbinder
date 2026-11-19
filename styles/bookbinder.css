@@ -89,8 +89,30 @@
 .bookbinder-collapsed .bookbinder-toc-toggle i {
   transform: rotate(180deg);
 }
-.bookbinder-collapsed :is(.bookbinder-toc-header h2, .bookbinder-toc-list) {
+.bookbinder-collapsed :is(.bookbinder-toc-header h2, .bookbinder-toc-list, .bookbinder-toc-create span) {
   display: none;
+}
+.bookbinder-toc-footer {
+  margin-top: auto;
+  padding: 6px 4px;
+  border-top: 1px solid rgba(255, 255, 255, .08);
+}
+.bookbinder-toc .bookbinder-toc-create {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 3px;
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.bookbinder-collapsed .bookbinder-toc-create {
+  justify-content: center;
+  padding: 6px 0;
 }
 .bookbinder-toc-list {
   flex: 1;
@@ -114,7 +136,7 @@
   overflow-wrap: anywhere;
   cursor: pointer;
 }
-.bookbinder-toc .bookbinder-toc-list button:is(:hover, :focus-visible) {
+.bookbinder-toc :is(.bookbinder-toc-list button, .bookbinder-toc-create):is(:hover, :focus-visible) {
   background: rgba(255, 255, 255, .06);
   color: #fff;
 }
