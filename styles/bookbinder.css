@@ -1,10 +1,3 @@
-.bookbinder-sheet .window-content {
-  display: flex;
-  flex-direction: row;
-  padding: 0;
-  gap: 0;
-  overflow: hidden;
-}
 
 .bookbinder-menu {
   position: absolute;
@@ -41,118 +34,16 @@
   text-transform: uppercase;
 }
 
-.bookbinder-toc {
-  flex: 0 0 210px;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  background: #1d1611;
-  color: #e9dcc0;
-  border-right: 1px solid rgba(0, 0, 0, .6);
-  transition: flex-basis .28s ease;
-}
-.bookbinder-toc.bookbinder-collapsed {
-  flex-basis: 34px;
-}
-.bookbinder-toc-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  padding: 8px 6px 8px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, .08);
-}
-.bookbinder-toc-header h2 {
-  margin: 0;
-  border: 0;
-  font-size: 11px;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  opacity: .75;
-}
-.bookbinder-toc .bookbinder-toc-toggle {
-  all: unset;
-  flex: 0 0 auto;
-  width: 22px;
-  height: 22px;
-  text-align: center;
-  line-height: 22px;
-  cursor: pointer;
-}
-.bookbinder-toc-toggle i {
-  transition: transform .28s ease;
-}
-.bookbinder-collapsed .bookbinder-toc-header {
-  padding-left: 6px;
-}
-.bookbinder-collapsed .bookbinder-toc-toggle i {
-  transform: rotate(180deg);
-}
-.bookbinder-collapsed :is(.bookbinder-toc-header h2, .bookbinder-toc-list, .bookbinder-toc-create span) {
-  display: none;
-}
-.bookbinder-toc-footer {
-  margin-top: auto;
-  padding: 6px 4px;
-  border-top: 1px solid rgba(255, 255, 255, .08);
-}
-.bookbinder-toc .bookbinder-toc-create {
-  all: unset;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 6px 8px;
-  border-radius: 3px;
-  font-size: 13px;
-  white-space: nowrap;
-  cursor: pointer;
-}
-.bookbinder-collapsed .bookbinder-toc-create {
-  justify-content: center;
-  padding: 6px 0;
-}
-.bookbinder-toc-list {
+.bookbinder-sheet .bookbinder-book-part {
+  position: relative;
   flex: 1;
-  margin: 0;
-  padding: 4px 0;
-  list-style: none;
-  overflow-y: auto;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
 }
-.bookbinder-toc-list li {
-  margin: 0;
-}
-.bookbinder-toc .bookbinder-toc-entry {
-  all: unset;
-  box-sizing: border-box;
-  display: block;
-  width: 100%;
-  padding: 5px 10px 5px calc(9px + var(--bb-level, 1) * 12px - 12px);
-  border-left: 3px solid transparent;
-  font-size: 13px;
-  line-height: 1.3;
-  overflow-wrap: anywhere;
-  cursor: pointer;
-}
-.bookbinder-toc :is(.bookbinder-toc-entry, .bookbinder-toc-create):is(:hover, :focus-visible) {
-  background: rgba(255, 255, 255, .06);
-  color: #fff;
-}
-.bookbinder-toc .bookbinder-toc-entry.bookbinder-active {
-  border-left-color: #c9a14a;
-  background: rgba(201, 161, 74, .14);
-  color: #fff;
-}
-.bookbinder-toc .bookbinder-toc-entry[draggable="true"] {
-  cursor: grab;
-}
-.bookbinder-toc .bookbinder-toc-entry.bookbinder-drop-before {
-  box-shadow: inset 0 2px 0 #c9a14a;
-}
-.bookbinder-toc .bookbinder-toc-entry.bookbinder-drop-after {
-  box-shadow: inset 0 -2px 0 #c9a14a;
+.bookbinder-sheet.bookbinder-book-mode [data-action="toggleMode"] {
+  display: none;
 }
 
 .bookbinder-stage {
@@ -957,8 +848,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bookbinder-toc,
-  .bookbinder-toc-toggle i,
   .bookbinder-view .bookbinder-nav,
   .bookbinder-view .bookbinder-tool,
   .bookbinder-hot::after {

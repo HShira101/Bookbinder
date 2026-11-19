@@ -193,6 +193,10 @@ export class BookView {
     if (anchor) this.#scrollTo(index, anchor);
   }
 
+  turn(dir) {
+    return this.goTo(this.#spread + dir);
+  }
+
   async goTo(to) {
     if (this.#busy || to === this.#spread || !this.#valid(to)) return false;
     if (!this.#book) return this.#slide(to);

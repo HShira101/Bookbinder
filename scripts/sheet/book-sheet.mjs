@@ -4,49 +4,37 @@ import { setting } from "../settings.mjs";
 import { forgetTheme, loadTheme, makeAssets, reportProblems } from "../theme/store.mjs";
 import { BookView } from "./book-view.mjs";
 
-const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
+const { JournalEntrySheet } = foundry.applications.sheets.journal;
+const BOOK_PART = { template: modulePath("templates/book.hbs"), scrollable: [] };
 
-export class BookSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
+export class BookSheet extends JournalEntrySheet {
   static DEFAULT_OPTIONS = {
     classes: ["bookbinder-sheet"],
-    window: { resizable: true, icon: "fa-solid fa-book-open" },
-    position: { width: 1240, height: 820 },
-    actions: {
-      toggleToc: BookSheet.#onToggleToc,
-      goToPage: BookSheet.#onGoToPage,
-      createPage: BookSheet.#onCreatePage
-    }
-  };
-
-  static PARTS = {
-    toc: { template: modulePath("templates/toc.hbs") },
-    book: { template: modulePath("templates/book.hbs") }
+    window: { icon: "fa-solid fa-book-open" },
+    position: { width: 1240, height: 820 }
   };
 
   static reloadTheme(journal) {
-    for (const app of foundry.applications.instances.values()) {
-      if (app instanceof BookSheet && app.document === journal) app.#reload();
-    }
+    for (const app of BookSheet.#instancesOf(journal)) app.#reload();
   }
 
   static refreshPage(page) {
+    for (const app of BookSheet.#instancesOf(page.parent)) {
+      app.#view?.invalidate(page.id);
+      if (app.#book) app.render();
+    }
+  }
+
+  static *#instancesOf(journal) {
     for (const app of foundry.applications.instances.values()) {
-      if (app instanceof BookSheet && app.document === page.parent) {
-        app.#view?.invalidate(page.id);
-        app.render();
-      }
+      if (app instanceof BookSheet && app.document === journal) yield app;
     }
   }
 
   #view = null;
   #loaded = null;
-  #dragged = null;
-  #tocCollapsed = setting("tocCollapsed");
+  #book = false;
   #saveBookmark = foundry.utils.debounce(pageId => game.user.update({ [`flags.${MODULE_ID}.lastPage.${this.document.id}`]: pageId }), 1000);
-
-  get title() {
-    return this.document.name;
-  }
 
   get #pages() {
     return this.document.pages.contents
@@ -58,11 +46,6 @@ export class BookSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
     return game.user.getFlag(MODULE_ID, "lastPage")?.[this.document.id] ?? null;
   }
 
-  _configureRenderOptions(options) {
-    super._configureRenderOptions(options);
-    if (this.rendered && !options.parts) options.parts = ["toc"];
-  }
-
   async #loadTheme() {
     const loaded = await loadTheme(this.document.getFlag(MODULE_ID, "theme"));
     reportProblems(loaded);
@@ -72,95 +55,45 @@ export class BookSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
   async #reload() {
     forgetTheme(this.document.getFlag(MODULE_ID, "theme"));
     await this.#loadTheme();
-    await this.render({ force: true, parts: ["toc", "book"] });
+    if (Boolean(this.#loaded.ok) !== this.#book) {
+      await this.close();
+      return this.render({ force: true });
+    }
+    if (this.#book) await this.render({ force: true, parts: ["pages"], bookbinderRebuild: true });
   }
 
-  async _prepareContext(options) {
-    const context = await super._prepareContext(options);
-    if (!this.#loaded) await this.#loadTheme();
-    return Object.assign(context, {
-      collapsed: this.#tocCollapsed,
-      canCreate: this.isEditable,
-      canSort: this.isEditable,
-      entries: this.#pages.map(page => ({ id: page.id, name: page.name, level: page.title?.level ?? 1 }))
-    });
+  async render(options, _options) {
+    if (!this.rendered) await this.#loadTheme();
+    return super.render(options, _options);
+  }
+
+  _configureRenderParts(options) {
+    const parts = super._configureRenderParts(options);
+    this.#book = Boolean(this.#loaded?.ok) && "pages" in parts;
+    if (this.#book) parts.pages = { ...parts.pages, ...BOOK_PART };
+    return parts;
+  }
+
+  _configureRenderOptions(options) {
+    super._configureRenderOptions(options);
+    if (this.rendered && this.#book && !options.bookbinderRebuild) options.parts = (options.parts ?? ["sidebar", "pages"]).filter(part => part !== "pages");
+  }
+
+  _getHeaderControls() {
+    const controls = super._getHeaderControls();
+    return this.#book ? controls.filter(control => control.action !== "toggleMode") : controls;
   }
 
   async _onFirstRender(context, options) {
     await super._onFirstRender(context, options);
-    const { element } = this;
-    element.addEventListener("keydown", event => this.#onKey(event));
-    element.addEventListener("dragstart", event => this.#onDragStart(event));
-    element.addEventListener("dragover", event => this.#onDragOver(event));
-    element.addEventListener("drop", event => this.#onDrop(event));
-    element.addEventListener("dragend", () => {
-      this.#dragged = null;
-      this.#markDrop(null);
-    });
-  }
-
-  #onKey(event) {
-    const entry = event.target.closest?.(".bookbinder-toc-entry");
-    if (entry && (event.key === "Enter" || event.key === " ")) {
-      event.preventDefault();
-      return entry.click();
-    }
-    this.#view?.onKey(event);
-  }
-
-  #entryOf(event) {
-    return event.target.closest?.(".bookbinder-toc-entry[data-page-id]") ?? null;
-  }
-
-  #dropTarget(event) {
-    const entry = this.#entryOf(event);
-    return entry && this.#dragged && entry.dataset.pageId !== this.#dragged ? entry : null;
-  }
-
-  #dropsBefore(entry, event) {
-    const box = entry.getBoundingClientRect();
-    return event.clientY < box.top + box.height / 2;
-  }
-
-  #markDrop(target, event) {
-    for (const entry of this.element.querySelectorAll(".bookbinder-toc-entry")) {
-      const here = entry === target, before = here && this.#dropsBefore(entry, event);
-      entry.classList.toggle("bookbinder-drop-before", here && before);
-      entry.classList.toggle("bookbinder-drop-after", here && !before);
-    }
-  }
-
-  #onDragStart(event) {
-    const entry = this.#entryOf(event);
-    if (!entry || !this.isEditable) return;
-    this.#dragged = entry.dataset.pageId;
-    event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.setData("text/plain", JSON.stringify(this.document.pages.get(this.#dragged).toDragData()));
-  }
-
-  #onDragOver(event) {
-    const target = this.#dropTarget(event);
-    this.#markDrop(target, event);
-    if (target) event.preventDefault();
-  }
-
-  async #onDrop(event) {
-    const target = this.#dropTarget(event);
-    if (!target) return;
-    event.preventDefault();
-    event.stopPropagation();
-    const before = this.#dropsBefore(target, event), pages = this.document.pages;
-    const source = pages.get(this.#dragged);
-    this.#dragged = null;
-    this.#markDrop(null);
-    const siblings = pages.contents.filter(page => page !== source);
-    const updates = foundry.utils.SortingHelpers.performIntegerSort(source, { target: pages.get(target.dataset.pageId), siblings, sortBefore: before });
-    await this.document.updateEmbeddedDocuments("JournalEntryPage", updates.map(({ target: page, update }) => ({ _id: page.id, ...update })));
+    this.element.addEventListener("keydown", event => this.#view?.onKey(event));
+    if (this.#book && setting("tocCollapsed") && this.sidebarExpanded) this.toggleSidebar();
   }
 
   async _onRender(context, options) {
     await super._onRender(context, options);
-    if (!this.#loaded?.ok) return this.#fallBack();
+    this.element.classList.toggle("bookbinder-book-mode", this.#book);
+    if (!this.#book) return;
     const stage = this.element.querySelector(".bookbinder-stage");
     if (this.#view && this.#view.host !== stage) {
       this.#view.destroy();
@@ -177,11 +110,46 @@ export class BookSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
     this.#view = null;
   }
 
-  async #fallBack() {
-    const { JournalEntrySheet } = foundry.applications.sheets.journal;
-    const journal = this.document;
-    await this.close();
-    new JournalEntrySheet({ document: journal }).render({ force: true });
+  goToPage(pageId, options = {}) {
+    if (!this.#book || !this.#view) return super.goToPage(pageId, options);
+    return this.#view.goToPage(pageId, options.anchor).then(() => this);
+  }
+
+  nextPage() {
+    return this.#book ? this.#view?.turn(1) : super.nextPage();
+  }
+
+  previousPage() {
+    return this.#book ? this.#view?.turn(-1) : super.previousPage();
+  }
+
+  async _renderPageViews(context, options) {
+    if (!this.#book) return super._renderPageViews(context, options);
+  }
+
+  _observePages() {
+    if (!this.#book) return super._observePages();
+  }
+
+  _observeHeadings() {
+    if (!this.#book) return super._observeHeadings();
+  }
+
+  _onPageScroll(entries, observer) {
+    if (!this.#book) return super._onPageScroll(entries, observer);
+  }
+
+  _synchronizeSidebar() {
+    if (!this.#book) return super._synchronizeSidebar();
+  }
+
+  _updateButtonState() {
+    if (!this.#book) return super._updateButtonState();
+  }
+
+  _activatePagesInView() {
+    if (!this.#book) return super._activatePagesInView();
+    this.#markToc();
   }
 
   #pickSheet(page, anchor) {
@@ -211,25 +179,8 @@ export class BookSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
 
   #markToc() {
     const ids = this.#view?.pageIds ?? [];
-    for (const button of this.element.querySelectorAll(".bookbinder-toc [data-page-id]")) {
-      button.classList.toggle("bookbinder-active", ids.includes(button.dataset.pageId));
+    for (const entry of this.element.querySelectorAll('[data-application-part="sidebar"] [data-page-id]')) {
+      entry.classList.toggle("active", ids.includes(entry.dataset.pageId));
     }
-  }
-
-  static #onToggleToc() {
-    this.#tocCollapsed = !this.#tocCollapsed;
-    const toc = this.element.querySelector(".bookbinder-toc");
-    toc.classList.toggle("bookbinder-collapsed", this.#tocCollapsed);
-    toc.querySelector(".bookbinder-toc-toggle").ariaExpanded = String(!this.#tocCollapsed);
-  }
-
-  static #onGoToPage(event, target) {
-    this.#view?.goToPage(target.dataset.pageId);
-  }
-
-  static async #onCreatePage() {
-    const sort = Math.max(0, ...this.document.pages.map(page => page.sort)) + CONST.SORT_INTEGER_DENSITY;
-    const page = await foundry.documents.JournalEntryPage.implementation.createDialog({ sort }, { parent: this.document, renderSheet: true });
-    if (page) await this.render({ pageId: page.id });
   }
 }

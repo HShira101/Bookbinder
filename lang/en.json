@@ -11,11 +11,6 @@
       "Warnings": "Theme \"{slug}\": {count} invalid value(s) were replaced by defaults.",
       "Broken": "Theme \"{slug}\" could not be loaded; its journals open with the normal sheet."
     },
-    "Toc": {
-      "Title": "Pages",
-      "Toggle": "Collapse or expand the index",
-      "AddPage": "Add page"
-    },
     "Book": {
       "Previous": "Previous page",
       "Next": "Next page",

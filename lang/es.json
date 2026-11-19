@@ -11,11 +11,6 @@
       "Warnings": "Tema \"{slug}\": {count} valor(es) inválido(s) se sustituyeron por los de defecto.",
       "Broken": "No se pudo cargar el tema \"{slug}\"; sus Journals se abren con la hoja normal."
     },
-    "Toc": {
-      "Title": "Páginas",
-      "Toggle": "Contraer o expandir el índice",
-      "AddPage": "Añadir página"
-    },
     "Book": {
       "Previous": "Página anterior",
       "Next": "Página siguiente",
