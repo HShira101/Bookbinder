@@ -497,8 +497,10 @@
 }
 :is(.bookbinder-paper, .bookbinder-endpaper) {
   position: absolute;
-  inset: 0;
   overflow: hidden;
+}
+.bookbinder-paper {
+  inset: 0;
 }
 :is(.bookbinder-paper, .bookbinder-endpaper)::before {
   content: "";

@@ -18,7 +18,7 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           REPO="https://github.com/${GITHUB_REPOSITORY}"
           jq --arg version "$VERSION" \
-             --arg manifest "$REPO/releases/latest/download/module.json" \
+             --arg manifest "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/module.json" \
              --arg download "$REPO/releases/download/v$VERSION/module.zip" \
              '.version = $version | .manifest = $manifest | .download = $download' \
              module.json > module.tmp && mv module.tmp module.json

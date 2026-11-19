@@ -12,7 +12,7 @@ Foundry VTT module that shows journals as a **book**: closed cover with the jour
 In Foundry: **Add-on Modules → Install Module → Manifest URL**:
 
 ```
-https://github.com/HShira101/Bookbinder/releases/latest/download/module.json
+https://raw.githubusercontent.com/HShira101/Bookbinder/main/module.json
 ```
 
 ### Use
@@ -44,7 +44,7 @@ Módulo de Foundry VTT que muestra los diarios como un **libro**: tapa cerrada c
 En Foundry: **Módulos complementarios → Instalar módulo → URL del manifiesto**:
 
 ```
-https://github.com/HShira101/Bookbinder/releases/latest/download/module.json
+https://raw.githubusercontent.com/HShira101/Bookbinder/main/module.json
 ```
 
 ### Uso
