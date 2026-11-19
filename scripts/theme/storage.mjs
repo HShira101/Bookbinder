@@ -2,11 +2,11 @@ import { MODULE_ID } from "../constants.mjs";
 import { canCreateThemes, canEditTheme } from "../permissions.mjs";
 import { setting } from "../settings.mjs";
 import { ask, onMessage, reply, send } from "../socket.mjs";
-import { canonical, copyDesign, stamp } from "./design.mjs";
+import { canonical, stamp } from "./design.mjs";
 import { upgradeFiles } from "./migrations.mjs";
 import { slugify, uniqueKey } from "./slug.mjs";
 import {
-  THEME_FILES, canWrite, entryOf, forgetTheme, listThemes, loadTheme, moduleVersion, pendingEntries, picker, readFiles, readIndex, readTheme, route, worldLocation, worldRoot
+  THEME_FILES, canWrite, entryOf, forgetTheme, moduleVersion, pendingEntries, picker, presetRoot, readFiles, readIndex, readTheme, route, worldLocation, worldRoot
 } from "./store.mjs";
 
 const WORLD_FOLDERS = ["theme", "img", "assets", "assets/sounds"];
@@ -46,10 +46,10 @@ async function diskSlugs() {
   return listing.dirs.map(dirName);
 }
 
-const writtenSlugs = async () => new Set([...(await diskSlugs()), ...(await readIndex(worldRoot()))]);
+const reservedSlugs = async () => new Set([...(await diskSlugs()), ...(await readIndex(worldRoot())), ...(await readIndex(presetRoot()))]);
 
 export async function chooseSlug(name) {
-  return uniqueKey(slugify(name), new Set([...(await writtenSlugs()), ...pendingEntries().map(entry => entry.slug)]));
+  return uniqueKey(slugify(name), new Set([...(await reservedSlugs()), ...pendingEntries().map(entry => entry.slug)]));
 }
 
 export function announceChange(slug, userId = game.user.id) {
@@ -75,7 +75,7 @@ async function authorizedWrite({ user, slug, files, isNew }) {
   if (!upgraded.ok) return { ok: false, reason: "invalid" };
   const clean = stamp(upgraded.files, { userId: user.id, moduleVersion: moduleVersion(), now: Date.now() });
   clean.theme.author = current?.theme.author ?? { id: user.id, name: user.name };
-  const finalSlug = isNew ? uniqueKey(slug, await writtenSlugs()) : slug;
+  const finalSlug = isNew ? uniqueKey(slug, await reservedSlugs()) : slug;
   await writeDesign(finalSlug, clean, isNew);
   announceChange(finalSlug, user.id);
   return { ok: true, slug: finalSlug };
@@ -153,14 +153,3 @@ const SAME_AS_TEMPLATE = ["styles", "effect"];
 
 export const isUnmodifiedCopy = (entry, template) => SAME_AS_TEMPLATE.every(name => canonical(entry.files[name]) === canonical(template.files[name]))
   && canonical(entry.files.theme.resources) === canonical(template.files.theme.resources);
-
-export async function applyTemplate(slug) {
-  const template = await loadTheme(slug);
-  if (!template.ok || template.source !== "preset") return slug;
-  const { world } = await listThemes();
-  const existing = world.find(entry => isUnmodifiedCopy(entry, template));
-  if (existing) return existing.slug;
-  const copy = copyDesign(template.files, { name: template.files.theme.name, author: game.user, visibility: "all", moduleVersion: moduleVersion(), now: Date.now() });
-  const result = await createDesign(copy);
-  return result.ok ? result.slug : slug;
-}

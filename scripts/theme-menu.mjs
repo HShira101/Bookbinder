@@ -1,7 +1,6 @@
 import { BOOK_SHEET_CLASS, MODULE_ID, localize } from "./constants.mjs";
 import { toggleMenu } from "./menu.mjs";
 import { canSeeTheme } from "./permissions.mjs";
-import { applyTemplate } from "./theme/storage.mjs";
 import { listThemes, sourceOf } from "./theme/store.mjs";
 
 const journalTheme = journal => journal.getFlag(MODULE_ID, "theme") ?? null;
@@ -29,9 +28,9 @@ export async function menuItems(current) {
   return items;
 }
 
-export async function applyChoice(journal, choice) {
-  const [source, slug] = choice.split(/:(.+)/);
-  return applyTheme(journal, source === "preset" ? await applyTemplate(slug) : slug || null);
+export function applyChoice(journal, choice) {
+  const [, slug] = choice.split(/:(.+)/);
+  return applyTheme(journal, slug || null);
 }
 
 async function showMenu(app, button) {

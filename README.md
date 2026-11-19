@@ -21,7 +21,7 @@ https://raw.githubusercontent.com/HShira101/Bookbinder/main/module.json
 3. The journal now opens as a book for everyone. Choose **None (Foundry sheet)** to go back.
 4. Below it, the **Aa** button picks one of the theme's sub-styles (a letter, a report…) for that page.
 
-Applying a template copies it into `worlds/<world>/Bookbinder_themes/` (if you can upload files), so later module updates never change your journals. Templates use only fonts bundled with Foundry.
+A template is used **straight from the module**: applying it to a journal does not copy anything into your world, and templates only use fonts bundled with Foundry. To customize one, open **Bookbinder** and use it as the base of a new design.
 
 Turn pages with the side arrows, the page corners, the ← → keys (while the window has focus), or by dragging the page edge. Clicking a page in the side index, or a link to a page of the same journal, turns the pages to it. The side index is Foundry's own: add, search and reorder pages there as usual. Outside the book, at the top corner next to each page, ✎ opens that page in Foundry's editor.
 
@@ -62,7 +62,7 @@ https://raw.githubusercontent.com/HShira101/Bookbinder/main/module.json
 3. El diario se abre ahora como libro para todos. Elige **Ninguno (hoja de Foundry)** para volver.
 4. Debajo, el botón **Aa** elige uno de los sub-estilos del tema (una carta, un informe…) para esa página.
 
-Aplicar una plantilla la copia a `worlds/<mundo>/Bookbinder_themes/` (si puedes subir archivos), así las actualizaciones del módulo nunca cambian tus diarios. Las plantillas usan solo fuentes incluidas en Foundry.
+Una plantilla se usa **directamente desde el módulo**: aplicarla a un diario no copia nada a tu mundo, y las plantillas usan solo fuentes incluidas en Foundry. Para personalizar una, abre **Bookbinder** y úsala como base de un diseño nuevo.
 
 Pasa las páginas con las flechas laterales, las esquinas de la página, las teclas ← → (con la ventana enfocada) o arrastrando el borde de la hoja. Pulsar una página en el índice lateral, o un enlace a una página del mismo diario, pasa las hojas hasta ella. El índice lateral es el de Foundry: ahí se añaden, buscan y reordenan las páginas como siempre. Fuera del libro, en la esquina superior junto a cada página, ✎ la abre en el editor de Foundry.
 
