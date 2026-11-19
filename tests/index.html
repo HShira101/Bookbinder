@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Bookbinder tests</title>
+<style>body{font:14px monospace;background:#fff;color:#000;margin:12px}.ok{color:#070}.fail{color:#b00;font-weight:700}</style>
+</head>
+<body>
+<pre id="out">running…</pre>
+<script type="module">
+import { presetTests, runAll } from "./run.mjs";
+const base = "../presets/theme/";
+const loadJSON = async file => (await fetch(base + file)).json();
+const slugs = await (await fetch(base + "index.json")).json();
+await presetTests(loadJSON, slugs);
+const report = await runAll();
+const failed = report.filter(entry => !entry.ok).length;
+document.getElementById("out").innerHTML = `${failed ? "FAILED" : "ALL PASSED"} (${report.length - failed}/${report.length})\n\n`
+  + report.map(({ name, ok, message }) => `<span class="${ok ? "ok" : "fail"}">${ok ? "ok  " : "FAIL"}</span> ${name}${message ? `\n     ${message}` : ""}`).join("\n");
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "name": "Book",
+  "author": {
+    "id": "bookbinder",
+    "name": "Bookbinder"
+  },
+  "visibility": "all",
+  "moduleVersion": "0.2.0",
+  "resources": {
+    "images": {
+      "cover": {
+        "path": "modules/bookbinder/presets/img/book/cover.svg",
+        "status": "ready"
+      },
+      "paper": {
+        "path": "modules/bookbinder/presets/img/book/paper.svg",
+        "status": "ready"
+      }
+    },
+    "fonts": {
+      "Amiri": {
+        "status": "ready"
+      },
+      "Modesto Condensed": {
+        "status": "ready"
+      }
+    }
+  }
+}

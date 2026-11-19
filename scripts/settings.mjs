@@ -3,6 +3,8 @@ import { MODULE_ID } from "./constants.mjs";
 const SETTINGS = {
   animation: { scope: "user", type: Boolean, default: true },
   speed: { scope: "user", type: Number, default: 1, range: { min: 0.5, max: 2, step: 0.1 } },
+  sound: { scope: "user", type: Boolean, default: true },
+  volume: { scope: "user", type: Number, default: 0.5, range: { min: 0, max: 1, step: 0.05 } },
   tocCollapsed: { scope: "user", type: Boolean, default: false },
   isolation: {
     scope: "client",

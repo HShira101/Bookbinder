@@ -2,6 +2,7 @@ import { MODULE_ID } from "./constants.mjs";
 import { registerSettings } from "./settings.mjs";
 import { attachThemeButton } from "./theme-menu.mjs";
 import { BookSheet } from "./sheet/book-sheet.mjs";
+import { ensureWorldFolders } from "./theme/store.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
@@ -11,7 +12,13 @@ Hooks.once("init", () => {
   });
 });
 
+Hooks.once("ready", ensureWorldFolders);
+
 Hooks.on("renderDocumentSheetV2", attachThemeButton);
+
+Hooks.on("updateJournalEntry", (journal, changes) => {
+  if (foundry.utils.getProperty(changes, `flags.${MODULE_ID}.theme`)) BookSheet.reloadTheme(journal);
+});
 
 for (const event of ["create", "update", "delete"]) {
   Hooks.on(`${event}JournalEntryPage`, page => BookSheet.refreshPage(page));
