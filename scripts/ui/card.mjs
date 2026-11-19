@@ -15,7 +15,7 @@ import { DesignWizard } from "./wizard.mjs";
 const idOf = slug => `bookbinder-card-${slug}`;
 const term = (label, value) => (value ? `<dt>${label}</dt><dd>${value}</dd>` : "");
 
-const SKELETON = `
+const skeleton = () => `
 <div class="bookbinder-card-preview"><div class="bookbinder-wizard-bar"><label>${localize("Editor.Sheet")} <select data-sheet></select></label></div><div class="bookbinder-preview-box"></div></div>
 <aside class="bookbinder-card-data"></aside>`;
 
@@ -50,7 +50,7 @@ export class DesignCard extends ShellApplication {
   }
 
   async html() {
-    return SKELETON;
+    return skeleton();
   }
 
   async _onFirstRender(context, options) {

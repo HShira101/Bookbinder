@@ -12,7 +12,7 @@ import { COVER_TITLE_FONT, QUICK_TYPE, fieldPaths, isSheetPath, wizardFields } f
 const STEPS = ["Base", "Cover", "Sheets", "Typography"];
 const DEFAULT_BASE = "book";
 
-const SKELETON = `
+const skeleton = () => `
 <ol class="bookbinder-steps"></ol>
 <div class="bookbinder-wizard-main">
   <div class="bookbinder-wizard-form"></div>
@@ -64,7 +64,7 @@ export class DesignWizard extends ShellApplication {
   #preview;
 
   async html() {
-    return SKELETON;
+    return skeleton();
   }
 
   async _onFirstRender(context, options) {

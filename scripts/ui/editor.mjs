@@ -16,7 +16,7 @@ import { ELEMENTS, SECTIONS, elementFields, elementRoot, read, sectionIds, sheet
 const CHANGED = "bookbinder.themeChanged";
 const idOf = slug => `bookbinder-editor-${slug}`;
 
-const SKELETON = `
+const skeleton = () => `
 <div class="bookbinder-editor-bar">
   <label>${localize("Editor.Sheet")} <select data-sheet></select></label>
   <button type="button" data-action="addSheet"><i class="fa-solid fa-plus"></i> ${localize("Editor.AddSheet")}</button>
@@ -99,7 +99,7 @@ export class DesignEditor extends ShellApplication {
   }
 
   async html() {
-    return SKELETON;
+    return skeleton();
   }
 
   async _onFirstRender(context, options) {
